@@ -9,7 +9,10 @@ align <- function(x, state = "Inactive", type = "left", spell = "first"){
 	x_left_all        <- 1:length(x) - 1
 	names(x_left_all) <- x
 	
-	if (state %in% x){
+	# combine states if necessary
+	refvar            <- "REFSTATE"
+	x[x %in% state]   <- refvar
+	if (refvar %in% x){
 		# now get spell info
 		sec        <- rle(x)
 		spells     <- sec$values
@@ -20,14 +23,14 @@ align <- function(x, state = "Inactive", type = "left", spell = "first"){
 		
 		# which is the reference spell? 3 choices
 		if (spell == "first"){
-			this.spell <- which(spells == state)[1]
+			this.spell <- which(spells == refvar)[1]
 		}
 		if (spell == "longest"){
-			s.spells   <- which(spells == state)
+			s.spells   <- which(spells == refvar)
 			this.spell <- s.spells[which.max(durs[s.spells])]
 		}
 		if (spell == "last"){
-			this.spell <- rev(which(spells == state))[1]
+			this.spell <- rev(which(spells == refvar))[1]
 		}
 		if (type == "left"){
 			shift_time <- x_lefts[this.spell]
