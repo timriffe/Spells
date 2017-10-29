@@ -50,6 +50,26 @@ draw_sequence3 <- function(durs, y = 0,...){
 	durs[is.na(durs)] <- ""
 	text(xvals+.5,y+.5,durs,...)
 }
+
+Ones            <- X == "Employed"
+Ones[Ones]      <- 1
+Ones[Ones == 0] <- NA
+
+pdf("Figures/Seq10ones.pdf",height=4,width=9)
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence3(Ones[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+dev.off()
+
+
+
+
 Dur <- apply(X,2,spell_durAge,state = "Inactive")
 
 pdf("Figures/Seq10dur.pdf",height=4,width=9)
@@ -63,6 +83,38 @@ axis(1)
 text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
 text(47,6,"Random individual i",xpd=TRUE,srt=90)
 dev.off()
+
+OrdUp   <- apply(X,2,spell_order,state = "Employed",increasing=TRUE)
+OrdDown <- apply(X,2,spell_order,state = "Employed",increasing=FALSE)
+
+
+pdf("Figures/Seq10ordUp.pdf",height=4,width=9)
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence3(OrdUp[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+dev.off()
+
+
+pdf("Figures/Seq10ordDown.pdf",height=4,width=9)
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence3(OrdDown[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+dev.off()
+
+
+
 
 # time spent
 
@@ -166,5 +218,6 @@ legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
 
+# -------------------------------------
 
 

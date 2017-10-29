@@ -176,6 +176,7 @@ spell_dur_after <- function(x, state = "Inactive"){
 #' # two spells of employment
 #' spell_order(x, state = "Employed", increasing = TRUE)
 #' spell_order(x, state = "Employed", increasing = FALSE)
+
 spell_order <- function(x, state = "Inactive", increasing = TRUE){
 	x_age             <- 1:length(x) - 1
 	names(x_age)      <- x
