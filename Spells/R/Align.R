@@ -3,7 +3,7 @@
 ###############################################################################
 
 
-align <- function(x, state = "Inactive", left = TRUE, spell = "first"){
+align <- function(x, state = "Inactive", type = "left", spell = "first"){
 	
 	# starting left x position for each observation
 	x_left_all        <- 1:length(x) - 1
@@ -29,8 +29,15 @@ align <- function(x, state = "Inactive", left = TRUE, spell = "first"){
 		if (spell == "last"){
 			this.spell <- rev(which(spells == state))[1]
 		}
-		
-		shift_time <- ifelse(left, x_lefts[this.spell], x_rights[this.spell])
+		if (type == "left"){
+			shift_time <- x_lefts[this.spell]
+		}
+		if (type == "right"){
+			shift_time <- x_rights[this.spell]
+		}
+		if (type == "center"){
+			shift_time <- (x_lefts[this.spell] +  x_rights[this.spell]) / 2
+		}
 	} else {
 		shift_time <- 0
 	}
@@ -38,4 +45,5 @@ align <- function(x, state = "Inactive", left = TRUE, spell = "first"){
 	
 	x_left_all - shift_time
 }
+
 

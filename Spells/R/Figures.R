@@ -2,9 +2,13 @@
 # Author: tim
 ###############################################################################
 
-setwd("/home/tim/workspace/Spells")
+setwd("/home/tim/git/Spells/Spells")
 set.seed(1)
+setwd("/home/tim/git/Spells/Spells")
 source("R/GenerateStationary.R")
+source("R/Counting.R")
+source("R/Distributions.R")
+source("R/Align.R")
 
 
 
@@ -105,7 +109,7 @@ draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
 }
 
 
-XdeathAlign <- apply(X,2,align,state = "Dead",left=TRUE)
+XdeathAlign <- apply(X,2,align,state = "Dead",type="left")
 
 pdf("Figures/Seq10deathalign.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
@@ -121,9 +125,9 @@ dev.off()
 
 
 # align on first retirement:
-XretirefirstAlign <- apply(X,2,align,state = "Retired",left=TRUE,spell = "first")
-Xinactlongleft    <- apply(X,2,align,state = "Inactive",left=TRUE,spell = "longest")
-Xinactlongright   <- apply(X,2,align,state = "Inactive",left=FALSE,spell = "longest")
+XretirefirstAlign <- apply(X,2,align,state = "Retired",type="left",spell = "first")
+Xinactlongleft    <- apply(X,2,align,state = "Inactive",type="left",spell = "longest")
+Xinactlongright   <- apply(X,2,align,state = "Inactive",type="right",spell = "longest")
 
 pdf("Figures/Seq10firstretirealign.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))

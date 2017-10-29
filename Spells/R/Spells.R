@@ -1,38 +1,15 @@
 # Author: tim
 ###############################################################################
-setwd("/home/tim/workspace/Spells")
+setwd("/home/tim/git/Spells/Spells")
+set.seed(1)
 source("R/GenerateStationary.R")
+source("R/Counting.R")
+source("R/Distributions.R")
+source("R/Align.R")
 
 
 
-
-
-
-spell_durAge <- function(x, state = "Inactive", not_first = FALSE){
-	
-	# starting left x position for each observation
-	x_age             <- 1:length(x) - 1
-	names(x_age)      <- x
-
-    sec               <- rle(x)
-	spells            <- sec$values
-	durs              <- sec$lengths
-	durs2             <- durs
-	durs2[spells != state] <- NA
-    if (not_first){
-		if (state %in% x){
-			durs2[which(spells == state)[1]] <- NA
-		}
-		
-	}
-	
-    #n_spells          <- sum(spells == state)
-	spell_age         <- rep(durs2, durs)
-	#spell_age[x != state] <- NA
-	
-	spell_age
-}
-EmplSpells <- apply(RTraj_clean, 2, spell_durAge, state = "Employed")
+EmplSpells  <- apply(RTraj_clean, 2, spell_durAge, state = "Employed")
 EmplSpellsH <- apply(RTraj_clean, 2, spell_durAge, state = "Employed",TRUE)
 
 
@@ -69,35 +46,6 @@ plot(50:100, Inact_given_empl50, type = 'l')
 plot(50:100, avg_dur_given_InactH, type = 'l')
 plot(50:100, InactH, type = 'l')
 
-qdens <- function(X,p=.5){
-	apply(X,1,function(x,p){
-				if (sum(!is.na(x))>2){
-					dx <- density(x,na.rm=TRUE)
-					return(quantile(density(x,na.rm=TRUE),prob=p))
-				} else {
-					return(NA)
-				}
-			},p=p)
-}
-
-intervalpoly <- function(x,u,l,...){
-	una <- is.na(u)
-	lna <- is.na(l)
-	keep <- !(una | lna)
-	polygon(c(x[keep],rev(x[keep])),
-			c(u[keep],rev(l[keep])),...)
-}
-
-intervalfan <- function(X,x=50:100,probs = seq(.1,.9,by=.1),...){
-	for (i in probs){
-		alpha <- i / 2
-		ua    <- 1- alpha
-		la    <- alpha
-		ql <- qdens(X,la)
-		qu <- qdens(X,ua)
-		intervalpoly(x,ql,qu,...)
-	}
-}
 
 sdInact <- sqrt(rowMeans((InactSpells - avg_dur_InactSpells) ^ 2, na.rm=TRUE))
 png("/home/tim/git/ArrowDecomp/ArrowDecomp/Figures/spelldurationagepattern.png")
@@ -115,63 +63,6 @@ dev.off()
 
 x <- RTraj_clean[,3]
 
-spell_dur_before <- function(x, state = "Inactive", not_first = FALSE){
-	
-	# starting left x position for each observation
-	x_age             <- 1:length(x) - 1
-	names(x_age)      <- x
-	
-	sec               <- rle(x)
-	spells            <- sec$values
-	durs              <- sec$lengths
-	durs2             <- durs
-	durs2[spells != state] <- NA
-	
-	n          <- length(durs)
-	x_lefts    <- cumsum(c(0,durs[-n]))
-	x_lefts[spells != state] <- NA          
-	if (not_first){
-		if (state %in% x){
-			x_lefts[which(spells == state)[1]] <- NA
-		}
-	}
-	
-	#n_spells          <- sum(spells == state)
-	spell_starts         <- rep(x_lefts, durs)
-	time_spent           <- x_age - spell_starts
-	#spell_age[x != state] <- NA
-	names(time_spent)    <- x_age
-	time_spent + .5
-}
-spell_dur_after <- function(x, state = "Inactive", not_first = FALSE){
-	
-	# starting left x position for each observation
-	x_age             <- 1:length(x) - 1
-	names(x_age)      <- x
-	
-	sec               <- rle(x)
-	spells            <- sec$values
-	durs              <- sec$lengths
-	durs2             <- durs
-	durs2[spells != state] <- NA
-	
-	n          <- length(durs)
-	x_lefts    <- cumsum(c(0,durs[-n]))
-	x_rights   <- x_lefts + durs
-	x_rights[spells != state] <- NA          
-	if (not_first){
-		if (state %in% x){
-			x_rights[which(spells == state)[1]] <- NA
-		}
-	}
-	
-	#n_spells          <- sum(spells == state)
-	spell_ends           <- rep(x_rights, durs)
-	time_left            <- spell_ends - x_age
-	#spell_age[x != state] <- NA
-	names(time_left)    <- x_age
-	time_left - .5
-}
 
 InactLeft  <- apply(RTraj_clean, 2, spell_dur_after, state = "Inactive")
 InactSpent <- apply(RTraj_clean, 2, spell_dur_before, state = "Inactive")
