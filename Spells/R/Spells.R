@@ -7,8 +7,6 @@ source("R/Counting.R")
 source("R/Distributions.R")
 source("R/Align.R")
 
-
-
 EmplSpells  <- apply(RTraj_clean, 2, spell_durAge, state = "Employed")
 EmplSpellsH <- apply(RTraj_clean, 2, spell_durAge, state = "Employed",TRUE)
 
