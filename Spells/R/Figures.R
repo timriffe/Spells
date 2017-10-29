@@ -165,13 +165,13 @@ XdeathAlign <- apply(X,2,align,state = "Dead",type="left")
 
 pdf("Figures/Seq10deathalign.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
-plot(NULL, type = "n", xlim = c(-50,0), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+plot(NULL, type = "n", xlim = c(-80,0), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
 	draw_sequence4(state_seq = X[,i],x=XdeathAlign[,i],states,cols,y=yvals[i], border = NA)
 }
 axis(1)
-text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
-text(47,6,"Random individual i",xpd=TRUE,srt=90)
+text(-80,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-83,6,"Random individual i",xpd=TRUE,srt=90)
 legend(-40,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
@@ -185,11 +185,11 @@ pdf("Figures/Seq10firstretirealign.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
-	draw_sequence4(state_seq = X[,i],x=XretireAlign[,i],states,cols,y=yvals[i], border = NA)
+	draw_sequence4(state_seq = X[,i],x=XretirefirstAlign[,i],states,cols,y=yvals[i], border = NA)
 }
 axis(1)
-text(min(XretireAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
-text(min(XretireAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
+text(min(XretirefirstAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
+text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
 #legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
@@ -200,8 +200,8 @@ for (i in 1:10){
 	draw_sequence4(state_seq = X[,i],x=Xinactlongleft[,i],states,cols,y=yvals[i], border = NA)
 }
 axis(1)
-text(min(XretireAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
-text(min(XretireAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
+text(min(XretirefirstAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
+text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
 #legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
@@ -212,12 +212,22 @@ for (i in 1:10){
 	draw_sequence4(state_seq = X[,i],x=Xinactlongright[,i],states,cols,y=yvals[i], border = NA)
 }
 axis(1)
-text(min(XretireAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
-text(min(XretireAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
+text(min(XretirefirstAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
+text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
 legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
 
 # -------------------------------------
-
-
+Xcenter   <- apply(X,2,align,state = c("Employed"),type="center",spell = "longest")
+pdf("Figures/Seq10centerlongempl.pdf",height=4,width=9)
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=Xcenter[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(min(XretirefirstAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
+text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+dev.off()
