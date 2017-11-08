@@ -36,48 +36,55 @@
 
 \begin{abstract}
 Multistate matrix population models are typically used to compute statistics
-such as the state occupancies or the moments thereof. Recently formulas
+such as state occupancies or the moments thereof. Recently formulas
 have been derived to compute the average number of spells for a given state,
-which combined with the average state occupancy yields the average spell
+which when combined with the average state occupancy yields the average spell
 duration. I've since wondered what the age pattern to average spell durations
 is. Here I demonstrate how to use simulations to estimate a variety of age and
-other patterns of different state spells. 
+other patterns of different state episodes. 
 \end{abstract}
 
 \section{Introduction}
 The amount of population-level measures that one might devise for a particular
 population-level process is dizzying, so it may beg the question from the outset
-why we might desire to have more. Matrix-based manipulations of incidence-based
+why we might desire to have more. Incidence-based matrix
 models are rather undeveloped with respect to tenure-statistics, and these might
 be of interest for a variety of substantive reasons. By tenure statistics I
 refer to the statistics of particular spells or episodes of a state. Namely, in
 incidence-based models with bidirectional flows (i.e. allowing for recovery and
-then re-onset, and so on), a hypothetical individual may pass through a state
-(say sickness) many times before death. Typically a transition matrix
-manipulation would only give us the average time spent sick (or moment
-statistics thereof). Recently matrix calculations have been described for how to
-calculate the average number of episodes of a given state \citep{dudel2017b}.
+then re-onset, and so on), a hypothetical individual may pass through a state,
+such as sickness, many times before death. Typically a transition matrix
+manipulation would only give us the average time spent sick or moment statistics
+thereof. Recently matrix calculations have been described for how to calculate the average number of episodes of a given state \citep{dudel2017b}.
 Combined with the average state occupancy, this information yields the average
 duration of episodes.
 
 One may wonder how the average spell duration changes with age, and for this
-there is no ready matrix expression (although it would of course be possible). I
-will procede using simulations rather than matrix calculations because it will
+there is no ready matrix expression. Such analytic expressions are surely
+possible, but in the following I intend to propose a suite of operations
+(incluiding the aforementioned) so broad and flexible as to fill the lifetime of
+an imaginary matrix-lover.
+I will procede using simulations rather than matrix calculations because it will
 save the work of deriving and checking dozens of formulas. In this way, we have
 the liberty to change definitions without incuring methodological setbacks.
 Since we simulate, we get stochastic stationary distributions of each
-measurement, which I'll represent using fan-chart visualizations. This approach is not all that different from
-that proposed by \citet{laditka1998new}, but I take things a bit
-farther by proposing a suite of age realignments and resulting age-like patterns of episode
-statistics. 
+measurement for free, which I'll represent using fan-chart visualizations. This
+approach is not all that different from that proposed by \citet{laditka1998new},
+but I expand on their approach by
+proposing a set of count statistics called \emph{clocks} and age
+\emph{realignments}, resulting in a large set of age-like patterns of state
+episodes. Simulation is not strictly required if an empirical population of
+individual sequences is on hand, but these would pertain to a non-stationary
+population.
 
 \section{Data}
-The point of departure for all calculationsis a
+The point of departure for all calculations is a
 transition matrix. To demonstrate, I use a published transition matrix from a recent
 study of working life expectancy in the United States \citep{Dudel2017}. This
 matrix refers to black females aged 50-100 in 1994. The same sorts of things can
-be done with any age-stage matrix. Actually technically you could do the same with
-an ageless matrix, if the simulated sequence steps are interpretable as age.
+be done with any age-stage matrix. One can indeed also do the same with
+an ageless transition matrix of the life course, if the simulated sequence steps
+are interpretable as age steps.
 
 \section{Simulation}
 I take advantage of the recently published \texttt{R} package
@@ -130,9 +137,11 @@ expectancies, for example.
 \section{Running clocks and alignment}
 Beyond counting episodes, one may wish to aggregate statistics on each episode
 in novel ways. For instance, conditional on being in state $s$ in age $x$, what
-is the average duration of spell that one finds oneself in? 
+is the average duration of spell that one finds oneself in? Or time spent or
+left in the state?
 
 \subsection{Clocks}
+\label{sec:clocks}
 To calculate the average spell duration by age, first convert our state
 sequences to a data object something like Figure~\ref{fig:seq10dur}. Using chronological age as the reference, one may also wish to calculate time
 spent or left in the state episode, per
@@ -140,7 +149,7 @@ Figure~\ref{fig:seq10timespent} or \ref{fig:seq10timeleft} \footnote{Actually,
 I'd increment values by $\frac{1}{2}$ for mid-state clocking, but decimals would squeeze the figure too
 much.}. In either of these cases, value alignment is with respect to episode
 entry or exit, but aggregation alignment remains pegged to age. Statistics
-across individuals in an array with therefore produce age patterns.
+across individuals in an array will therefore produce age patterns.
 
 \begin{figure}[ht!]
 \centering
@@ -174,8 +183,8 @@ episode fractions. One could further condition age patterns of total duration, t
 filled with 1s, then aggregation results in prevalence. Note, time \emph{left}
 in the episode has no left-truncation problem, also not in the aggregate. 
 These series of values, that I call clocks, are then aggregated in some
-way, and aggregation is always within some external structuring classes that
-remain to be defined. 
+way. Aggregation procedes within some external structuring classes defined in
+the following section.
 
 \begin{figure}[ht!]
 \centering
@@ -200,19 +209,21 @@ are imputed with order count variables.}
 
 \FloatBarrier
 \subsection{Alignment}
-Episodic clock values are aggregated according to some
+\label{sec:align}
+Episodic \emph{clock} values are aggregated according to some
 structuring criteria. In all previous figures, the structuring criteria was
 chronological age, which is how data were generated in the first instance. To
-introduce a term, these figures are \emph{left-aligned} on the event of birth.
+introduce a term, the sequences in these figures are \emph{left-aligned} on the
+event of birth.
 This is the most common default alignment in social and medical sciences, but other choices may be more
 compelling for particular questions.
 
-For late-life processes, birth is usually a long ways off, and empirical
-regularity may be be found with respect to other alignment criteria. Aligning lifelines requires
-two choices: 1) a reference moment or anchoring \emph{event} must be selected,
+For late-life processes, birth is usually decades away from the events and
+states of interest, and sharper empirical regularity may be be found with
+respect to other alignment criteria. Aligning lifelines requires two choices: 1) a reference moment or anchoring \emph{event} must be selected,
 and 2) the alignment direction must be chosen. A reference event could be any instance of
 entry, exit, or other compelling anchor point, such as a spell midpoint-- ergo
-such events likely relate to episodes.
+such events may relate to episodes themselves.
 For repeated events, the choice of anchoring episode could itself follow a
 regular criterion, such as first, last, or longest episode. The \emph{direction} of
 alignment could be left, right, center, or perhaps something else.
@@ -268,12 +279,31 @@ types.}
 \end{figure}
 
 The purpose of realigning is to bring transitions into focus. We do not showcase
-\emph{sorting} in this treatment, as this is another can of worms. Rather, here
-we would like to operate on aggregations of individual sequences, in which case
-between-individual sorting is unimportant. We'd still like to make statements
-about population-level characteristics.
+\emph{sorting} in this treatment, as this is another can of worms, likely in
+need of sophisticated clustering and sequence analysis. For researchers doing
+sequence analysis, count and alignment operations would precede standard
+analysis, and one would need to be juditious in choosing a clustering algorithm
+that is less sensitive to realignment. For the present, I would rather
+like to operate on aggregations of individual sequences, in which case between-individual sorting is unimportant. We'd still like to make statements about population-level characteristics.
 
+\FloatBarrier
+\section{Aggregate patterns}
+Inlcude a big set of patterns from the example matrix. Somehow. Systematically.
+Like a 5x5 panel plot, where five clocks in columns and five alignments in rows.
+Some combinatorics to see the researcher degrees of freedom too.
 
+\section{Discussion}
+As stated the purpose of episode clocks and sequencec realignment is to detect
+important patterns in data that are likely to otherwise go unnoticed. Some
+reasonable priors might include that i) life course events condition each other;
+ii) temporal proximity to life course transitions is likely to be an important
+predictor of other transitions; iii) within-episode patterns of other
+characteristics might be monotonically increasing or decreasing, or concave or
+convex. Therefore, it may be the case that aggregate patterns derived from such
+operations are simply sharper and of more obvious interpretation and consequence
+than are age patterns themselves.  
+
+\section{Conclusions}
 
 
 

@@ -1,7 +1,7 @@
 
 # Author: tim
 ###############################################################################
-
+# TODO fill arg (left and right)
 
 align <- function(x, state = "Inactive", type = "left", spell = "first"){
 	
