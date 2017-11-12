@@ -19,6 +19,19 @@ draw_sequence2 <- function(state_seq, states, cols, y = 0,...){
 	
 	rect(xvals,y,xvals+1,y+1,col=col_seq,...)
 }
+draw_sequence3 <- function(durs, y = 0,...){
+	xvals <- 1:length(durs) - 1 + 50	
+	durs[is.na(durs)] <- ""
+	text(xvals+.5,y+.5,durs,...)
+}
+# alignment
+draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
+	
+	names(cols) <- states
+	col_seq     <- cols[state_seq]
+	
+	rect(x,y,x+1,y+1,col=col_seq,...)
+}
 
 
 cols   <- c("#74ee65", "#773129", "#41bbc5",NA)
@@ -45,11 +58,6 @@ dev.off()
 # figure 2
 # total duration.
 
-draw_sequence3 <- function(durs, y = 0,...){
-	xvals <- 1:length(durs) - 1 + 50	
-	durs[is.na(durs)] <- ""
-	text(xvals+.5,y+.5,durs,...)
-}
 
 Ones            <- X == "Employed"
 Ones[Ones]      <- 1
@@ -161,7 +169,6 @@ draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
 }
 
 
-XdeathAlign <- apply(X,2,align,state = "Dead",type="left")
 
 pdf("Figures/Seq10deathalign.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
@@ -177,6 +184,7 @@ dev.off()
 
 
 # align on first retirement:
+XdeathAlign <- apply(X,2,align,state = "Dead",type="left")
 XretirefirstAlign <- apply(X,2,align,state = "Retired",type="left",spell = "first")
 Xinactlongleft    <- apply(X,2,align,state = "Inactive",type="left",spell = "longest")
 Xinactlongright   <- apply(X,2,align,state = "Inactive",type="right",spell = "longest")

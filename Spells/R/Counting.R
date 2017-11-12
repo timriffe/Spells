@@ -48,6 +48,7 @@ spell_durAge <- function(x, state = "Inactive", not_first = FALSE){
 	#n_spells          <- sum(spells == state)
 	spell_age         <- rep(durs2, durs)
 	#spell_age[x != state] <- NA
+	spell_age[is.na(x)] <- NA
 	
 	spell_age
 }
@@ -103,6 +104,8 @@ spell_dur_before <- function(x, state = "Inactive", not_first = FALSE){
 	time_spent           <- x_age - spell_starts
 	#spell_age[x != state] <- NA
 	names(time_spent)    <- x_age
+	
+	time_spent[is.na(x)] <- NA
 	time_spent + .5
 }
 #' @description produce a vector of \code{length(x)} values corresponding to the time left in a given episode of the reference state. 
@@ -126,7 +129,7 @@ spell_dur_before <- function(x, state = "Inactive", not_first = FALSE){
 #' spell_dur_before(x, c("Inactive","Employed"), not_first = TRUE)
 #' # total lifespan 50+
 #' spell_dur_before(x, c("Inactive","Employed","Retired"), not_first = FALSE)
-spell_dur_after <- function(x, state = "Inactive"){
+spell_dur_after <- function(x, state = "Inactive", not_first = FALSE){
 
 	
 	# starting left x position for each observation
@@ -158,6 +161,7 @@ spell_dur_after <- function(x, state = "Inactive"){
 	time_left            <- spell_ends - x_age
 	#spell_age[x != state] <- NA
 	names(time_left)    <- x_age
+	time_left[is.na(x)] <- NA
 	time_left - .5
 }
 

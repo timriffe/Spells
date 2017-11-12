@@ -288,24 +288,115 @@ like to operate on aggregations of individual sequences, in which case between-i
 
 \FloatBarrier
 \section{Aggregate patterns}
-Inlcude a big set of patterns from the example matrix. Somehow. Systematically.
-Like a 5x5 panel plot, where five clocks in columns and five alignments in rows.
-Some combinatorics to see the researcher degrees of freedom too.
+Given a multistate process, and given the choices in clock measures and
+alignments, the researcher has many degrees of freedom in calculating episode
+statistics in the aggregate. As a first example, and with no substantive
+justification, say we'd like to know about inactivity spell patterns by time
+since first employment exit. Such patterns can be calculated directly on the
+same simulated object used for previous exposition.
+Figure~\ref{fig:macrofirst} displays mean conditional episode durations of
+inactivity structured by time since exitiong one's first employment spell, ergo
+right-aligned on first employment spell and conditional on i) having exited
+employment, and ii) being in an inactivity spell. Time spent (red, per
+Figure~\ref{fig:seq10timespent} ) and time left (blue, per
+Figure~\ref{fig:seq10timeleft}) sum to total duration
+(black, per
+Figure~\ref{fig:seq10dur}) as one would hope.
+Figures~\ref{fig:macro2}, \ref{fig:macro3}, and \ref{fig:macro4} show that mean
+statistics deviate from median and don't necessarily represent the underlying
+distribution for any of these three measures. 
+
+ \begin{figure}[ht!]
+\centering
+\caption{Inactivity spell statistics by time since end of first employment.}
+\label{fig:macrofirst}
+
+\begin{subfigure}{.49\textwidth}
+\centering
+\caption{Inactivity spells: mean total duration, time spent, and time left.}
+\label{fig:macro1}
+\includegraphics[scale=.4]{Figures/Macro1.pdf}
+\end{subfigure}
+~
+\begin{subfigure}{.49\textwidth}
+\centering
+\caption{Total duration, mean vs quantiles.}
+\label{fig:macro2}
+\includegraphics[scale=.4]{Figures/Macro2.pdf}
+\end{subfigure}
+
+\begin{subfigure}{.49\textwidth}
+\centering
+\caption{Time remaining in spell, mean vs quantiles.}
+\label{fig:macro3}
+\includegraphics[scale=.4]{Figures/Macro3.pdf}
+\end{subfigure}
+~
+\begin{subfigure}{.49\textwidth}
+\centering
+\caption{Time spent in spell, mean vs quantiles.}
+\label{fig:macro4}
+\includegraphics[scale=.4]{Figures/Macro4.pdf}
+\end{subfigure}
+\end{figure}
+
 
 \section{Discussion}
-As stated the purpose of episode clocks and sequencec realignment is to detect
-important patterns in data that are likely to otherwise go unnoticed. Some
-reasonable priors might include that i) life course events condition each other;
-ii) temporal proximity to life course transitions is likely to be an important
+Observe that the episode statistics displayed in Figure~\ref{fig:macrofirst},
+inactivity spells structured by time since exit from one's first employment
+spell, was chosen haphazardly. Let's say we have a process with 3 state
+categories. Given one of these states, one may select the first, last, longest
+or some other episode for purposes of alignment. For simplicity let's say we
+have 3 choices like this for episode order. Alignment may then be left, right,
+center, or something else, so let's say again for simplicity that there are 3
+ways to align. Now we have 3 or 5 or more clock variables than might be worth
+calculating statistics on structured like this. It should be clear that the
+researcher easily has 100+ potential macro age-like patterns that might be
+calculated, just for this relatively simple example case. It may be surprising
+to behold that most of these patterns, even though they result from a simple markov
+process with a small set of simple and monotonic age patterns, have some
+character to them. They contain information. Presumably the age patterns that
+entered into said markov model do not capture the entire story, and raw
+observed state sequences are expected to bear stronger degrees of
+codependency. And if we wish to know something about
+episodes of the states we are studying, the researcher has i) large degrees of freedom in selecting macro episode patterns, and ii) is limited only by one's own creativity in doing so.
+
+The researcher is not obliged to move in
+the direction I propose, but the straw-man default scenario is to treat
+episode structure (and any process for that matter) as if the only thing that matters is the
+amount of time passed since birth. Where health, employment, or other life
+events are co-dependent, the importance of age as a structural predictor is
+expected to wane with respect to other transitions. Fetuses, babies, and
+toddlers are largely synchronized with each other as a function of time until or
+since birth. This is less so for children, whose development slowly begins to
+lose alignment, far less so for young adults, some of which have passed through
+first life transitions and others that have passed through none. Adults in mid
+life and old age are maximally heterogenous with respect to age structure. To
+gain further insight, it makes sense to realign.
+
+As stated, the purpose of episode clocks and sequence realignment is to detect
+important patterns in data (or model results) that are likely to otherwise
+go unnoticed. Some reasonable priors might include that i) life course events
+condition each other; ii) temporal proximity to life course transitions is likely to be an important
 predictor of other transitions; iii) within-episode patterns of other
 characteristics might be monotonically increasing or decreasing, or concave or
 convex. Therefore, it may be the case that aggregate patterns derived from such
 operations are simply sharper and of more obvious interpretation and consequence
-than are age patterns themselves.  
+than are age patterns themselves. 
 
-\section{Conclusions}
-
-
+It is difficult to offer advice on the judicious application of data
+operations proposed here. All I can say is that the researcher should sit back
+and think creatively about the process under study and not be afraid to
+experiment some with clocks and alignment. The initial motivating case here
+involved no re-alignment whatsoever: I just wanted to know how episode duration
+changes over age. This very question already begs a second round of questions,
+for it is unclear how to relate episodes to age, given that an age is a point
+and an episode is a duration. This conundrum is what gives rise to clocks as an
+operation. From there alignment is a natural next question, and the magnitude of
+our researcher degrees of freedom increases by another order. In combination,
+these steps already imply some distancing from markov matrix models, as even
+cutting edge developments in this methodology are far from reaching the degree
+of flexibility we propose to have.
 
 \FloatBarrier
 \singlespacing
