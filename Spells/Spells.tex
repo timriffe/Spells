@@ -29,30 +29,36 @@
 \begin{document}
 
 %\title{Macro patterns in the shape of aging}
-\title{Spell analysis in multistate Markov models}
+\title{Spell analysis: clocks and alignment \\ (a very rough first draft)}
 \author[1]{Tim Riffe\thanks{riffe@demogr.mpg.de}}
 \affil[1]{Max Planck Institute for Demographic Research}
 \maketitle
 
 \begin{abstract}
-Multistate matrix population models are typically used to compute statistics
-such as state occupancies or the moments thereof. Recently formulas
-have been derived to compute the average number of spells for a given state,
-which when combined with the average state occupancy yields the average spell
-duration. I've since wondered what the age pattern to average spell durations
-is. Here I demonstrate how to use simulations to estimate a variety of age and
-other patterns of different state episodes. 
+Individuals are often modelled as passing through a series of discrete
+states. Multistate markov models are a means to calculate expectancies and
+moment statistics of state occupancies under the assumption that the transition
+rate schedules between states are held fixed. There are however no handy
+analytic expressions for any but the most simple characteristics of state episodes. Here
+I demonstrate how to use simulations to estimate a variety of age and other
+macro patterns of different state episodes. I introduce a
+suite of episode ``clock'' measures that count within or between episodes, and the notion of
+sequence ``alignment'' as a means to create new structuring axes within which to
+aggregate clock measures. Resulting aggregate patterns can be age patterns of
+episode duration, or a variety of other potential measures. This sequence
+aggregation toolkit may also be used to pre-process sequences prior to a
+standard sequence analyis, so as to yield more apt clusters. 
 \end{abstract}
 
 \section{Introduction}
 The amount of population-level measures that one might devise for a particular
-population-level process is dizzying, so it may beg the question from the outset
+process is dizzying, so it may beg the question from the outset
 why we might desire to have more. Incidence-based matrix
-models are rather undeveloped with respect to tenure-statistics, and these might
-be of interest for a variety of substantive reasons. By tenure statistics I
-refer to the statistics of particular spells or episodes of a state. Namely, in
-incidence-based models with bidirectional flows (i.e. allowing for recovery and
-then re-onset, and so on), a hypothetical individual may pass through a state,
+models are rather undeveloped with respect to tenure-statistics, and these
+might be of interest for a variety of substantive reasons. By tenure statistics I
+refer to the statistics of particular spells or episodes of a state. For
+example, in incidence-based models with bidirectional flows (i.e. allowing for recovery and
+then re-onset, and so on), modelled individuals may pass through a state,
 such as sickness, many times before death. Typically a transition matrix
 manipulation would only give us the average time spent sick or moment statistics
 thereof. Recently matrix calculations have been described for how to calculate the average number of episodes of a given state \citep{dudel2017b}.
@@ -63,8 +69,8 @@ One may wonder how the average spell duration changes with age, and for this
 there is no ready matrix expression. Such analytic expressions are surely
 possible, but in the following I intend to propose a suite of operations
 (incluiding the aforementioned) so broad and flexible as to fill the lifetime of
-an imaginary matrix-lover.
-I will procede using simulations rather than matrix calculations because it will
+a matrix buff.
+I procede using simulations rather than matrix calculations because it will
 save the work of deriving and checking dozens of formulas. In this way, we have
 the liberty to change definitions without incuring methodological setbacks.
 Since we simulate, we get stochastic stationary distributions of each
@@ -72,17 +78,19 @@ measurement for free, which I'll represent using fan-chart visualizations. This
 approach is not all that different from that proposed by \citet{laditka1998new},
 but I expand on their approach by
 proposing a set of count statistics called \emph{clocks} and age
-\emph{realignments}, resulting in a large set of age-like patterns of state
-episodes. Simulation is not strictly required if an empirical population of
-individual sequences is on hand, but these would pertain to a non-stationary
-population.
+\emph{realignments}, which together result in a large (unbounded?) set of
+age-like patterns of state episodes. These same operations can be used
+on observed populations of sequences as well, but the key difference
+is that observed populations are not stationary. Our example will refer to the
+stationary tenure statistics that belong to a particular set of transition
+rates.
 
 \section{Data}
-The point of departure for all calculations is a
-transition matrix. To demonstrate, I use a published transition matrix from a recent
-study of working life expectancy in the United States \citep{Dudel2017}. This
-matrix refers to black females aged 50-100 in 1994. The same sorts of things can
-be done with any age-stage matrix. One can indeed also do the same with
+I use a published transition matrix from a recent
+study of working life expectancy in the United States \citep{Dudel2017} as the
+basis of my example stationary population.
+This matrix refers to black females aged 50-100 in 1994. The same following
+steps can be done with any age-stage matrix. One can indeed also do the same with
 an ageless transition matrix of the life course, if the simulated sequence steps
 are interpretable as age steps.
 
@@ -92,8 +100,8 @@ I take advantage of the recently published \texttt{R} package
 sequence generator function \texttt{rmarkovchain()} that mereley requires a
 transition matrix to do its work.\footnote{There are some trivial object
 definition steps to convert the employment matrix into a conformable markov
-object before feeding it to the random generator.} I generate a large number,
-say 10k or more trajectories to operate on as the stationary population. Each
+object before feeding it to the random generator.} I generate a large number of
+trajectories (10k) to operate on as the stationary population. Each
 trajectory consists in a \texttt{character} vector of states
 [\texttt{Employed},\texttt{Inactive},\texttt{Retired},\texttt{Dead}], where dead
 is of course an absorbing state, but the other states can be switched on and off
