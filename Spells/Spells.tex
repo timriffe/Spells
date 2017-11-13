@@ -47,7 +47,7 @@ sequence ``alignment'' as a means to create new structuring axes within which to
 aggregate clock measures. Resulting aggregate patterns can be age patterns of
 episode duration, or a variety of other potential measures. This sequence
 aggregation toolkit may also be used to pre-process sequences prior to a
-standard sequence analyis, so as to yield more apt clusters. 
+standard sequence analysis, so as to yield more apt clusters. 
 \end{abstract}
 
 \section{Introduction}
@@ -97,7 +97,7 @@ are interpretable as age steps.
 \section{Simulation}
 I take advantage of the recently published \texttt{R} package
 \texttt{markovchain} \citep{spedicato2017}, which includes a random state
-sequence generator function \texttt{rmarkovchain()} that mereley requires a
+sequence generator function \texttt{rmarkovchain()} that merely requires a
 transition matrix to do its work.\footnote{There are some trivial object
 definition steps to convert the employment matrix into a conformable markov
 object before feeding it to the random generator.} I generate a large number of
@@ -290,7 +290,7 @@ The purpose of realigning is to bring transitions into focus. We do not showcase
 \emph{sorting} in this treatment, as this is another can of worms, likely in
 need of sophisticated clustering and sequence analysis. For researchers doing
 sequence analysis, count and alignment operations would precede standard
-analysis, and one would need to be juditious in choosing a clustering algorithm
+analysis, and one would need to be judicious in choosing a clustering algorithm
 that is less sensitive to realignment. For the present, I would rather
 like to operate on aggregations of individual sequences, in which case between-individual sorting is unimportant. We'd still like to make statements about population-level characteristics.
 
@@ -303,7 +303,7 @@ justification, say we'd like to know about inactivity spell patterns by time
 since first employment exit. Such patterns can be calculated directly on the
 same simulated object used for previous exposition.
 Figure~\ref{fig:macrofirst} displays mean conditional episode durations of
-inactivity structured by time since exitiong one's first employment spell, ergo
+inactivity structured by time since exiting one's first employment spell, ergo
 right-aligned on first employment spell and conditional on i) having exited
 employment, and ii) being in an inactivity spell. Time spent (red, per
 Figure~\ref{fig:seq10timespent} ) and time left (blue, per
