@@ -86,7 +86,7 @@
 \centering
  2 motivating questions:\vspace{2em}
  \begin{enumerate}
- \item would different patterns emerge if trajectories were aligned on moment of death?
+ \item would different patterns emerge if trajectories were aligned on moment of death rather than age?
  \item what is the age pattern of average episode duration?
  \end{enumerate}
  % get screenshot from June, also paper from Dudel in email.
@@ -98,7 +98,7 @@
 \centering
  2 \emph{procedural} solutions:\vspace{2em}
  \begin{enumerate}
- \item trajectory shifting to state transitions: \only<2>{\textcolor{red}{alignment}}
+ \item restructure wrt state transitions: \only<2>{\textcolor{red}{alignment}}
  \item flexible episode recording: \only<2>{\textcolor{red}{clocking}}
  \end{enumerate}
  % get screenshot from June, also paper from Dudel in email.
@@ -112,29 +112,60 @@ An illustration
 \pause
 \begin{itemize}[<+->]
   \item Take transition matrix from \normalsize{Dudel \& Myrskl\"a (2017)}.
-  \item Simulate trajectories using \texttt{rmarkovchain()} in \texttt{markovchain}
+  \item Simulate 10k trajectories using \texttt{rmarkovchain()} in \texttt{markovchain}
   package \normalsize{(Spedicato, 2017)}.
   \item Demonstrate concepts of \textcolor{red}{alignment} and \textcolor{red}{clocks}
   \item Generate (stationary) novel macro patterns
 \end{itemize}
 \end{frame}
 
-%\begin{frame}[plain]
-%\Large
-%\centering
-%A visual explanation
-%
-%\only<1>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron1.pdf}}
-%\only<2>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron2.pdf}}
-%\only<3>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron3.pdf}}
-%\only<4>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron4.pdf}}
-%\only<5>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron5.pdf}}
-%\only<6>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/than1.pdf}}
-%\only<7>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/together.pdf}}
-%\end{frame}
-%
-%
+\begin{frame}[plain]
+\Large
+\begin{centering}
+Clock measures
+\vspace{1em}
+\begin{overlayarea}{\textwidth}{.4\textheight}
+\only<1>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10.pdf}}
+\only<2>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_prev.pdf}}
+\only<3>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_dur.pdf}}
+\only<4>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_timespent.pdf}}
+\only<5>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_timespentcumul.pdf}}
+\only<6>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_timeleft.pdf}}
+\only<7>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordUp.pdf}}
+\only<8>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordDown.pdf}}
+\end{overlayarea}
+\end{centering}
+\end{frame}
 
+\begin{frame}[plain]
+\Large
+\begin{centering}
+\begin{block}{Clock measures}
+Measures of scaling or total durations in episodes or cumulatively over episodes; Also
+measures of episode order, or even simply prevalence as a degenerate case.
+\end{block}
+\pause
+Values that get averaged \emph{with respect to some structure}.
+\end{centering}
+\end{frame}
+
+\begin{frame}[plain]
+\Large
+\begin{centering}
+Alignment
+\vspace{1em}
+\begin{overlayarea}{\textwidth}{.4\textheight}
+\only<1>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10.pdf}}
+\only<2>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10align_death.pdf}}
+\only<3>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_dur.pdf}}
+\only<4>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_timespent.pdf}}
+\only<5>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_timespentcumul.pdf}}
+\only<6>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_timeleft.pdf}}
+\only<7>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordUp.pdf}}
+\only<8>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordDown.pdf}}
+\end{overlayarea}
+\end{centering}
+\end{frame}
 
 %\begin{frame}[plain]
 %\Large
