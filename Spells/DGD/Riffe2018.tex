@@ -1,0 +1,343 @@
+%% 
+%%	This is file 'beamer_sample.tex'
+%%	according to an MPIDR's PowerPoint template (?)
+%%	
+%%	by Eric Naujoks
+%%
+%%	Problems, bugs and comments to 
+%%	naujoks@demogr.mpg.de
+%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Praelegomena								%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	- Make sure that you use utf8-encoding for all your .tex-files!!! (TeXnicCenter since version 2.0)
+%%	- TeXnicCenter update: MPIDR intranet > Hard- & Sortfware > Software > Script and text editors > TeXnicCenter
+
+\documentclass[20pt,usenames,dvipsnames]{beamer}
+
+\usepackage[ngerman,english]{babel}
+\usepackage{tikz}
+\usepackage[normalem]{ulem}
+\geometry{paperwidth=10in, paperheight=7.5in}
+\usepackage{animate}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[mpidr]{./mpidr/beamerthemeMPIDR}
+%\usefonttheme{serif}
+%\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+%\newcommand*{\QEDA}{\hfill\ensuremath{\blacksquare}}
+%% Declaring title and author
+%	the institute's logo
+%\renewcommand{\mylogo}{\includegraphics[width=4.7in]{mpidr_logo_colour_en}}
+\usepackage{color}
+\definecolor{mygray}{rgb}{0.8,0.8,0.8}
+\definecolor{yellow}{rgb}{1,1,0}
+
+\defbeamertemplate{description item}{align left}{\insertdescriptionitem\hfill}
+%%	should be the very last package to be loaded
+\usepackage{hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Beginning of the document		%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%	titlepage - fixed frame:
+%%	========================
+
+% \begin{frame}
+% 	\titlepage
+% \end{frame}
+\begin{frame}[plain]
+	%\titlepage
+	\vspace{-3cm}
+ \centerline{\includegraphics[scale=.165]{beamerstrip3.png}}
+
+	
+	\huge
+	\vspace{1em}
+	
+	Alignment, clocking, and macro patterns of episodes in the life course\\
+	\vspace{1em}
+	\large 
+	Tim Riffe 
+\end{frame}
+%-------------------
+
+% motivation:
+% 1) late-life sequence analysis ending in death (pattern detection)
+% 2) matrix expression for average number of episodes (tenure statistics)
+\begin{frame}[plain]
+\Large
+\centering
+ 2 motivating observations:\vspace{2em}
+ \begin{enumerate}[<+->]
+ \item sequence analysis of trajectories ending in death \only<3-4>{\textcolor{red}{(pattern detection)}} \only<4>{(Y. Hu)}
+ \item matrix expression for average episode count \only<3-4>{\textcolor{red}{(tenure statistics)}} \only<4>{(C. Dudel)}
+ \end{enumerate}
+ % get screenshot from June, also paper from Dudel in email.
+\end{frame}
+%
+
+\begin{frame}[plain]
+\Large
+\centering
+ 2 motivating questions:\vspace{2em}
+ \begin{enumerate}
+ \item would different patterns emerge if trajectories were aligned on moment of death?
+ \item what is the age pattern of average episode duration?
+ \end{enumerate}
+ % get screenshot from June, also paper from Dudel in email.
+\end{frame}
+%
+
+\begin{frame}[plain]
+\Large
+\centering
+ 2 \emph{procedural} solutions:\vspace{2em}
+ \begin{enumerate}
+ \item trajectory shifting to state transitions: \only<2>{\textcolor{red}{alignment}}
+ \item flexible episode recording: \only<2>{\textcolor{red}{clocking}}
+ \end{enumerate}
+ % get screenshot from June, also paper from Dudel in email.
+\end{frame}
+%
+
+\begin{frame}[plain]
+\Large
+\centering
+An illustration
+\pause
+\begin{itemize}[<+->]
+  \item Take transition matrix from \normalsize{Dudel \& Myrskl\"a (2017)}.
+  \item Simulate trajectories using \texttt{rmarkovchain()} in \texttt{markovchain}
+  package \normalsize{(Spedicato, 2017)}.
+  \item Demonstrate concepts of \textcolor{red}{alignment} and \textcolor{red}{clocks}
+  \item Generate (stationary) novel macro patterns
+\end{itemize}
+\end{frame}
+
+%\begin{frame}[plain]
+%\Large
+%\centering
+%A visual explanation
+%
+%\only<1>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron1.pdf}}
+%\only<2>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron2.pdf}}
+%\only<3>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron3.pdf}}
+%\only<4>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron4.pdf}}
+%\only<5>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/chron5.pdf}}
+%\only<6>{\hspace{-8em}\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/than1.pdf}}
+%\only<7>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/LifeLineSeq/together.pdf}}
+%\end{frame}
+%
+%
+
+
+%\begin{frame}[plain]
+%\Large
+% \begin{block}{Brouard-Carey Symmetry}
+%  The age distribution is identical to / symmetrical with the time-to-death distribution.
+% \end{block}
+%\end{frame}
+%
+%\begin{frame}[plain]
+%\Large
+% \begin{block}{Transient Symmetry}
+%  Within a given \textcolor{OliveGreen}{state}, the \textcolor{red}{time-spent}
+%  distribution is equal to the \textcolor{blue}{time-to-exit} distribution.
+% \end{block}
+%\end{frame}
+%
+%\begin{frame}[plain]
+%\Large
+% \begin{block}{Transient equality}
+%  Under stationarity, the probability that a randomly selected individual is in
+%  state \textcolor{OliveGreen}{$\mathbf{s}$} and entered
+%  \textcolor{OliveGreen}{$\mathbf{s}$} \textcolor{red}{$\mathbf{x}$} years ago
+%  is equal to the probability of being in state
+%  \textcolor{OliveGreen}{$\mathbf{s}$} and exiting in
+%  \textcolor{blue}{$\mathbf{x}$} years.
+% \end{block}
+%\end{frame}
+%
+%\begin{frame}[plain]
+%\Large
+%\centering
+%Requisites:
+%\begin{itemize}
+%\item All vital and state transition schedules fixed.
+%\item No growth (births = deaths).
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}[plain]
+%\Large
+%\centering
+%Probabilistic result:
+%\begin{itemize}[<+->]
+%\item The expected age-state structure is frozen.
+%\item Each potential discrete state trajectory has a fixed probability of
+%occurring.
+%\item Same for past and future cohorts.
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}[plain]
+%\Large
+%\centering
+%Deterministic result (problematic):
+%\begin{itemize}[<+->]
+%\item The age-state structure is frozen.
+%\item Each discrete state trajectory occurs for a fixed fraction of a birth
+%cohort.
+%\item Same for past and future cohorts.
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}[plain]
+%\Large
+%\centering
+%Deterministic result (friendly):
+%\begin{itemize}[<+->]
+%\item The age-state structure is frozen.
+%\item The same finite set of discrete state trajectories.
+%\item Same for past and future cohorts (all clones).
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}[plain]
+%\Large
+%\centering
+%Prove for friendly case, generalize to probability case.
+%\end{frame}
+%
+%\begin{frame}[plain]
+%\Large
+%Step 1
+%\begin{overlayarea}{\textwidth}{.4\textheight}
+%\begin{center}
+%\only<1>{
+%$A^{(i)}=\left\{ 0\right\}$\\
+%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step0.pdf}\\
+%$T^{(i)}=\left\{ \tau_1 \right\}$
+%}
+%\only<2>{
+%$A^{(i)}=\left\{0, a_1 \right\}$\\
+%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step1.pdf}\\
+%$T^{(i)}=\left\{ \tau_1 \right\}$
+%}
+%\only<3>{
+%$A^{(i)}=\left\{0, a_1,a_2 \right\}$\\
+%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step2.pdf}\\
+%$T^{(i)}=\left\{ \tau_1,\tau_2 \right\}$
+%}
+%\only<4>{
+%$A^{(i)}=\left\{0, a_1,a_2,a_3 \right\}$\\
+%%\includegraphics[scale =
+%1]{Figures/SingleLifeAnim1/step3.pdf}\\
+%$T^{(i)}=\left\{ \tau_1,\tau_2,\tau_3 \right\}$} 
+%\only<5>{
+%$A^{(i)}=\left\{0, a_1,a_2,a_3,\ldots, a_{K-1} \right\}$\\
+%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step14.pdf}\\
+%$T^{(i)}=\left\{ \tau_1,\tau_2,\tau_3, \ldots, \tau_{K-1} \right\}$
+%}
+%\only<6>{
+%$A^{(i)}=\left\{0, a_1,a_2,a_3,\ldots, a_{K-1}, a_{K} \right\}$\\
+%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step15.pdf}\\
+%$T^{(i)}=\left\{ \tau_1,\tau_2,\tau_3, \ldots, \tau_{K-1}, 0 \right\}$
+%}
+%\only<7>{
+%$A^{(i)}=\left\{0, a_1,a_2,a_3,\ldots, a_{K-1}, a_{K} \right\}$\\
+%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/stepsmalldelta.pdf}\\
+%$T^{(i)}=\left\{ \tau_1,\tau_2,\tau_3, \ldots, \tau_{K-1}, 0 \right\}$
+%}
+%\end{center}
+%\end{overlayarea}
+%\end{frame}
+%
+%--------------------------------------------------------
+
+
+%
+%\begin{frame}[plain]
+%\Large
+%\begin{center}
+%Implications:
+%\pause
+%\begin{itemize}[<+->]
+%  \item Equal time spent-left distributions within states.
+%  \item Within episode \emph{order}. 
+%  \item Cumulative over episodes.
+%  \item Conditional on anything (age, TTD).
+%  \item Brouard-Carey is degenerate case.
+%\end{itemize}
+%\end{center}
+%\end{frame}
+%
+% Now we install the new template for the following frames:
+%{
+%\usebackgroundtemplate{%
+% 
+  % \includegraphics[width=\paperwidth,height=\paperheight]{Figures/eberhard-grossgasteiger-410620-unsplash.jpg}} \begin{frame}[plain]
+%\tiny
+%\flushright
+%\vspace{18cm}
+%   Photo by Eberhard Grossgasteiger on Unsplash
+%\end{frame}
+%}
+% Now we install another template, effective from now on:
+%\begin{frame}[plain]
+%\Large
+%\begin{center}
+%Simulate
+%\begin{itemize}[<+->]
+%  \item Take transition matrix from \normalsize{Dudel \& Myrskl\"a (2017)}
+%  \item Simulate trajectories; \texttt{rmarkovchain()} in \texttt{markovchain}
+%  package.
+%  \item Take census in stationary series. 
+%  \item Assume observation at half interval.
+%  \item Tabulate time spent and left in sampled episodes.
+%  \item Compare distributions.
+%\end{itemize}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[plain]
+%\Large
+%\begin{center}
+%\includegraphics[height=\paperheight]{Figures/SimResults.pdf}
+%\end{center}
+%\end{frame}
+
+
+%% this puts image as slide background
+%{
+%\usebackgroundtemplate{%
+%  \includegraphics[width=\paperwidth,height=\paperheight]{Figures/eberhard-grossgasteiger-410620-unsplash.jpg}} 
+%\begin{frame}
+%\vspace{9cm}
+%\Large
+%\begin{center}
+%Estimate from the reflection!\\ Thanks! \\
+%riffe@demogr.mpg.de
+%\end{center}
+%\end{frame}
+%}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	End of the document			%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+
+
+
+% Photo by eberhard grossgasteiger on Unsplash
+
+
+
+
+
+
