@@ -107,7 +107,7 @@
 
 \begin{frame}[plain]
 \Large
-\centering
+\begin{center}
 An illustration
 \pause
 \begin{itemize}[<+->]
@@ -117,11 +117,12 @@ An illustration
   \item Demonstrate concepts of \textcolor{red}{alignment} and \textcolor{red}{clocks}
   \item Generate (stationary) novel macro patterns
 \end{itemize}
+\end{center}
 \end{frame}
 
 \begin{frame}[plain]
 \Large
-\begin{centering}
+\begin{center}
 Clock measures
 \vspace{1em}
 \begin{overlayarea}{\textwidth}{.4\textheight}
@@ -134,238 +135,113 @@ Clock measures
 \only<7>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordUp.pdf}}
 \only<8>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordDown.pdf}}
 \end{overlayarea}
-\end{centering}
+\end{center}
 \end{frame}
 
 \begin{frame}[plain]
 \Large
-\begin{centering}
+\begin{center}
 \begin{block}{Clock measures}
 Measures of scaling or total durations in episodes or cumulatively over episodes; Also
-measures of episode order, or even simply prevalence as a degenerate case.
+measures of episode order, or even simply prevalence as a simple case.
 \end{block}
 \pause
 Values that get averaged \emph{with respect to some structure}.
-\end{centering}
+\end{center}
 \end{frame}
 
 \begin{frame}[plain]
 \Large
-\begin{centering}
+\begin{center}
 Alignment
 \vspace{1em}
 \begin{overlayarea}{\textwidth}{.4\textheight}
-\only<1>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10.pdf}}
+\only<1>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10aligncoords.pdf}}
 \only<2>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10align_death.pdf}}
-\only<3>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_dur.pdf}}
-\only<4>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_timespent.pdf}}
-\only<5>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_timespentcumul.pdf}}
-\only<6>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_timeleft.pdf}}
-\only<7>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordUp.pdf}}
-\only<8>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordDown.pdf}}
+\only<3>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10align_firstret.pdf}}
+\only<4>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10align_longestret.pdf}}
+\only<5>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10align_inactlongleft.pdf}}
+\only<6>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10align_inactlongright.pdf}}
+\only<7>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10align_centerlongempl.pdf}}
+%\only<8>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordDown.pdf}}
 \end{overlayarea}
-\end{centering}
+\end{center}
 \end{frame}
 
-%\begin{frame}[plain]
-%\Large
-% \begin{block}{Brouard-Carey Symmetry}
-%  The age distribution is identical to / symmetrical with the time-to-death distribution.
-% \end{block}
-%\end{frame}
-%
-%\begin{frame}[plain]
-%\Large
-% \begin{block}{Transient Symmetry}
-%  Within a given \textcolor{OliveGreen}{state}, the \textcolor{red}{time-spent}
-%  distribution is equal to the \textcolor{blue}{time-to-exit} distribution.
-% \end{block}
-%\end{frame}
-%
-%\begin{frame}[plain]
-%\Large
-% \begin{block}{Transient equality}
-%  Under stationarity, the probability that a randomly selected individual is in
-%  state \textcolor{OliveGreen}{$\mathbf{s}$} and entered
-%  \textcolor{OliveGreen}{$\mathbf{s}$} \textcolor{red}{$\mathbf{x}$} years ago
-%  is equal to the probability of being in state
-%  \textcolor{OliveGreen}{$\mathbf{s}$} and exiting in
-%  \textcolor{blue}{$\mathbf{x}$} years.
-% \end{block}
-%\end{frame}
-%
-%\begin{frame}[plain]
-%\Large
-%\centering
-%Requisites:
-%\begin{itemize}
-%\item All vital and state transition schedules fixed.
-%\item No growth (births = deaths).
-%\end{itemize}
-%\end{frame}
-%
-%\begin{frame}[plain]
-%\Large
-%\centering
-%Probabilistic result:
-%\begin{itemize}[<+->]
-%\item The expected age-state structure is frozen.
-%\item Each potential discrete state trajectory has a fixed probability of
-%occurring.
-%\item Same for past and future cohorts.
-%\end{itemize}
-%\end{frame}
-%
-%\begin{frame}[plain]
-%\Large
-%\centering
-%Deterministic result (problematic):
-%\begin{itemize}[<+->]
-%\item The age-state structure is frozen.
-%\item Each discrete state trajectory occurs for a fixed fraction of a birth
-%cohort.
-%\item Same for past and future cohorts.
-%\end{itemize}
-%\end{frame}
-%
-%\begin{frame}[plain]
-%\Large
-%\centering
-%Deterministic result (friendly):
-%\begin{itemize}[<+->]
-%\item The age-state structure is frozen.
-%\item The same finite set of discrete state trajectories.
-%\item Same for past and future cohorts (all clones).
-%\end{itemize}
-%\end{frame}
-%
-%\begin{frame}[plain]
-%\Large
-%\centering
-%Prove for friendly case, generalize to probability case.
-%\end{frame}
-%
-%\begin{frame}[plain]
-%\Large
-%Step 1
-%\begin{overlayarea}{\textwidth}{.4\textheight}
-%\begin{center}
-%\only<1>{
-%$A^{(i)}=\left\{ 0\right\}$\\
-%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step0.pdf}\\
-%$T^{(i)}=\left\{ \tau_1 \right\}$
-%}
-%\only<2>{
-%$A^{(i)}=\left\{0, a_1 \right\}$\\
-%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step1.pdf}\\
-%$T^{(i)}=\left\{ \tau_1 \right\}$
-%}
-%\only<3>{
-%$A^{(i)}=\left\{0, a_1,a_2 \right\}$\\
-%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step2.pdf}\\
-%$T^{(i)}=\left\{ \tau_1,\tau_2 \right\}$
-%}
-%\only<4>{
-%$A^{(i)}=\left\{0, a_1,a_2,a_3 \right\}$\\
-%%\includegraphics[scale =
-%1]{Figures/SingleLifeAnim1/step3.pdf}\\
-%$T^{(i)}=\left\{ \tau_1,\tau_2,\tau_3 \right\}$} 
-%\only<5>{
-%$A^{(i)}=\left\{0, a_1,a_2,a_3,\ldots, a_{K-1} \right\}$\\
-%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step14.pdf}\\
-%$T^{(i)}=\left\{ \tau_1,\tau_2,\tau_3, \ldots, \tau_{K-1} \right\}$
-%}
-%\only<6>{
-%$A^{(i)}=\left\{0, a_1,a_2,a_3,\ldots, a_{K-1}, a_{K} \right\}$\\
-%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/step15.pdf}\\
-%$T^{(i)}=\left\{ \tau_1,\tau_2,\tau_3, \ldots, \tau_{K-1}, 0 \right\}$
-%}
-%\only<7>{
-%$A^{(i)}=\left\{0, a_1,a_2,a_3,\ldots, a_{K-1}, a_{K} \right\}$\\
-%%\includegraphics[scale = 1]{Figures/SingleLifeAnim1/stepsmalldelta.pdf}\\
-%$T^{(i)}=\left\{ \tau_1,\tau_2,\tau_3, \ldots, \tau_{K-1}, 0 \right\}$
-%}
-%\end{center}
-%\end{overlayarea}
-%\end{frame}
-%
-%--------------------------------------------------------
-
+\begin{frame}[plain]
+\Large
+ \begin{block}{Alignment}
+  Shift trajectories to match on a state entry (left) or exit (right) event. The reference event is selected based on a criteria (first, last, longest episode).
+ \end{block}
+\end{frame}
 
 %
-%\begin{frame}[plain]
-%\Large
-%\begin{center}
-%Implications:
-%\pause
-%\begin{itemize}[<+->]
-%  \item Equal time spent-left distributions within states.
-%  \item Within episode \emph{order}. 
-%  \item Cumulative over episodes.
-%  \item Conditional on anything (age, TTD).
-%  \item Brouard-Carey is degenerate case.
-%\end{itemize}
-%\end{center}
-%\end{frame}
+\begin{frame}[plain]
+\Large
+\begin{center}
+\begin{block}{Macro patterns}
+Macro patterns can be derived by aggregating (e.g. means) over clock measures by some structure defined by an alignment operation. Clocking and alignment do not need to be with respect to the same state.
+\end{block}
+\end{center}
+\end{frame}
 %
-% Now we install the new template for the following frames:
-%{
-%\usebackgroundtemplate{%
-% 
-  % \includegraphics[width=\paperwidth,height=\paperheight]{Figures/eberhard-grossgasteiger-410620-unsplash.jpg}} \begin{frame}[plain]
-%\tiny
-%\flushright
-%\vspace{18cm}
-%   Photo by Eberhard Grossgasteiger on Unsplash
-%\end{frame}
-%}
-% Now we install another template, effective from now on:
-%\begin{frame}[plain]
-%\Large
-%\begin{center}
-%Simulate
-%\begin{itemize}[<+->]
-%  \item Take transition matrix from \normalsize{Dudel \& Myrskl\"a (2017)}
-%  \item Simulate trajectories; \texttt{rmarkovchain()} in \texttt{markovchain}
-%  package.
-%  \item Take census in stationary series. 
-%  \item Assume observation at half interval.
-%  \item Tabulate time spent and left in sampled episodes.
-%  \item Compare distributions.
-%\end{itemize}
-%\end{center}
-%\end{frame}
-%
-%\begin{frame}[plain]
-%\Large
-%\begin{center}
-%\includegraphics[height=\paperheight]{Figures/SimResults.pdf}
-%\end{center}
-%\end{frame}
+
+\begin{frame}[plain]
+\Large
+\begin{center}
+Inactivity clocks aligned on exit from first retirement
+\vspace{2em}
+\begin{overlayarea}{\textwidth}{.8\textheight}
+\centering
+\only<1>{\includegraphics[scale=.9, keepaspectratio]{Figures/Macro1.pdf}}
+\only<2>{\includegraphics[scale=.9, keepaspectratio]{Figures/Macro2.pdf}}
+\only<3>{\includegraphics[scale=.9, keepaspectratio]{Figures/Macro3.pdf}}
+\only<4>{\includegraphics[scale=.9, keepaspectratio]{Figures/Macro4.pdf}}
+%\only<8>{\includegraphics[width=\textwidth, keepaspectratio]{Figures/Seq10clock_ordDown.pdf}}
+\end{overlayarea}
+\end{center}
+\end{frame}
 
 
-%% this puts image as slide background
-%{
-%\usebackgroundtemplate{%
-%  \includegraphics[width=\paperwidth,height=\paperheight]{Figures/eberhard-grossgasteiger-410620-unsplash.jpg}} 
-%\begin{frame}
-%\vspace{9cm}
-%\Large
-%\begin{center}
-%Estimate from the reflection!\\ Thanks! \\
-%riffe@demogr.mpg.de
-%\end{center}
-%\end{frame}
-%}
+\begin{frame}[plain]
+\Large
+\begin{center}
+How many macro patterns from the same data?
+\begin{itemize}[<+->]
+\item $\textbf{s}$ states
+\item $\textbf{a}$ possible alignments (entry, exit, center, \emph{justified}, \ldots)
+\item $\textbf{e}$ possible episode choices (first, last, longest episode, \ldots)
+\item $\textbf{c}$ possible clock types (up, down, total, order, \emph{fractional}, \emph{relative}, \ldots)
+\item $\textbf{s}\times \textbf{a}\times \textbf{e}\times \textbf{c} = \textbf{p}$ possible clock/structure combinations from which to derive macro patterns.
+\end{itemize}
+\end{center}
+\end{frame}
 %
+\begin{frame}[plain]
+\Large
+\begin{center}
+Why again?
+\begin{itemize}[<+->]
+\item Preprocessing steps for sequence analyses
+\item Pattern detection in general 
+\item More completely characterize demographic phenomena 
+\item Expand set of possible tenure statistics
+\end{itemize}
+\pause
+Thanks!\\
+riffe@demogr.mpg.de
+\end{center}
+
+
+\end{frame}
+%
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%	End of the document			%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
-
-
-
-% Photo by eberhard grossgasteiger on Unsplash
 
 
 

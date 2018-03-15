@@ -189,6 +189,18 @@ draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
 	rect(x,y,x+1,y+1,col=col_seq,...)
 }
 
+pdf("DGD/Figures/Seq10aligncoords.pdf",height=4,width=9)
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(40,110), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence2(X[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(36,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+dev.off()
+
 
 XdeathAlign <- apply(X,2,align,state = "Dead",type="left")
 pdf("DGD/Figures/Seq10align_death.pdf",height=4,width=9)
@@ -199,30 +211,47 @@ for (i in 1:10){
 }
 axis(1)
 text(-80,yvals+.5,1:10,pos=2,xpd=TRUE)
-text(-83,6,"Random individual i",xpd=TRUE,srt=90)
-legend(-40,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+text(-84,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
 
 # align on first retirement:
-XdeathAlign       <- apply(X,2,align,state = "Dead",type="left")
 XretirefirstAlign <- apply(X,2,align,state = "Retired",type="left",spell = "first")
+XretirelongAlign <- apply(X,2,align,state = "Retired",type="left",spell = "longest")
+
 Xinactlongleft    <- apply(X,2,align,state = "Inactive",type="left",spell = "longest")
 Xinactlongright   <- apply(X,2,align,state = "Inactive",type="right",spell = "longest")
 
-pdf("DGD/Figures/Seq10firstretirealign.pdf",height=4,width=9)
+pdf("DGD/Figures/Seq10align_firstret.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
+	if ("Retired" %in% X[,i]){
 	draw_sequence4(state_seq = X[,i],x=XretirefirstAlign[,i],states,cols,y=yvals[i], border = NA)
+}
 }
 axis(1)
 text(min(XretirefirstAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
-text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
-#legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+text(min(XretirefirstAlign)-4,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
-pdf("DGD/Figures/Seq10inactlongleft.pdf",height=4,width=9)
+pdf("DGD/Figures/Seq10align_longestret.pdf",height=4,width=9)
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	if ("Retired" %in% X[,i]){
+		draw_sequence4(state_seq = X[,i],x=XretirelongAlign[,i],states,cols,y=yvals[i], border = NA)	
+	}
+}
+axis(1)
+text(min(XretirelongAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
+text(min(XretirelongAlign)-4,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+dev.off()
+
+pdf("DGD/Figures/Seq10align_inactlongleft.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -230,11 +259,11 @@ for (i in 1:10){
 }
 axis(1)
 text(min(XretirefirstAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
-text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
-#legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+text(min(XretirefirstAlign)-4,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
-pdf("DGD/Figures/Seq10inactlongright.pdf",height=4,width=9)
+pdf("DGD/Figures/Seq10align_inactlongright.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -242,14 +271,14 @@ for (i in 1:10){
 }
 axis(1)
 text(min(XretirefirstAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
-text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
+text(min(XretirefirstAlign)-4,6,"Random individual i",xpd=TRUE,srt=90)
 legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
 
 # -------------------------------------
 Xcenter   <- apply(X,2,align,state = c("Employed"),type="center",spell = "longest")
-pdf("DGD/Figures/Seq10centerlongempl.pdf",height=4,width=9)
+pdf("DGD/Figures/Seq10align_centerlongempl.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -257,6 +286,6 @@ for (i in 1:10){
 }
 axis(1)
 text(min(XretirefirstAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
-text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
+text(min(XretirefirstAlign)-4,6,"Random individual i",xpd=TRUE,srt=90)
 legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
