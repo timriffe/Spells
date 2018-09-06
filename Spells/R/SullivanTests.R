@@ -482,9 +482,87 @@ mean(Vars1e4.25)-vS.25
 
 
 
+# absurd case:
+vblock2 <- function(lx,prev, radix = 1e5){
+	lx    <- round(lx / lx[1] * radix)
+	Nsick <- round(lx*prev)
+	n     <- length(lx)
+	Pmat  <- matrix(0,nrow=radix,ncol=n)
+	for (i in 1:n){
+		Pmat[(radix-Nsick[i]):radix,i] <- 1
+	}
+	Di <- rowSums(Pmat)
+	e0 <- mean(Di)
+	mean((e0 - Di)^2)
+}
+vblock3 <- function(lx,prev, radix = 1e5){
+	lx    <- round(lx / lx[1] * radix)
+	Nsick <- round(lx*prev)
+	n     <- length(lx)
+	Pmat  <- matrix(0,nrow=radix,ncol=n)
+	
+	for (i in 1:n){
+		ind <- radix-lx[i] 
+		Pmat[1:ind,i] <- NA
+		Pmat[(ind+1):(ind+Nsick[i]),i] <- 1
+	}
+	Di <- rowSums(Pmat,na.rm=TRUE)
+	e0 <- mean(Di)
+	mean((e0 - Di)^2)
+}
+sqrt(vblock2(lx,prev))
+sqrt(vblock3(lx,prev))
 
 
+barplot(table(Di))
 
+png("/home/tim/git/Spells/Spells/Figures/Top-Down-Bottom-Up.png")
+plot(0:110,lx,type='l', xlab = "Age", las = 1, 
+		main ="Binary prevalence top-down and bottom up\nlinear increase from 0 at age 0 to .5 at age 110")
+polygon(c(0:110,110:0),c(Nsick,rep(0,111)),col="#FF000080",border="red")
+polygon(c(0:110,110:0),c(lx-Nsick,rev(lx)),col="#0000FF80",border="blue")
+text(60,8e4,"sd = 10.65",cex=2,font=2)
+text(60,1e4,"sd = 26.52",cex=2,font=2)
+dev.off()
+ramp   <- colorRampPalette(RColorBrewer::brewer.pal(9,"Reds"),space="Lab")
+breaks <- seq(0,.5,by=.01)
+colors <- as.character(cut(prev,breaks=breaks,labels=ramp(length(breaks)-1)))
 
-
+png("/home/tim/git/Spells/Spells/Figures/Uniform.png")
+plot(0:110,lx,type='l',
+		main = "Prevalence Uniform within age\nlinear increase from 0 at age 0 to .5 at age 110",
+		las=1,xlab="Age")
+for (i in 0:110){
+	polygon(c(i,i+1,i+1,i),c(0,0,lx[i+2],lx[i+1]), border= NA, col = colors[i])
+}
+lines(0:110,lx,lwd=2)
+text(40,5e4,"sd= 4.74",cex=2,font=2)
+dev.off()
+#sqrt(blockv0(lx,prev,1))
 # -----------------------------------
+
+vblock4 <- function(lx, prev, radix = 1e5){
+	# take arithmetic average of uniform prevalence
+	# and drop-from-lx prevalence. Still constrained.
+	lx    <- round(lx / lx[1] * radix)
+	Nsick <- round(lx*prev)
+	n     <- length(lx)
+	Pmat  <- matrix(0,nrow=radix,ncol=n)
+	
+	for (i in 1:n){
+		ind <- radix-lx[i] 
+		Pmat[1:ind,i] <- NA
+		Pmat[(ind+1):(ind+Nsick[i]),i] <- 1
+	}
+	
+	Pmat2 <- matrix(prev,nrow=radix,ncol=n,byrow=TRUE)
+	Pmat3 <- (Pmat2 + Pmat) / 2
+	
+	
+	Di <- rowSums(Pmat3, na.rm=TRUE)
+	e0 <- mean(Di)
+	mean((e0 - Di)^2)
+}
+sqrt(vblock4(lx,prev))
+sqrt(SullivanMatrixCalc(qx, prev, type = 2, closeout = TRUE)$var[1])
+
