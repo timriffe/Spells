@@ -566,3 +566,58 @@ vblock4 <- function(lx, prev, radix = 1e5){
 sqrt(vblock4(lx,prev))
 sqrt(SullivanMatrixCalc(qx, prev, type = 2, closeout = TRUE)$var[1])
 
+# and what about top-down linear prevalence?
+
+vblock6 <- function(lx,prev,radix=1e5){
+	lx    <- round(lx / lx[1] * radix)
+	n     <- length(lx)
+	Nsick <- round(lx*prev)
+	Pmat  <- matrix(0,nrow=radix,ncol=n)
+	for (i in 1:n){
+		ind <- radix-lx[i] 
+		Pmat[1:ind,i] <- NA
+		xnew <- (ind+1):radix
+		ref  <- min(prev[i],1-prev[i])
+		pl   <- seq(from = prev[i]+ref, to = prev[i]-ref,length=lx[i])
+		plm  <- mean(pl)
+		pl   <- pl * prev[i]/plm
+		Pmat[(ind+1):radix,i] <- pl
+	}
+	Di <- rowSums(Pmat, na.rm=TRUE)
+	e0 <- mean(Di)
+	mean((e0 - Di)^2)
+}
+vblock7 <- function(lx,prev,radix=1e5){
+	lx    <- round(lx / lx[1] * radix)
+	n     <- length(lx)
+	Nsick <- round(lx*prev)
+	Pmat  <- matrix(0,nrow=radix,ncol=n)
+	for (i in 1:n){
+		ind <- radix-lx[i] 
+		Pmat[1:ind,i] <- NA
+		xnew <- (ind+1):radix
+		ref  <- min(prev[i],1-prev[i])
+		pl   <- seq(from = prev[i]-ref, to = prev[i]+ref,length=lx[i])
+		plm  <- mean(pl)
+		pl   <- pl * prev[i]/plm
+		Pmat[(ind+1):radix,i] <- pl
+	}
+	Di <- rowSums(Pmat, na.rm=TRUE)
+	e0 <- mean(Di)
+	mean((e0 - Di)^2)
+}
+sqrt(vblock6(lx,prev,radix=1e5))
+sqrt(vblock7(lx,prev,radix=1e5))
+
+
+seq(0,.5,length=100)
+plot(seq(0,.5,length=100),pexp(q=seq(0,.5,length=100),rate=.01))
+
+lines(0:10,dexp(x=0:10,rate=.2))
+
+
+# simple to parameterize. we have nr steps to take,
+d <- 1/sum(1:lx[10]) # this is the second derivative of the curve
+plot(cumsum(cumsum(rep(d,lx[80]))),type='l')
+
+mean(cumsum(cumsum(rep(d,lx[80]))))
