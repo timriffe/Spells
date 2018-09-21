@@ -214,6 +214,9 @@ LT        <- readHMDweb("USA","mltper_1x1",username=us,password=pw)
 qx        <- LT$qx[LT$Year==2000]
 lx        <- qx2lx(qx)
 # now graduate this one
+
+lx_5      <- exp(granularize(log(lx),interval=5,method = "monoH.FC"))
+lx_10     <- exp(granularize(log(lx),interval=10,method = "monoH.FC"))
 lx.5      <- exp(granularize(log(lx),interval=.5,method = "monoH.FC"))
 lx.25     <- exp(granularize(log(lx),interval=.25,method = "monoH.FC"))
 lx.1      <- exp(granularize(log(lx),interval=.1,method = "monoH.FC"))
@@ -222,6 +225,8 @@ lx.01     <- exp(granularize(log(lx),interval=.01,method = "monoH.FC"))
 #lx.5  <- exp(granularize(log(lx),interval=.5,method = "linear"))
 #lx.25 <- exp(granularize(log(lx),interval=.25,method = "linear"))
 #lx.1  <- exp(granularize(log(lx),interval=.1,method = "linear"))
+qx_5      <- lx2qx(lx_5)
+qx_10     <- lx2qx(lx_10)
 qx.5      <- lx2qx(lx.5)
 qx.25     <- lx2qx(lx.25)
 qx.1      <- lx2qx(lx.1)
@@ -368,9 +373,7 @@ SullivanMatrixCalc(qx.025, prev.025, type = 2, closeout = TRUE,interval=.025)$ex
 
 
 Pmat <- matrix(prev,nrow=1e5,ncol=length(prev),byrow=TRUE)
-for (i in 1:lx){
-	
-}
+
 lx2dx <- function(lx,radix=1e5){
 	lx <- lx / lx[1]
 	-diff(radix * c(lx,0))
