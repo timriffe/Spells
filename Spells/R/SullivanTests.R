@@ -12,8 +12,8 @@ SullivanMatrixCalc <- function(
         prevx,         # prevalence vector
         closeout = TRUE,  # better handling of rewards in moment of death
         type = 1,      # 1 healthy, 2 sick
-        interval = 1,
-		rewards = "fixed"){ # interval is the new argument. If 1 everything works fine.
+        interval = 1,  # otherwise it's prevalence
+		rewards = "fixed"){ # "bernoulli" different
                        # just a question of where to put it if the time interval is e.g. .5
     s       <- length(qx) # nr of ages
 	s1      <- s+1
@@ -21,7 +21,9 @@ SullivanMatrixCalc <- function(
 
 
     I       <- diag(s) # identity matrix
-    # build transition matrix
+    
+	# TR: this could be generalized more
+	# build transition matrix
     px      <- 1 - qx
     U       <- matrix(0, nrow = s, ncol = s)
     U[row(U)-1 == col(U) ] <- px[-s]
@@ -29,14 +31,17 @@ SullivanMatrixCalc <- function(
 
     # define the Markov chain
     P       <- rbind(cbind(U, rep(0, s)), c(1 - colSums(U), 1))
-
-    # Daniel: I assumed the interval would have its effect by placing
-    # it in the rewards, but looks like no.
+    
+	# figure out rewards
+	
+	# type == 1 for total lifetime
     if(type == 1){
         # reward for living another interval
         m1 <- rep(interval,s)
         m2 <- rep(interval,s)
         m3 <- rep(interval,s)
+		
+	# otherwise it's prevalence related
     } else {
         # reward 1 (unit of healthy life) with probability 'prevage'
 		m1 <- prevx * interval
@@ -45,13 +50,10 @@ SullivanMatrixCalc <- function(
 			m2 <- prevx ^ 2 * interval
 			m3 <- prevx ^ 3 * interval
 		} else {       
-			# Binary outcome
+			# Bernoulli outcome
             m2 <- prevx * interval
             m3 <- prevx * interval
 		}
-# for fixed rewards, uncomment:
-# m2 <- prevx^2 * interval
-# m3 <- prevx^3 * interval
     }
 
     # Define reward matrices with rewards associated with the transitions
@@ -72,14 +74,10 @@ SullivanMatrixCalc <- function(
         R2[nrow(R2), 1:s]           <- m2 / 2
         R3[nrow(R3), 1:s]           <- m3 / 2
     }
-#  R2fixed=R1^2
-#  R3fixed=R1^3
 
-    # Daniel: Also tried using interval for these 1s
     Z   <- cbind(diag(rep(1,s)), rep(0, s)) # truncation matrix
     e   <- rep(1, s + 1) #vector of ones (112x1)
 
-    #  contour(t(solve(I - t(U))))
     #NN   <- solve(I - t(U))
 	#N    <- solve(I - U)
     #faster for large s
@@ -92,9 +90,8 @@ SullivanMatrixCalc <- function(
     # rho1   <- solve(I - t(U)) %*% (Z %*% ((t(P * R1)) %*% e))
     # rho1    <- NN %*% (Z %*% ((t(P * R1)) %*% e))
     # rho1    <- NN %*% ((t(P * R1) %*% e)[-s1,])
-    # even faster
-	# rho1    <- NN %*% colSums(P * R1)[-s1]
-	# even faster
+
+	# faster
 	rho1    <- colSums( N * colSums(P * R1)[-s1])
     # TR: very similar
     # colSums(solve(I - U) * m1)
@@ -105,13 +102,7 @@ SullivanMatrixCalc <- function(
 #                (t(P * R2) %*% e)[-s1,] +
 #                2 * t(P*R1)[-s1,-s1] %*% rho1
 #                )  
-	# also faster
-#	rho2 - NN %*%
-#			(
-#				colSums(P * R2)[-s1] +
-#				2 * t(P*R1)[-s1,-s1] %*% rho1
-#				)  
-# even faster
+#   faster
 	rho2 <- colSums(N *
 			(
 				colSums(P * R2)[-s1] +
@@ -123,13 +114,14 @@ SullivanMatrixCalc <- function(
 #                3 * t(P * R2)[-s1,-s1] %*% rho1 +
 #                3 * t(P * R1)[-s1,-s1] %*% rho2
 #                )
-	 # faster
+	# faster
     rho3 <-  colSums(N *
 				(
 					colSums(P * R3)[-s1] +
 					3 * colSums((P * R2)[-s1,-s1] * c(rho1)) +
 					3 * colSums((P * R1)[-s1,-s1] * c(rho2))
 					))
+
     # Statistics of Longevity
     var         <- rho2 - rho1^2
     std         <- sqrt(var)
@@ -142,9 +134,9 @@ SullivanMatrixCalc <- function(
     vv          <- vv ^ (-3 / 2)
     vv[pick]    <- 0
     dim(vv)     <- NULL
-    # vv        <- as.vector(vv)
+  
     # TR: left side of equation
-    dd         <- diag(vv, nrow = length(vv))
+   # dd         <- diag(vv, nrow = length(vv))
     #skew      <- dd %*% (rho3 - 3 * rho2 * rho1 + 2 * rho1^3)
     # faster
 	skew        <-  vv * (rho3 - 3 * rho2 * rho1 + 2 * rho1^3)
