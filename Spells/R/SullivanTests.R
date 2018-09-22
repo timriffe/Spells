@@ -41,9 +41,11 @@ SullivanMatrixCalc <- function(
         # reward 1 (unit of healthy life) with probability 'prevage'
 		m1 <- prevx * interval
 		if (rewards == "fixed"){
+			# fixed means uniform
 			m2 <- prevx ^ 2 * interval
 			m3 <- prevx ^ 3 * interval
 		} else {       
+			# Binary outcome
             m2 <- prevx * interval
             m3 <- prevx * interval
 		}
@@ -159,19 +161,29 @@ lx2qx <- function(lx){
 	1-px
 }
 
-# variance simulation
-vari <- function(lx, prev, radix = 1e5, interval=1){
+
+makeLTblock <- function(lx, prev, radix, interval){
 	n       <- length(lx)
 	stopifnot(length(prev) == n)
 	lx      <- lx / lx[1] * radix
-	Nsick   <- round(lx*prev)
-	LTBlock <- matrix(0,ncol = length(lx), nrow = radix)
+	Nsick   <- round(lx * prev)
+	LTBlock <- matrix(0, ncol = length(lx), nrow = radix)
 	for (i in 1:n){
 		if (Nsick[i] > 0){
-			ind <- sample(1:lx[i],size=Nsick[i],replace=FALSE)
+			ind <- sample(1:lx[i], size = Nsick[i], replace = FALSE)
 			LTBlock[ind,i] <- interval
 		}
 	}
+	LTBlock
+}
+
+# variance simulation
+vari <- function(lx, prev, radix = 1e5, interval=1){
+	LTBlock <- makeLTblock(
+			lx = lx, 
+			prev = prev, 
+			radix = radix, 
+			interval = interval)
 	Di      <- rowSums(LTBlock)
 	DLE     <- mean(Di) # same every time!
 	mean((Di - DLE)^2)
@@ -337,6 +349,18 @@ plot(sd_intervals[1:5],
 sqrt(variance_fixedrewards),asp=1)
 abline(a=0,b=1)
 
+variance_fixedrewards <- c(
+		SullivanMatrixCalc(qx, prev, type = 2, closeout = TRUE, rewards = "fixed")$var[1],
+		SullivanMatrixCalc(qx.5, prev.5, type = 2, closeout = TRUE, interval=.5, rewards = "fixed")$var[1],
+		SullivanMatrixCalc(qx.25, prev.25, type = 2, closeout = TRUE, interval=.25, rewards = "fixed")$var[1],
+		SullivanMatrixCalc(qx.1, prev.1, type = 2, closeout = TRUE, interval=.1, rewards = "fixed")$var[1],
+		SullivanMatrixCalc(qx.025, prev.025, type = 2, closeout = TRUE, interval=.025, rewards = "fixed")$var[1])
+variance_hmrewards <- c(
+		SullivanMatrixCalc(qx, prev, type = 2, closeout = TRUE, rewards = "hm")$var[1],
+		SullivanMatrixCalc(qx.5, prev.5, type = 2, closeout = TRUE, interval=.5, rewards = "hm")$var[1],
+		SullivanMatrixCalc(qx.25, prev.25, type = 2, closeout = TRUE, interval=.25, rewards = "hm")$var[1],
+		SullivanMatrixCalc(qx.1, prev.1, type = 2, closeout = TRUE, interval=.1, rewards = "hm")$var[1],
+		SullivanMatrixCalc(qx.025, prev.025, type = 2, closeout = TRUE, interval=.025, rewards = "hm")$var[1])
 
 #
 #plot(seq(0,110,by=1),SullivanMatrixCalc(qx, prev, type = 2, closeout = TRUE)$var,ylim=c(0,35))
