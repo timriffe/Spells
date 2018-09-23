@@ -1,10 +1,6 @@
 # Author: tim
 ###############################################################################
 
-# Observe: the same prevalence and survival can imply different 
-# state occupancy variances depending on distribution over individuals.
-# So, where does the Sullivan estimate sit in the range and distribution.
-# Do process-free simulation to see.
 #qx <- qx.5
 #prevx <- prev.5
 SullivanMatrixCalc <- function(
