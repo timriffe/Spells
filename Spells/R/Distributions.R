@@ -1,13 +1,11 @@
 
 # Author: tim
 ###############################################################################
-
-
+require(spatstat)
 qdens <- function(X,p=.5){
 	apply(X,1,function(x,p){
 				if (sum(!is.na(x))>2){
-					dx <- density(x,na.rm=TRUE)
-					return(quantile(density(x,na.rm=TRUE),prob=p))
+					return(spatstat::quantile.density(density(x,na.rm=TRUE),prob=p))
 				} else {
 					return(NA)
 				}
