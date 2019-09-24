@@ -6,9 +6,7 @@
 set.seed(1)
 setwd("/home/tim/git/Spells/Spells")
 source("R/GenerateStationary.R")
-source("R/Counting.R")
-source("R/Distributions.R")
-source("R/Align.R")
+
 
 
 

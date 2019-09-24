@@ -5,6 +5,7 @@
 
 library(markovchain)
 library(spatstat)
+library(here)
 # here I just read in the first matrix given in the supplementary material to:
 # Christian Dudel & Mikko Myrskylä (2017)
 # Working Life Expectancy at Age 50 in the United States and the Impact of the Great Recession
@@ -12,14 +13,16 @@ library(spatstat)
 
 
 # get a transition matrix
+
+TM_path <- here("Spells","Data","Dudel","Transition matrices","Pmat_b_f_1994.csv")
 TM <- as.matrix(
-		read.csv("/home/tim/git/TransientSymmetry/TransientSymmetry/Data/Pmat_b_f_1994.csv",
-				check.names=FALSE)
+		read.csv(TM_path,
+				check.names = FALSE)
 )
 
 
 # transpose for standard MC stuff.
-# demographers do stuff backwards I guess
+# demographers do stuff transposed...
 TM <- t(TM)
 
 # make s4 transition matrix from markovchain package
