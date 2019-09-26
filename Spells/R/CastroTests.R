@@ -1,6 +1,9 @@
 # Tests fertility
 library(here)
 library(tidyverse)
+pkg_path <- here("Spells","R","Spells")
+library(devtools)
+
 data_path <- here("Spells","Data","Castro","cas_wom_1000seqs.RData")
 
 # df:         original datasets (variables are described in object vars)
@@ -23,8 +26,7 @@ cumsum_na <- function(x,na.rm = TRUE){
 }
 
 # m_parity derived from / relates to m_births
-apply(m_parity,1,cumsum_na,na.rm=TRUE) %>% 
-  t() %>% 
+apply(m_births,1,cumsum_na,na.rm=TRUE) %>% 
   rowMeans(na.rm=TRUE) %>% 
   plot(x = 10:50,.)
 lines(10:50,colMeans(m_parity,na.rm = TRUE))
@@ -41,8 +43,11 @@ lines(10:50,colMeans(m_parity,na.rm = TRUE))
 # m_unions
 
 all(is.na(m_parity) == is.na(m_unions))
-
 # soon go for macro stats. w alignment and counting
+
+
+
+
 
 
 
