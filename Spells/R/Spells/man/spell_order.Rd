@@ -11,7 +11,7 @@ spell_order(x, state = "Inactive", increasing = TRUE)
 
 \item{state}{character. The reference state. Could be a vector of states too.}
 
-\item{not_first}{logical. Shall we ignore the first episode of the given state? Default \code{FALSE}}
+\item{increasing}{logical. Default \code{TRUE}. If \code{clock_type} is either \code{"step"} or \code{"order"} do we count up or count down?}
 }
 \description{
 produce a vector of \code{length(x)} values corresponding to the order of each episode of the reference state.

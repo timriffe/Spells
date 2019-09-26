@@ -4,14 +4,14 @@
 \alias{spell_dur}
 \title{impute durations of episodes in specified reference state}
 \usage{
-spell_dur(x, state = "Inactive", not_first = FALSE)
+spell_dur(x, state = "Inactive", step_size = 1)
 }
 \arguments{
 \item{x}{character vector of state in each time step}
 
 \item{state}{character. The reference state. Could be a vector of states too.}
 
-\item{not_first}{logical. Shall we ignore the first episode of the given state? Default \code{FALSE}}
+\item{step_size}{numeric. Default \code{1}. What is the time interval for the discrete bins in \code{x}.}
 }
 \description{
 produce a vector of \code{length(x)} values corresponding to the total duration of each episode of the reference state.
@@ -24,13 +24,9 @@ x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired",
 				"Dead"), c(7,  8,  3,  3, 25,  5))
 # a single 8-year spell of inactivity
 spell_dur(x, "Inactive", not_first = FALSE)
-# catches nothing since there was only one spell of inactivity
-spell_dur(x, "Inactive", not_first = TRUE)
 # merges first consecutive employment and inactivity spells into a single spell,
 # also catches second employment after retirement
 spell_dur(x, c("Inactive","Employed"), not_first = FALSE)
-# catches just last employment spell
-spell_dur(x, c("Inactive","Employed"), not_first = TRUE)
 # total lifespan 50+
 spell_dur(x, c("Inactive","Employed","Retired"), not_first = FALSE)
 }

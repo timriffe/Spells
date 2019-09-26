@@ -5,6 +5,8 @@
 #' @param X numeric matrix, with time steps in rows and individuals in columns
 #' @param p desired quantiles
 #' @return numeric vector (matrix) of the desired quantile(s) per time step.
+#' @importFrom spatstat quantile.density
+#' @importFrom stats density
 #' @export
 #' @examples 
 #' X <- runif(5000)
@@ -14,7 +16,7 @@
 qdens <- function(X,p=.5){
 	apply(X,1,function(x,p){
 				if (sum(!is.na(x))>2){
-					return(spatstat::quantile.density(density(x,na.rm=TRUE),probs=p))
+					return(spatstat::quantile.density(stats::density(x,na.rm=TRUE),probs=p))
 				} else {
 					return(NA)
 				}
