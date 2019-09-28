@@ -31,29 +31,28 @@
 %\title{Macro patterns in the shape of aging}
 \title{Alignment, clocking, and macro patterns of episodes in the life course \\ (a very rough first draft)}
 \author[1]{Tim Riffe\thanks{riffe@demogr.mpg.de}}
-\affil[1]{Max Planck Institute for Demographic Research}
+\author[1]{Andr\'{e}s Castro}
+\affil[1]{Max-Planck-Institute for Demographic Research}
 \maketitle
 
-\begin{abstract}
-Individuals are often modeled as passing through a series of discrete
-states. Multistate markov models are a means to calculate expectancies and
-moment statistics of state occupancies under the assumption that the transition
-rate schedules between states are held fixed. There are however no handy
-analytic expressions for any but the most simple characteristics of state episodes. Here
-I demonstrate how to use simulations to estimate a variety of age and other
-macro patterns of different state episodes. I introduce a
-suite of episode ``clock'' measures that count within or between episodes, and the notion of
-sequence ``alignment'' as a means to create new structuring axes within which to
-aggregate clock measures. Resulting aggregate patterns can be age patterns of
-episode duration, or a variety of other potential measures. This sequence
-aggregation toolkit may also be used to pre-process sequences prior to a
-standard sequence analysis, so as to yield more apt clusters. 
-\end{abstract}
+%\begin{abstract}
+%Individuals are often modeled as passing through a series of discrete states. Multistate markov models are a means to calculate expectancies and moment statistics of state occupancies under the assumption that the transition rate schedules between states are held fixed. There are however no handy analytic expressions for any but the most simple characteristics of state episodes. Here I demonstrate how to use simulations to estimate a variety of age and other macro patterns of different state episodes. I introduce a suite of episode ``clock'' measures that count within or between episodes, and the notion of sequence ``alignment'' as a means to create new structuring axes within which to aggregate clock measures. Resulting aggregate patterns can be age patterns of episode duration, or a variety of other potential measures. This sequence aggregation toolkit may also be used to pre-process sequences prior to a standard sequence analysis, so as to yield more apt clusters.
+%\end{abstract}
+
+\begin{description}
+\item[Background]{Individuals are often either observed or modeled as passing through a sequence of discrete states. These are usually either simplified into transition probabilities for Markov-derived aggregate statistics, or else retained for pattern and group detection using sequence analysis. Markov-derived statistics are of limited scope (moment stats), and sequence analysis doesn't typically lead to heuristic understanding of macro patterns.}
+\item[Objective]{We broaden the scope of aggregate patterns and summary indices that may be calculated from trajectory data, including trajectories generated from Markov models. For example, one might calculate the time-since-event or time-to-event pattern of episode duration.}
+\item[Methods]{We introduce the concepts of clocking and alignment as a new framework for generating novel statistics from trajectories. }
+\item[Data]{We use different data to demonstrate concepts and give example applications. We use published transition probabilities (originally derived from US HRS data) to simulate discrete trajectories of employment states. We will use fertility and union trajectories derived from Colombian DHS data for example applications. We will also have health applications from either directly observed or simulated trajectories, tbd.}
+\item[Results]{We demonstrate several new measures in the areas of health, family, and labor demography.}
+\item[Conclusions]{We generate several new patterns and measures in the areas of health, family, and labor demography. An R package is presented to facilitate experimentation with these operations.}
+\end{description}
 
 \section{Introduction}
-The amount of population-level measures that one might devise for a particular
-process is dizzying, so it may beg the question from the outset
-why we might desire to have more. Incidence-based matrix
+
+There is a void between the methodological camps of Markov statistics and sequence analysis. Most of what we know about demography (levels, trends) stands on a Markovian foundation: the lifetable is a Markov process, as are most multistate models in practice, and these two things underly what we know about the longevity, healthy life expectancy, working life expectancy, and many other areas. More recently ...
+
+Incidence-based matrix
 models are rather undeveloped with respect to tenure-statistics, and these
 might be of interest for a variety of substantive reasons. By tenure statistics I
 refer to the statistics of particular spells or episodes of a state. For
