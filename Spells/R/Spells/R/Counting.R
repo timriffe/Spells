@@ -270,13 +270,11 @@ clock <- function(x,
       out <- spell_step_increasing(
                  x = x, 
                  state = state, 
-                 not_first = not_first, 
                  step_size = step_size)
     } else {
       out <- spell_step_decreasing(
         x = x, 
         state = state, 
-        not_first = not_first, 
         step_size = step_size)
     }
   }
@@ -287,7 +285,6 @@ clock <- function(x,
     out <- spell_dur(
       x = x, 
       state = state, 
-      not_first = not_first, 
       step_size = step_size)
   }
   
