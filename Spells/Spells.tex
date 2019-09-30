@@ -26,95 +26,83 @@
   \addtocounter{footnote}{-1}%
   \endgroup
 }
+
+\newcommand{\absdiv}[1]{%
+  \par\addvspace{.5\baselineskip}% adjust to suit
+  \noindent\textbf{#1}\quad\ignorespaces
+}
 \begin{document}
 
-%\title{Macro patterns in the shape of aging}
-\title{Alignment, clocking, and macro patterns of episodes in the life course \\ (a very rough first draft)}
+\title{Alignment, clocking, and macro patterns of episodes in the life course}
 \author[1]{Tim Riffe\thanks{riffe@demogr.mpg.de}}
 \author[1]{Andr\'{e}s Castro}
 \affil[1]{Max-Planck-Institute for Demographic Research}
 \maketitle
 
-%\begin{abstract}
-%Individuals are often modeled as passing through a series of discrete states. Multistate markov models are a means to calculate expectancies and moment statistics of state occupancies under the assumption that the transition rate schedules between states are held fixed. There are however no handy analytic expressions for any but the most simple characteristics of state episodes. Here I demonstrate how to use simulations to estimate a variety of age and other macro patterns of different state episodes. I introduce a suite of episode ``clock'' measures that count within or between episodes, and the notion of sequence ``alignment'' as a means to create new structuring axes within which to aggregate clock measures. Resulting aggregate patterns can be age patterns of episode duration, or a variety of other potential measures. This sequence aggregation toolkit may also be used to pre-process sequences prior to a standard sequence analysis, so as to yield more apt clusters.
-%\end{abstract}
+\begin{abstract}
 
-\begin{description}
-\item[Background]{Individuals are often either observed or modeled as passing through a sequence of discrete states. These are usually either simplified into transition probabilities for Markov-derived aggregate statistics, or else retained for pattern and group detection using sequence analysis. Markov-derived statistics are of limited scope (moment stats), and sequence analysis doesn't typically lead to heuristic understanding of macro patterns.}
-\item[Objective]{We broaden the scope of aggregate patterns and summary indices that may be calculated from trajectory data, including trajectories generated from Markov models. For example, one might calculate the time-since-event or time-to-event pattern of episode duration.}
-\item[Methods]{We introduce the concepts of clocking and alignment as a new framework for generating novel statistics from trajectories. }
-\item[Data]{We use different data to demonstrate concepts and give example applications. We use published transition probabilities (originally derived from US HRS data) to simulate discrete trajectories of employment states. We will use fertility and union trajectories derived from Colombian DHS data for example applications. We will also have health applications from either directly observed or simulated trajectories, tbd.}
-\item[Results]{We demonstrate several new measures in the areas of health, family, and labor demography.}
-\item[Conclusions]{We generate several new patterns and measures in the areas of health, family, and labor demography. An R package is presented to facilitate experimentation with these operations.}
-\end{description}
+\absdiv{Background}Individuals are often either observed or modeled as passing through a sequence of discrete states. These are usually either simplified into transition probabilities for Markov-derived aggregate statistics, or else retained for pattern and group detection using sequence analysis. Markov-derived statistics are of limited scope (moment stats), and sequence analysis doesn't typically lead to heuristic understanding of macro patterns.
+\absdiv{Objective}We broaden the scope of aggregate patterns and summary indices that may be calculated from trajectory data, including trajectories generated from Markov models. For example, one might calculate the time-since-event or time-to-event pattern of episode duration.
+\absdiv{Methods}We introduce the concepts of clocking and alignment as a new framework for generating novel statistics from trajectories. 
+\absdiv{Data}We use different data to demonstrate concepts and give example applications. We use published transition probabilities (originally derived from US HRS data) to simulate discrete trajectories of employment states. We will use fertility and union trajectories derived from Colombian DHS data for example applications. We will also have health applications from either directly observed or simulated trajectories, tbd.
+\absdiv{Results}We demonstrate several new measures in the areas of health, family, and labor demography.
+\absdiv{Conclusions}We generate several new patterns and measures in the areas of health, family, and labor demography. An R package is presented to facilitate experimentation with these operations.
+\end{abstract}
 
 \section{Introduction}
 
-There is a void between the methodological camps of Markov statistics and sequence analysis. Most of what we know about demography (levels, trends) stands on a Markovian foundation: the lifetable is a Markov process, as are most multistate models in practice, and these two things underly what we know about the longevity, healthy life expectancy, working life expectancy, and many other areas. More recently ...
+% Regularity in the age patterns of demographic rates often evoke 
+% 
+% Markov models
+% 
+% Sequence analysis aims to 
+% 
+% 
+% Most of what we know about demography (levels, trends) stands on a Markovian foundation: The lifetable is a Markov process, as are most multistate models in practice, and these two analytic instruments underly what we know about longevity, healthy years lived, years worked, and many other of the primary concerns of demography. Results of this approach tend to be synthetic indices, a number or two to summarize an average lifetime from a possibly rich set of age-structured demographic rates or probabilities. And age-structured rates are already an abstraction from an even richer sequence of events and states. Moment statistics, such as life expectancy, are useful metrics, but we're not so sure that they
 
-Incidence-based matrix
-models are rather undeveloped with respect to tenure-statistics, and these
-might be of interest for a variety of substantive reasons. By tenure statistics I
-refer to the statistics of particular spells or episodes of a state. For
-example, in incidence-based models with bidirectional flows (i.e., allowing for
-recovery and then re-onset, and so on), modelled individuals may pass through a state,
-such as sickness, many times before death. Typically a transition matrix
-manipulation would only give us the average time spent sick or moment statistics
-thereof. Recently matrix calculations have been described for how to calculate the average number of episodes of a given state \citep{dudel2017b}.
-Combined with the average state occupancy, this information yields the average
-duration of episodes.
+There is a void between the methodological approaches of Markov statistics and sequence analysis. Markov-generated quantities, like trends and levels, are useful metrics but such information does not necessarily lead to an understanding of processes or of typical experiences. The age-structured data that underlie such Markov calculations are surely appreciated for their articulated and often-regular patterns, but (i) the estimation of such rates already blurs over the features of underlying life trajectories, and (ii) such age patterns serve the objective statistic. Insofar as sequence analysis retains and reasonably typifies life trajectories it might be used to infer processes and identify new patterns. We propose a two-part framework to extract patterns hidden within trajectory data. Such patterns might be age-like patterns of novel prevalence, state-episode-occupancy time measures, or they may be used to derive new rates. Using this framework, we aim to zoom in on demographic patterns that emerge at various stages of the life course, and so describe a given demographic phenomenon (state) from a variety of perspectives. 
 
-One may wonder how the average spell duration changes with age, and for this
-there is no ready matrix expression. Such analytic expressions are surely
-possible, but in the following I intend to propose a suite of operations
-(including the aforementioned) so broad and flexible as to fill the lifetime of
-a matrix buff.
-I proceed using simulations rather than matrix calculations because it will
-save the work of deriving and checking dozens of formulas. In this way, we have
-the liberty to change definitions without incurring methodological setbacks.
-Since we simulate, we get stochastic stationary distributions of each
-measurement for free, which I'll represent using fan-chart visualizations. This
-approach is not all that different from that proposed by \citet{laditka1998new},
-but I expand on their approach by
-proposing a set of count statistics called \emph{clocks} and age
-\emph{realignments}, which together result in a large (unbounded?) set of
-age-like patterns of state episodes. These same operations can be used
-on observed populations of sequences as well, but the key difference
-is that observed populations are not stationary. Our example will refer to the
-stationary tenure statistics that belong to a particular set of
-age-specific transition rates, although the configuration of transition rates
-used to generate results is immaterial.
+We first define \emph{clock} measures, a way to inscribe time, order, prevalence, or other measures into individual life trajectories. This step is analogous to defining a rewards matrix in multistate Markov models \citep[see e.g.][]{caswell2018matrix}, and the ends are not entirely dissimilar. As an example of a concrete Markov link, \citet{dudel2017b} defines a matrix algebra approach to estimate the expected number of episodes of a given state that individuals experience in a given multistate world. Taken together with the total expected state occupancy time, one can infer an average episode duration. And there are both clunky and elegant approaches close at hand to derive an age pattern of expected episode duration. Such measures (even that hasn't been done before) would already add insight to demographic processes. Clock measures are much more flexible than this, and enable the researcher to decompose expected episode durations into expected time spent and left within episodes. Further one can visualize full distributions of these and other prevalence or episode order statistics.
+
+Second we define \emph{alignment} operations, which shift trajectories to have synchronous timing with respect to a specified state-episode. Researchers already do similar things: for example \citet{iacobelli2013multiple} propose a flexible use of time-since-event scales, and \citet{riffe2017unified} define flexible Lexis spaces in which life lines are aligned both on birth and on death, and this has been used to reveal hidden health patterns \citep{riffe2016time} and pathways \citep{potente2018disability, raab2018pathways}. We here propose more flexible alignment procedures, which allow trajectory synchronization on the start or end of a specified episode (e.g., first, last, longest).
+
+In combination, clock and alignment operations open a large space for the derivation of demographic macro patterns. In the following sections we give concrete examples to illustrate these two steps. We end with a few suggestive macro patterns. At present, or examples pertain to labor demography, but in a later stage, this manuscript will include examples from different domains of demography including family, fertility, and health. We here use simulated life trajectories, although in the final manuscript we will use both simulated and observed trajectories. Work shown here is fully reproducible, and we also offer an \texttt{R} package, \texttt{Spells}, which enables flexible clock and alignment operations, and will in the future play well with other popular time series and sequence analysis packages, such as \texttt{TraMineR}.
+% 
+% Incidence-based matrix
+% models are rather undeveloped with respect to tenure-statistics, and these
+% might be of interest for a variety of substantive reasons. By tenure statistics I
+% refer to the statistics of particular spells or episodes of a state. For
+% example, in incidence-based models with bidirectional flows (i.e., allowing for
+% recovery and then re-onset, and so on), modelled individuals may pass through a state,
+% such as sickness, many times before death. Typically a transition matrix
+% manipulation would only give us the average time spent sick or moment statistics
+% thereof. Recently matrix calculations have been described for how to calculate the average number of episodes of a given state \citep{dudel2017b}.
+% Combined with the average state occupancy, this information yields the average
+% duration of episodes.
+
+% One may wonder how the average spell duration changes with age, and for this
+% there is no ready matrix expression. Such analytic expressions are surely
+% possible, but in the following I intend to propose a suite of operations
+% (including the aforementioned) so broad and flexible as to fill the lifetime of
+% a matrix buff.
+% I proceed using simulations rather than matrix calculations because it will
+% save the work of deriving and checking dozens of formulas. In this way, we have
+% the liberty to change definitions without incurring methodological setbacks.
+% Since we simulate, we get stochastic stationary distributions of each
+% measurement for free, which I'll represent using fan-chart visualizations. This
+% approach is not all that different from that proposed by \citet{laditka1998new},
+% but I expand on their approach by
+% proposing a set of count statistics called \emph{clocks} and age
+% \emph{realignments}, which together result in a large (unbounded?) set of
+% age-like patterns of state episodes. These same operations can be used
+% on observed populations of sequences as well, but the key difference
+% is that observed populations are not stationary. Our example will refer to the
+% stationary tenure statistics that belong to a particular set of
+% age-specific transition rates, although the configuration of transition rates
+% used to generate results is immaterial.
 
 \section{Data}
-I use a published transition matrix from a recent
-study of working life expectancy in the United States \citep{Dudel2017} as the
-basis of my example stationary population.
-This matrix refers to black females aged 50-100 in 1994. The same following
-steps can be done with any age-stage matrix. One can indeed also do the same with
-an ageless transition matrix of the life course, if the simulated sequence steps
-are interpretable as age steps.
-
-\section{Simulation}
-I take advantage of the recently published \texttt{R} package
-\texttt{markovchain} \citep{spedicato2017}, which includes a random state
-sequence generator function \texttt{rmarkovchain()} that merely requires a
-transition matrix to do its work.\footnote{There are some trivial object
-definition steps to convert the employment matrix into a conformable markov
-object before feeding it to the random generator.} I generate a large number of
-trajectories (10k) to operate on as the stationary population. Each
-trajectory consists in a \texttt{character} vector of states
-[\texttt{Employed},\texttt{Inactive},\texttt{Retired},\texttt{Dead}], where dead
-is of course an absorbing state, but the other states can be switched on and off
-annually from ages 50 and higher.\footnote{It would also be possible to further
-graduate transition rates to standardized month or week units to produce higher
-resolution sequences, but this is unnecessary for the present treatment.}
-
-A glimpse of the first 10 randomly generated individuals is shown in
-Figure~\ref{fig:seq10}. These ten individuals will be recycled in all of the
-following data manipulations used to demonstrate concepts. All aggregate
-calculations of age patterns (and so on) are done on the full simulated population. In this case, I simulated
-assuming that one starts in a state of employment at age 50, but the starting
-state could also easily be a mixture of states.
+To demonstrate concepts, we simulate trajectories from a published transition matrix \citep{Dudel2017}. This matrix refers to black females aged 50-100 in 1994, and it contains age-structured transition probabilities for movements between employment, inactivity, and retirement, as well as mortality from these three states. Simulation is done using the \texttt{rmarkovchain()} function from the \texttt{R} package \texttt{markovchain} \citep{spedicato2017}. A glimpse of the first 10 randomly generated individuals is shown in Figure~\ref{fig:seq10}. These ten individuals will be recycled in all of the following data manipulations used to demonstrate concepts. All aggregate calculations of age patterns (and so on) are based on a simulated population of 10000 trajectories starting in employment at age 50.\footnote{We appreciate the irony that the trajectories used here came from an age-stage Markov model, which means that the diversity of patterns we derive ought to give even more food for thought.} 
 
 \begin{figure}[ht!]
 \centering
@@ -124,40 +112,23 @@ of black females \citep{Dudel2017}}
 \includegraphics[scale=.5]{Figures/Seq10.pdf}
 \end{figure}
 
-Standard calculations of prevalence typically proceed by imputing reference
-states with 1s (with 0s elsewhere) and taking column means over survivors in
-each age. Figure~\ref{fig:seq10ones} shows such a data construct, where the
-state sequence matrix has been converted to a binary matrix, with 1s for
-employment episodes, 0s for other living states (shown blank). Typically one
-might impute NA values in dead states for this sort of calculation. Operations on
-objects such as this can yield age patterns of prevalence or
-expectancies, for example.
+\FloatBarrier
 
- \begin{figure}[ht!]
+\section{Clocks}
+\label{sec:clocks}
+
+\subsection{A binary trajectory matrix gives prevalence}
+Standard calculations of prevalence typically proceed by imputing reference states with 1s (with 0s elsewhere) and taking column means over survivors in each age. Figure~\ref{fig:seq10ones} shows such a data construct, where the state sequence matrix has been converted to a binary matrix, with 1s for employment episodes, 0s for other living states (shown blank). Typically one might impute \texttt{NA} values in dead states for this sort of calculation. Operations on objects such as this can yield age patterns of prevalence or expectancies, for example. This is not what we call a clock, but this data construct illustrates the setup. As the number of simulated trajectories increases, the resulting age pattern of prevalence will approach the values in the respective column of the so-called fundamental matrix in a Markov approach.
+
+\begin{figure}[ht!]
 \centering
 \caption{Binary imputation of employment spells}
 \label{fig:seq10ones}
 \includegraphics[scale=.5]{Figures/Seq10ones.pdf}
 \end{figure}
 
-
-\FloatBarrier
-\section{Running clocks and alignment}
-Beyond counting episodes, one may wish to aggregate statistics on each episode
-in novel ways. For instance, conditional on being in state $s$ in age $x$, what
-is the average duration of spell that one finds oneself in? Or time spent or
-left in the state? Or state order?
-
-\subsection{Clocks}
-\label{sec:clocks}
-To calculate the average spell duration by age, first convert our state
-sequences to a data object something like Figure~\ref{fig:seq10dur}. Using chronological age as the reference, one may also wish to calculate time
-spent or left in the state episode, per
-Figure~\ref{fig:seq10timespent} or \ref{fig:seq10timeleft} \footnote{Actually,
-I'd increment values by $\frac{1}{2}$ for mid-state clocking, but decimals would squeeze the figure too
-much.}. In either of these cases, value alignment is with respect to episode
-entry or exit, but aggregation alignment remains pegged to age. Statistics
-across individuals in an array will therefore produce age patterns.
+\subsection{Duration, step, and order clocks}
+To derive measures other than prevalence, we simply change the 1s to other values. For example, if to calculate an age-pattern of spell duration, instead impute time steps with episodes with values equal to the total episode length (Fig.~\ref{fig:seq10dur}). Column means of the resulting object would give the average episode duration conditional on being in any point of an episode. If instead one wanted to condition on episodes starting (ending) in each age then impute the same values in only the first (last) time step within each episode (not shown). One may also wish to calculate time spent or left in the state episode, per Fig.~\ref{fig:seq10timespent} or \ref{fig:seq10timeleft} \footnote{In practice we increment values by $\frac{1}{2}$ for mid-state clocking.}. Episodes can also be imputed with other markers, such as episode order, as in Fig.~\ref{fig:order} for the case of employment spells, or episode fractions. 
 
 \begin{figure}[ht!]
 \centering
@@ -173,26 +144,17 @@ $\frac{1}{2}$ to the displayed \emph{running} values. }
 \end{subfigure}
 
 \begin{subfigure}{\textwidth}
-\caption{Running; Time spent in episode of inactivity.}
+\caption{Step; Time spent in episode of inactivity.}
 \label{fig:seq10timespent}
 \includegraphics[scale=.5]{Figures/Seq10timespent.pdf}
 \end{subfigure}
 
 \begin{subfigure}{\textwidth}
-\caption{Running; Time left in episode of inactivity}
+\caption{Step; Time left in episode of inactivity}
 \label{fig:seq10timeleft}
 \includegraphics[scale=.5]{Figures/Seq10timeleft.pdf}
 \end{subfigure}
 \end{figure}
-
-One may fill episodes with other markers, such as episode
-order, as in Figure~\ref{fig:order} for the case of employment spells, or
-episode fractions. One could further condition age patterns of total duration, time spent, or time left on episode order. If spells are
-filled with 1s, then aggregation results in prevalence. Note, time \emph{left}
-in the episode has no left-truncation problem, also not in the aggregate. 
-These series of values, that I call clocks, are then aggregated in some
-way. Aggregation proceeds within some external structuring classes defined in
-the following section.
 
 \begin{figure}[ht!]
 \centering
@@ -214,40 +176,21 @@ are imputed with order count variables.}
 
 \end{figure}
 
+There is room for creativity in defining clock measures such as these, and we encourage experimentation along these lines. Clock measures are then aggregated in some way. In these examples, \emph{value} alignment is with respect to episodes, but \emph{aggregation} alignment is still structured by age, such that statistics across individuals in an array produce age patterns. However, one may wish to synchronize trajectories in ways other than time since birth.
 
 \FloatBarrier
 \subsection{Alignment}
 \label{sec:align}
-Episodic \emph{clock} values are aggregated according to some
-structuring criteria. In all previous figures, the structuring criteria was
-chronological age, which is how data were generated in the first instance. To
-introduce a term, the sequences in these figures are \emph{left-aligned} on the
-event of birth.
-This is the most common default alignment in social and medical sciences, but other choices may be more
-compelling for particular questions.
+Episodic \emph{clock} values are aggregated according to some structuring criteria. In all previous figures, the structuring criteria was chronological age, which is how data were generated in the first instance. To introduce a term, the sequences in these figures are \emph{left-aligned} on the event of birth. This is the most common default alignment in social and medical sciences, but other choices may be more compelling for particular questions.
 
-For late-life processes, birth is usually decades away from the events and
-states of interest, and sharper empirical regularity may be be found with
-respect to other alignment criteria. Aligning lifelines requires two choices: 1) a reference moment or anchoring \emph{event} must be selected,
-and 2) the alignment direction must be chosen. A reference event could be any instance of
-entry, exit, or other compelling anchor point, such as a spell midpoint-- ergo
-such events may relate to episodes themselves.
-For repeated events, the choice of anchoring episode could itself follow a
-regular criterion, such as first, last, or longest episode. The \emph{direction} of
-alignment could be left, right, center, or perhaps something else.
+For late-life processes, birth is usually decades away from the events and states of interest, and sharper empirical regularity may be be found with respect to other alignment criteria. Aligning lifelines requires two choices: 1) a reference moment or anchoring \emph{event} must be selected, and 2) the alignment direction must be chosen. A reference event could be any instance of entry, exit, or other compelling anchor point, such as a spell midpoint-- ergo such events may relate to episodes themselves. For repeated events, the choice of anchoring episode could itself follow a regular criterion, such as first, last, or longest episode. The \emph{direction} of alignment could be left, right, center, or perhaps something else.
 
-Aggregated patterns
-would certainly turn out different if we were to right-align on the moment of death, per Figure~\ref{fig:seq10death}.
-This particular realignment doesn't seem so compelling for the
-demonstrated process, but I suppose it would be
-illuminating for health states and the sequence of events leading up to death.
-
-Figure~\ref{fig:alignment} shows a set of four alignment selections out of the
-many possible choices. Figure~\ref{fig:firstretire} left-aligns on
+Fig.~\ref{fig:alignment} shows a set of four alignment selections out of the
+many possible choices. Fig.~\ref{fig:firstretire} left-aligns on
 entry to \emph{first} retirement (if any). One could also choose last, longest,
 or some other episode of retirement, or of course right-align on exit.
-Figure~\ref{fig:longinactleft} left-aligns on entry into each individual's
-longest spell of inactivity, whereas Figure~\ref{fig:longinactright} right-aligns on exit from
+Fig.~\ref{fig:longinactleft} left-aligns on entry into each individual's
+longest spell of inactivity, whereas Fig.~\ref{fig:longinactright} right-aligns on exit from
 the same spell.
 
  \begin{figure}[ht!]
@@ -286,38 +229,16 @@ types.}
 
 \end{figure}
 
-The purpose of realigning is to bring transitions into focus. We do not showcase
-\emph{sorting} in this treatment, as this is another can of worms, likely in
-need of sophisticated clustering and sequence analysis. For researchers doing
-sequence analysis, count and alignment operations would precede standard
-analysis, and one would need to be judicious in choosing a clustering algorithm
-that is less sensitive to realignment. For the present, I would rather
-like to operate on aggregations of individual sequences, in which case between-individual sorting is unimportant. We'd still like to make statements about population-level characteristics.
+These examples are subset of many possible alignments, in this case column shifting within rows of a matrix. Alignment as shown here is probably insufficient to reveal patterns if one is visualizing raw trajectories, as in these demonstrative figures. One would probably want to define \emph{sort} operations (row-swapping) for this, and that is not something we have ventured to do at this point \footnote{Possibly the \texttt{TraMineR} universe already has \emph{sort} functionality, we need to check.}. Other visualization techniques (ignoring clocks for now) might follow an alignment operation \citep[e.g.][]{fasang2014visualizing}. In the present, we instead aggregate up to macro patterns.
 
 \FloatBarrier
 \section{Aggregate patterns}
-Given a multistate process, and given the choices in clock measures and
-alignments, the researcher has many degrees of freedom in calculating episode
-statistics in the aggregate. As a first example, and with no substantive
-justification, say we'd like to know about inactivity spell patterns by time
-since first employment exit. Such patterns can be calculated directly on the
-same simulated object used for previous exposition.
-Figure~\ref{fig:macrofirst} displays mean conditional episode durations of
-inactivity structured by time since exiting one's first employment spell, ergo
-right-aligned on first employment spell and conditional on i) having exited
-employment, and ii) being in an inactivity spell. Time spent (red, per
-Figure~\ref{fig:seq10timespent} ) and time left (blue, per
-Figure~\ref{fig:seq10timeleft}) sum to total duration
-(black, per
-Figure~\ref{fig:seq10dur}) as one would hope.
-Figures~\ref{fig:macro2}, \ref{fig:macro3}, and \ref{fig:macro4} show that mean
-statistics deviate from median and don't necessarily represent the underlying
-distribution for any of these three measures. 
+Given the choices in clock measures and alignments, the researcher has many degrees of freedom in calculating episode statistics in the aggregate. As a first example, and with no substantive justification as of yet\footnote{We'll swap these examples out with something more substantively compelling.}, say we'd like to know about inactivity spell patterns by time since first employment exit. We calculate from the same simulated object used for previous exposition. Fig.~\ref{fig:macrofirst} displays mean conditional episode durations of inactivity structured by time since exiting one's first employment spell, ergo right-aligned on first employment spell and conditional on i) having exited employment, and ii) being in an inactivity spell. Time spent (red, per Fig.~\ref{fig:seq10timespent} ) and time left (blue, per Figure~\ref{fig:seq10timeleft}) sum to total duration (black, per Fig.~\ref{fig:seq10dur}) as one would hope. Figs~\ref{fig:macro2}, \ref{fig:macro3}, and \ref{fig:macro4} show that mean statistics deviate from median and don't necessarily represent the underlying distribution for any of these three measures. 
 
- \begin{figure}[ht!]
+\begin{figure}[ht!]
 \centering
 \caption{Inactivity spell statistics by time since end of first employment.
-Bold lines are median, while normal lines are mean.}
+Bold lines are median.}
 \label{fig:macrofirst}
 
 \begin{subfigure}{.49\textwidth}
@@ -351,61 +272,15 @@ Bold lines are median, while normal lines are mean.}
 
 
 \section{Discussion}
-Observe that the episode statistics displayed in Figure~\ref{fig:macrofirst},
-inactivity spells structured by time since exit from one's first employment
-spell, was chosen haphazardly. Let's say we have a process with 3 state
-categories. Given one of these states, one may select the first, last, longest
-or some other episode for purposes of alignment. For simplicity let's say we
-have 3 choices like this for episode order. Alignment may then be left, right,
-center, or something else, so let's say again for simplicity that there are 3
-ways to align. Now we have 3 or 5 or more clock variables than might be worth
-calculating statistics on structured like this. It should be clear that the
-researcher easily has 100+ potential macro age-like patterns that might be
-calculated, just for this relatively simple example case. It may be surprising
-to behold that most of these patterns, even though they result from a simple markov
-process with a small set of simple and monotonic age patterns, have some
-character to them. They contain information. Presumably the age patterns that
-entered into said markov model do not capture the entire story, and raw
-observed state sequences are expected to bear stronger degrees of
-codependency. And if we wish to know something about
-episodes of the states we are studying, the researcher has i) large degrees of freedom in selecting macro episode patterns, and ii) is limited only by one's own creativity in doing so.
 
-The researcher is not obliged to move in
-the direction I propose, but the straw-man default scenario is to treat
-episode structure (and any process for that matter) as if the only thing that matters is the
-amount of time passed since birth. Where health, employment, or other life
-events are co-dependent, the importance of age as a structural predictor is
-expected to wane with respect to other transitions. Fetuses, babies, and
-toddlers are largely synchronized with each other as a function of time until or
-since birth. This is less so for children, whose development slowly begins to
-lose alignment, far less so for young adults, some of which have passed through
-first life transitions and others that have passed through none. Adults in mid
-life and old age are maximally heterogenous with respect to age structure. To
-gain further insight, it makes sense to realign.
+We propose a formal set of data operations to allow for creative derivation of demographic macro patterns. Our examples makeup a small subset of those possible, even with the small state space used in our example. To give a sense of the number of macro patterns possible, multiply (1) the number of state categories, (2) episode selection options (first, last, longest, etc), (3) alignment options (left, right, center, etc), and clock options (duration, time spent/left, order, and many others), and it becomes evident that we might have produced over one hundred different macro patterns, just for this relatively simple example case. 
 
-As stated, the purpose of episode clocks and sequence realignment is to detect
-important patterns in data (or model results) that are likely to otherwise
-go unnoticed. Some reasonable priors might include that i) life course events
-condition each other; ii) temporal proximity to life course transitions is likely to be an important
-predictor of other transitions; iii) within-episode patterns of other
-characteristics might be monotonically increasing or decreasing, or concave or
-convex. Therefore, it may be the case that aggregate patterns derived from such
-operations are simply sharper and of more obvious interpretation and consequence
-than are age patterns themselves. 
+It may be surprising to notice that most of these patterns, even though ours resulted from a simple Markov process with a small set of simple and monotonic age patterns, have some character to them. They contain information. Presumably the age patterns that entered into said Markov model do not capture the entire story, and raw observed state sequences are expected to bear stronger degrees of co-dependency. And if we wish to learn something new about a given demographic process, the researcher has (i) large degrees of freedom in selecting macro episode patterns, and (ii) is limited only by one's own creativity in doing so. 
 
-It is difficult to offer advice on the judicious application of data
-operations proposed here. All I can say is that the researcher should sit back
-and think creatively about the process under study and not be afraid to
-experiment some with clocks and alignment. The initial motivating case here
-involved no re-alignment whatsoever: I just wanted to know how episode duration
-changes over age. This very question already begs a second round of questions,
-for it is unclear how to relate episodes to age, given that an age is a point
-and an episode is a duration. This conundrum is what gives rise to clocks as an
-operation. From there alignment is a natural next question, and the magnitude of
-our researcher degrees of freedom increases by another order. In combination,
-these steps already imply some distancing from markov matrix models, as even
-cutting edge developments in this methodology are far from reaching the degree
-of flexibility we propose to have.
+The purpose of episode clocks and sequence realignment is to detect important patterns in data (or model results) that are likely to otherwise go unnoticed. Some reasonable priors might include that (i) life course events condition each other; (ii) temporal proximity to life course transitions is likely to be an important predictor of other transitions; (iii) within-episode patterns of other characteristics might be monotonically increasing or decreasing, concave, or convex. Aggregate patterns derived after such operations may be sharper and of more obvious interpretation and consequence than are age patterns. 
+
+\section*{Promises}
+This manuscript is an early draft. In a future version we will offer vignette-style applications for a selection of different demographic phenomena, including health and fertility/family demography, with a variety of programmatically generated macro patterns. 
 
 \FloatBarrier
 \singlespacing
