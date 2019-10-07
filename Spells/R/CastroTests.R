@@ -33,16 +33,31 @@ as.tidy.df <- function(X, value.name = "parity"){
     X %>%
     gather(age, {{value.name}}, everything(), -id, convert = TRUE) 
 }
+
+dimnames(m_parity)
+
+
 m_parity %>% 
   as.tidy.df %>%
   mutate(parity = as.character(parity)) %>% 
   arrange(id,age) %>% 
   group_by(id) %>% 
+  filter("1" %in% parity,
+         !is.na(parity)) %>% 
   mutate(dur0 = clock(x = parity, state = "0", clock_type = "duration"),
          dur1 = clock(x = parity, state = "1", clock_type = "duration"),
          dur2 = clock(x = parity, state = "2", clock_type = "duration"),
          dur3 = clock(x = parity, state = "3", clock_type = "duration"),
+         leftfirst = align(x = parity, state="1", type='left', spell='first')
          ) %>% 
+  ungroup() %>% 
+  group_by(leftfirst) %>% 
+  summarize(dur1m = mean(dur1, na.rm = TRUE)) %>% 
+  ggplot(mapping = aes(x = leftfirst, y = dur1m)) +
+  geom_line()
+
+
+
   head()
 
 align(x, state = "Inactive", type = "right", spell = "last")

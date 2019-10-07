@@ -1,4 +1,4 @@
-# make sure all dependencies installed
+. ,# make sure all dependencies installed
 # the script modified from one found here:
 #
 # https://github.com/ikashnitsky/demres-geofacet/blob/master/R/session-preparation.R
