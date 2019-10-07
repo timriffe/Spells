@@ -2,13 +2,12 @@
 # Author: tim
 ###############################################################################
 
-setwd("/home/tim/git/Spells/Spells")
-set.seed(1)
-setwd("/home/tim/git/Spells/Spells")
-source("R/GenerateStationary.R")
-source("R/Counting.R")
-source("R/Distributions.R")
-source("R/Align.R")
+
+library(here)
+source("Spells/R/GenerateStationary.R")
+# source("R/Counting.R")
+# source("R/Distributions.R")
+# source("R/Align.R")
 
 ls()
 
@@ -52,15 +51,21 @@ LongTime  <- melt(rightfirstemply,
 LongState  <- melt(RTraj_clean, 
 		   varnames = c("Age","ID"), 
 		   value.name = "State")
-   
+ 
 LongState <- merge(LongTime, LongState)
+LongState$State <- as.character(LongState$State)
 LongState$State[LongState$State == "Dead"] <- NA
+
+
 Xaligned <- acast(LongState, TimeSinceEndOfFirstEmploy ~ ID, value.var = "State", fill = NA)
 
+
+
 # now get spell duration object
-dur <- apply(Xaligned,2,spell_durAge, state = "Inactive")
-durleft <- apply(Xaligned,2,spell_dur_after, state = "Inactive")
-durspent <- apply(Xaligned,2,spell_dur_before, state = "Inactive")
+dur      <- apply(Xaligned,2,clock, clock_type = "duration", state = "Inactive")
+durleft  <- apply(Xaligned,2,clock,clock_type="step",increasing=FALSE, state = "Inactive")
+durspent <- apply(Xaligned,2,clock,clock_type="step",increasing=TRUE, state = "Inactive")
+
 
 xnew <- as.integer(rownames(Xaligned))
 
