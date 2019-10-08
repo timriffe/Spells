@@ -171,7 +171,7 @@ spell_step_decreasing <- function(x, state = "Inactive",  step_size = 1){
 #' spell_order(x, state = "Employed", increasing = TRUE)
 #' spell_order(x, state = "Employed", increasing = FALSE)
 
-spell_order <- function(x, state = "Inactive", increasing = TRUE){
+spell_order <- function(x, state = "Inactive", increasing = TRUE, step_size = 1){
 	x_age             <- (1:length(x) - 1) * step_size
 	names(x_age)      <- x
 	
@@ -294,7 +294,8 @@ clock <- function(x,
     out <- spell_order(
       x = x,
       state = state,
-      increasing = increasing)
+      increasing = increasing, 
+      step_size = step_size)
   }
   
   # --------------------------

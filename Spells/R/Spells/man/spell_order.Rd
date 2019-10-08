@@ -4,7 +4,7 @@
 \alias{spell_order}
 \title{impute episode order for episodes of a given reference state}
 \usage{
-spell_order(x, state = "Inactive", increasing = TRUE)
+spell_order(x, state = "Inactive", increasing = TRUE, step_size = 1)
 }
 \arguments{
 \item{x}{character vector of state in each time step}
@@ -12,6 +12,8 @@ spell_order(x, state = "Inactive", increasing = TRUE)
 \item{state}{character. The reference state. Could be a vector of states too.}
 
 \item{increasing}{logical. Default \code{TRUE}. If \code{clock_type} is either \code{"step"} or \code{"order"} do we count up or count down?}
+
+\item{step_size}{numeric. Default \code{1}. What is the time interval for the discrete bins in \code{x}.}
 }
 \description{
 produce a vector of \code{length(x)} values corresponding to the order of each episode of the reference state.
