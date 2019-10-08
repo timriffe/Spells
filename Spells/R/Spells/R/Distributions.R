@@ -18,7 +18,7 @@ qdens <- function(X,p=.5){
 				if (sum(!is.na(x))>2){
 					return(spatstat::quantile.density(stats::density(x,na.rm=TRUE),probs=p))
 				} else {
-					return(NA)
+					return(rep(NA,length(p)))
 				}
 			}, p = p)
 }
