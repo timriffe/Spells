@@ -33,6 +33,7 @@ mcEmpl <- new("markovchain", states = rownames(TM),
 # how many sequences should we generate?
 N      <- 1e4
 
+set.seed(1)
 # each assuming a start in employment at age 50.
 RTraj  <- replicate(N,
 		rmarkovchain(n = 50, object = mcEmpl, t0 = "50::Employed", parallel = TRUE)

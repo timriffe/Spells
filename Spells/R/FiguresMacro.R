@@ -4,7 +4,7 @@
 
 
 library(here)
-source("Spells/R/GenerateStationary.R")
+source(here("Spells","R","GenerateStationary.R"))
 # source("R/Counting.R")
 # source("R/Distributions.R")
 # source("R/Align.R")
@@ -36,7 +36,7 @@ q <- seq(.05,.95,by=.05)
 # so, can take average spell duration of inactivity as function of 
 # time since end of first employment, for example:
 
-rightfirstemply <- apply(RTraj_clean, 2, align, spell = "first", state = "Employed", type = "right")
+rightfirstemply           <- apply(RTraj_clean, 2, align, spell = "first", state = "Employed", type = "right")
 
 colnames(rightfirstemply) <- 1:ncol(rightfirstemply)
 colnames(RTraj_clean)     <- 1:ncol(RTraj_clean)
@@ -67,7 +67,7 @@ durleft  <- apply(Xaligned,2,clock,clock_type="step",increasing=FALSE, state = "
 durspent <- apply(Xaligned,2,clock,clock_type="step",increasing=TRUE, state = "Inactive")
 
 
-xnew <- as.integer(rownames(Xaligned))
+xnew     <- as.integer(rownames(Xaligned))
 
 
 pdf("Figures/Macro1.pdf")
@@ -84,12 +84,32 @@ dev.off()
 #lines(xnew, qdens(durleft, .5), lwd = 2, col = "blue")
 #lines(xnew, qdens(durspent, .5), lwd = 2, col = "red")
 #
+alphas = seq(.1, .9, by = .1)
+lp    <- alphas / 2
+up    <- 1 - alphas / 2
+p = sort(c(lp, up))
+q     <- qdens(dur,p = sort(c(lp, up)))
+
+apply(dur,1,function(x,p){
+  if (sum(!is.na(x))>5){
+    return(spatstat::quantile.density(stats::density(x,na.rm=TRUE),probs=p))
+  } else {
+    return(rep(NA, length(p)))
+  }
+}, p = p)
+
+
+n     <- length(alphas) * 2
+for (i in 1:length(alphas)){
+  intervalpoly(xnew,l = q[i, ],u = q[n - i + 1,], col = "#00000010")
+}
+xnewid <- xnew >= 0 & xnew <= 24
 
 pdf("Figures/Macro2.pdf")
 par(mai=c(1,1,.0,0))
 plot(xnew, rowMeans(dur, na.rm=TRUE), type = 'l', ylim = c(0,25), xlim = c(0,25),
 		xlab = "Time since first employment exit", ylab = "Avg duration")
-intervalfan(dur,x=xnew, col = "#00000010", border = NA)
+intervalfan(dur[xnewid,],x=xnew[xnewid], col = "#00000010", border = NA)
 lines(xnew, qdens(dur,.5), lwd = 2)
 dev.off()
 

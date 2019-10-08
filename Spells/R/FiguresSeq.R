@@ -4,6 +4,7 @@
 
 library(here)
 library(devtools)
+library(colorspace)
 install_github("timriffe/Spells/Spells/R/Spells")
 
 source(here("Spells","R","GenerateStationary.R"))
@@ -28,10 +29,12 @@ draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
 }
 
 
-
-cols   <- c("#74ee65", "#773129", "#41bbc5",NA)
+#cols   <- c("#74ee65", "#773129", "#41bbc5",NA)
+cols <- c(qualitative_hcl(5, palette = "Dark 3")[c(3,2,4)],NA)
+cols2 <- lighten(desaturate(cols,.3),.3)
 states <- c("Employed", "Inactive","Retired","Dead")
 yvals  <- 9:0 * 1.1
+
 
 
 X <- RTraj_clean[,1:10]
@@ -51,6 +54,15 @@ text(47,6,"Random individual i",xpd=TRUE,srt=90)
 legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols2, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 
 # ---------------------------------------
 # figure 2
@@ -65,6 +77,7 @@ pdf("Figures/Seq10ones.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
 	draw_sequence3(Ones[,i],y=yvals[i])
 	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
 }
@@ -82,6 +95,7 @@ pdf("Figures/Seq10dur.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
 	draw_sequence3(Dur[,i],y=yvals[i])
 	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
 }
@@ -89,6 +103,23 @@ axis(1)
 text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
 text(47,6,"Random individual i",xpd=TRUE,srt=90)
 dev.off()
+
+# conditional on age at entry:
+# (function not yet wrapped in clock())
+DurEntry      <- apply(X,2,spell_dur_conditional,state = "Inactive", entry = TRUE)
+DurExit       <- apply(X,2,spell_dur_conditional,state = "Inactive", entry = FALSE)
+
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence3(DurEntry[,i],y=yvals[i])
+  rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+
+
 
 OrdUp   <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=TRUE, step_size = 1)
 OrdDown <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=FALSE, step_size = 1)
@@ -156,9 +187,9 @@ dev.off()
 
 
 
-
-
-
+# ---------------------------------
+# Alignment
+XdeathAlign <- apply(X,2,align,state = "Dead",type="left")
 pdf("Figures/Seq10deathalign.pdf",height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(-80,0), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
