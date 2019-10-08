@@ -23,10 +23,10 @@ produce a vector of \code{length(x)} values corresponding to the total duration 
 x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired", 
 				"Dead"), c(7,  8,  3,  3, 25,  5))
 # a single 8-year spell of inactivity
-spell_dur(x, "Inactive", not_first = FALSE)
+spell_dur(x, "Inactive")
 # merges first consecutive employment and inactivity spells into a single spell,
 # also catches second employment after retirement
-spell_dur(x, c("Inactive","Employed"), not_first = FALSE)
+spell_dur(x, c("Inactive","Employed"))
 # total lifespan 50+
-spell_dur(x, c("Inactive","Employed","Retired"), not_first = FALSE)
+spell_dur(x, c("Inactive","Employed","Retired"))
 }

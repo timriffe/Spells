@@ -8,15 +8,15 @@
 #' @inheritParams clock
 #' @export
 #' @examples
- x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired", 
- 				"Dead"), c(7,  8,  3,  3, 25,  5))
- # a single 8-year spell of inactivity
- spell_dur(x, "Inactive")
- # merges first consecutive employment and inactivity spells into a single spell,
- # also catches second employment after retirement
- spell_dur(x, c("Inactive","Employed"))
- # total lifespan 50+
- spell_dur(x, c("Inactive","Employed","Retired"))
+#' x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired", 
+#' 				"Dead"), c(7,  8,  3,  3, 25,  5))
+#' # a single 8-year spell of inactivity
+#' spell_dur(x, "Inactive")
+#' # merges first consecutive employment and inactivity spells into a single spell,
+#' # also catches second employment after retirement
+#' spell_dur(x, c("Inactive","Employed"))
+#' # total lifespan 50+
+#' spell_dur(x, c("Inactive","Employed","Retired"))
 
 spell_dur <- function(x, state = "Inactive", step_size = 1){
 	
