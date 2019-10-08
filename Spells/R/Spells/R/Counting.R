@@ -8,15 +8,15 @@
 #' @inheritParams clock
 #' @export
 #' @examples
-#' x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired", 
-#' 				"Dead"), c(7,  8,  3,  3, 25,  5))
-#' # a single 8-year spell of inactivity
-#' spell_dur(x, "Inactive", not_first = FALSE)
-#' # merges first consecutive employment and inactivity spells into a single spell,
-#' # also catches second employment after retirement
-#' spell_dur(x, c("Inactive","Employed"), not_first = FALSE)
-#' # total lifespan 50+
-#' spell_dur(x, c("Inactive","Employed","Retired"), not_first = FALSE)
+ x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired", 
+ 				"Dead"), c(7,  8,  3,  3, 25,  5))
+ # a single 8-year spell of inactivity
+ spell_dur(x, "Inactive")
+ # merges first consecutive employment and inactivity spells into a single spell,
+ # also catches second employment after retirement
+ spell_dur(x, c("Inactive","Employed"))
+ # total lifespan 50+
+ spell_dur(x, c("Inactive","Employed","Retired"))
 
 spell_dur <- function(x, state = "Inactive", step_size = 1){
 	
@@ -48,6 +48,60 @@ spell_dur <- function(x, state = "Inactive", step_size = 1){
 	# adjust to step_size
 	spell_x * step_size
 }
+
+#' impute conditional durations of episodes in specified reference state
+#' @description produce a vector of \code{length(x)} values corresponding to the total duration of each episode of the reference state in either the entry time step or the exit time step
+#' @details \code{NA} are given for other states. \code{state} can be a vector of states if you'd rather consider certain states merged into single episodes.
+#' 
+#' @inheritParams clock
+#' @param entry logical. Do we impute the episode duration at the point of entry or exit?
+#' @export
+#' @examples
+#' x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired", 
+#'            "Dead"), c(7,  8,  3,  3, 25,  5))
+#' # a single 8-year spell of inactivity, conditional on entry
+#' spell_dur_conditional(x, "Inactive", entry = TRUE)
+#' # a single 8-year spell of inactivity, conditional on exit
+#' spell_dur_conditional(x, "Inactive", entry = FALSE)
+#' 
+#' # merges first consecutive employment and inactivity spells into a single spell,
+#' # also catches second employment after retirement
+#' spell_dur_conditional(x, state=c("Inactive","Employed"), entry = TRUE)
+#' spell_dur_conditional(x, state=c("Inactive","Employed"), entry = FALSE)
+
+spell_dur_conditional <- function(x, state = "Inactive", entry = TRUE, step_size = 1){
+  
+  # starting left x position for each observation
+  x_age             <- 1:length(x) - 1
+  names(x_age)      <- x
+  
+  # combine states if necessary
+  refvar            <- "REFSTATE"
+  x[x %in% state]   <- refvar
+  
+  sec               <- rle(x)
+  spells            <- sec$values
+  durs              <- sec$lengths
+  durs2             <- durs
+  durs2[spells != refvar] <- NA
+
+  # need first or last position of each target spell:
+  if (entry){
+    # first step in spell:
+    ind <- cumsum(durs) - durs + 1
+  } else {
+    ind <- cumsum(durs)
+  }
+  
+  #n_spells          <- sum(spells == state)
+  spell_x            <- rep(NA, length(x))
+  spell_x[ind]       <- durs2
+
+  # adjust to step_size
+  spell_x * step_size
+}
+
+
 
 #' impute time spent in episodes of specified reference state
 #' @description produce a vector of \code{length(x)} values corresponding to the time spent in a given episode of the reference state. 

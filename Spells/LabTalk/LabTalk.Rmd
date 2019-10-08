@@ -93,6 +93,7 @@ cols   <- c("#74ee65", "#773129", "#41bbc5",NA)
 states <- c("Employed", "Inactive","Retired","Dead")
 yvals  <- 9:0 * 1.1
 X      <- readRDS(here::here("Spells","LabTalk","X.rds"))
+library(Spells)
 source(here::here("Spells","R","DrawSequences.R"))
 ```
 
@@ -149,7 +150,69 @@ axis(2, las = 1)
 
 ## Illustration: Clocks
 
-```{r}
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence2(X[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+```
 
+## Illustration: Clocks: Duration (unconditional)
+
+```{r}
+# unconditional durations
+Dur      <- apply(X,2,clock,clock_type="duration",state = "Inactive")
+# conditional on age at entry:
+Dur
 
 ```
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence2(X[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+```
+
+
+## Illustration: Clocks: \textcolor{red}{Ascending order}
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+OrdUp   <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=TRUE, step_size = 1)
+OrdDown <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=FALSE, step_size = 1)
+```
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence3(OrdUp[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: \textcolor{blue}{Descending order}
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence3(OrdDown[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
