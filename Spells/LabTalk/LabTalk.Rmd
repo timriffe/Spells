@@ -1,0 +1,155 @@
+---
+title: "Alignment, Clocking, and Macro Patterns of Episodes in the Life Course"
+author: "Tim Riffe and Andrés Castro"
+date: "9 Oct. 2019"
+colortheme: "dove"
+output: beamer_presentation
+header-includes:
+  - \usepackage{color}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Backstory
+
+\Large
+Sequence analysis for *pathways-to-event* questions can be tricky (Hu presentation, 2017) .
+
+\pause
+
+\Large
+Idea: Realign sequences on transition. ![](idea.pdf){width=70px}
+
+## Backstory
+
+\Large
+Markov matrix expression for average episode count (Dudel, 2017-).
+
+\pause
+
+\Large
+Question: What else might we derive?  ![](thought.pdf){width=70px}
+ 
+## Example questions:
+
+\Large
+> - Do disability episodes get shorter or longer with age? And over time?
+> - What is the distribution of other state episode durations before cancer?
+> - How much of an expectancy is composed of short vs long episodes?
+> - How do parity-specific birth interval distributions vary by completed fertility?
+
+##  
+ 
+\Large 
+\begin{block}{\textbf{Problem}}
+Tools for answering such questions are scattered.
+\end{block}
+
+<br>
+\pause
+
+\begin{block}{\textbf{Corollary}}
+Questions are posed less often, and new pattern discovery less frequent.
+\end{block}
+
+## 
+
+\Large
+\begin{block}{\textbf{Solution}}
+We develop a framework (or grammar) of data operations to flexibly derive aggregate patterns.
+\end{block}
+
+<br>
+\pause
+
+\begin{block}{\textbf{Approach}}
+Define episode pre-aggregation operations: \textbf{Clocks}\\
+Define time structuring operations: \textbf{Alignment} 
+\end{block}
+<!-- if simulated then there is likely a markov expression waiting to be written -->
+
+## Approach
+
+\Large
+\begin{block}{\textbf{Clocks}}
+Within episodes of state \textbf{s}, count time \textcolor{red}{steps} or episode  \textcolor{red}{order} up or down, or total episode  \textcolor{red}{duration} conditional on time of episode entry, exit, or neither.
+\end{block}
+
+## Approach
+
+\Large
+\begin{block}{\textbf{Alignment}}
+  \textcolor{red}{left}, \textcolor{red}{right}, \textcolor{red}{center}, etc. on the \textcolor{blue}{first}, \textcolor{blue}{last}, \textcolor{blue}{longest}, \textcolor{blue}{shortest}, \textcolor{blue}{$n^{th}$}, \textcolor{blue}{$n^{th}$ from last} episode of state \textbf{s}. (and others)
+\end{block}
+
+## Illustrations
+
+\Large
+10 trajectories simulated from Dudel (2017)
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+cols   <- c("#74ee65", "#773129", "#41bbc5",NA)
+states <- c("Employed", "Inactive","Retired","Dead")
+yvals  <- 9:0 * 1.1
+X      <- readRDS(here::here("Spells","LabTalk","X.rds"))
+source(here::here("Spells","R","DrawSequences.R"))
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence2(X[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+```
+
+## Illustration: Age structured prevalence.
+
+\Large 
+\emph{Identity} clock in employment state
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+Ones            <- X == "Employed"
+Ones[Ones]      <- 1
+Ones[Ones == 0] <- NA
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence3(Ones[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Age structured prevalence.
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+XX       <- readRDS(here::here("Spells","LabTalk","RTraj_clean.rds"))
+Ones     <- XX == "Employed"
+Ones[XX == "Dead"] <- NA
+PrevEmpl <- rowMeans(Ones, na.rm=TRUE)
+```
+```{r}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,1), axes = FALSE, xlab = "", ylab = "")
+lines(50:100, PrevEmpl, lwd = 2)
+axis(1)
+text(43,.5,"Prevalence",xpd=TRUE,srt=90)
+axis(2, las = 1)
+```
+
+## Illustration: Clocks
+
+```{r}
+
+
+```
