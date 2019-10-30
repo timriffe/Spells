@@ -19,7 +19,7 @@ TM <- as.matrix(
 		read.csv(TM_path,
 				check.names = FALSE)
 )
-
+dim(TM)
 
 # transpose for standard MC stuff.
 # demographers do stuff transposed...
@@ -42,4 +42,4 @@ RTraj                 <- rbind(rep("50::Employed",N), RTraj)
 RTraj_clean           <- gsub(".*:","",RTraj)
 rownames(RTraj_clean) <- 50:100
 
-
+# ------------------

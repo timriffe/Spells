@@ -81,29 +81,33 @@ Within episodes of state \textbf{s}, count time \textcolor{red}{steps} or episod
 
 \Large
 \begin{block}{\textbf{Alignment}}
-  \textcolor{red}{left}, \textcolor{red}{right}, \textcolor{red}{center}, etc. on the \textcolor{blue}{first}, \textcolor{blue}{last}, \textcolor{blue}{longest}, \textcolor{blue}{shortest}, \textcolor{blue}{$n^{th}$}, \textcolor{blue}{$n^{th}$ from last} episode of state \textbf{s}. (and others)
+  \textcolor{red}{left}, \textcolor{red}{right}, \textcolor{red}{center}, etc. on the \textcolor{blue}{first}, \textcolor{blue}{last}, \textcolor{blue}{longest}, \textcolor{blue}{shortest}, \textcolor{blue}{$n^{th}$}, \textcolor{blue}{$n^{th}$ from last} episode of state \textbf{s}. 
 \end{block}
 
 ## Illustrations
 
 \Large
-10 trajectories simulated from Dudel & Myrskylä (2017)
+10 lives simulated from Dudel & Myrskylä (2017)
 ```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+library(tidyverse)
+library(Spells)
 library(colorspace)
+library(here)
+library(reshape2)
+source(here::here("Spells","R","DrawSequences.R"))
 #cols   <- c(qualitative_hcl(5, palette = "Dark 3")[c(3,2,4)],NA)
 palette_OkabeIto <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999")
-cols <- c(palette_OkabeIto[c(3,1,2)],NA)
+cols             <- c(palette_OkabeIto[c(3,1,2)],NA)
 # plot(NULL, xlim=c(0,length(palette_OkabeIto)), ylim=c(0,1), 
 #     xlab="", ylab="", xaxt="n", yaxt="n")
 # rect(0:(length(palette_OkabeIto)-1), 0, 1:length(palette_OkabeIto), 1, col=palette_OkabeIto)
 
 # background colors for clock measures:
-cols2  <- lighten(desaturate(cols,.3),.3)
-states <- c("Employed", "Inactive","Retired","Dead")
-yvals  <- 9:0 * 1.1
-X      <- readRDS(here::here("Spells","LabTalk","X.rds"))
-library(Spells)
-source(here::here("Spells","R","DrawSequences.R"))
+cols2            <- lighten(desaturate(cols,.3),.3)
+states           <- c("Employed", "Inactive","Retired","Dead")
+yvals            <- 9:0 * 1.1
+X                <- readRDS(here("Spells","LabTalk","X.rds"))
+RTraj_clean      <- readRDS(here("Spells","LabTalk","RTraj_clean.rds"))
 ```
 
 ```{r,fig.height=4,fig.width=9}
@@ -372,17 +376,19 @@ text(-30,yvals+.5,1:10,pos=2,xpd=TRUE)
 text(-30-3,6,"Random individual i",xpd=TRUE,srt=90)
 ```
 
-## Macro patterns
+## 
 
 \Large
+\begin{block}{\textbf{Macro patterns}}
 Combine clocks and alignment to aggregate (e.g. means, quantiles)
+\end{block}
 
-## Macro patterns
+## Macro patterns: Inactivity step clocks by 3 alignments
 \Large
-```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+```{r, include = FALSE, cache = TRUE}
 # dplyr + ggplot attempts
-library(tidyverse)
-Clean <- RTraj_clean %>% 
+
+RTraj_long <- RTraj_clean %>% 
   melt(varnames = c("age","id"), value.name = "state") %>% 
   mutate(state = as.character(state)) %>% 
   arrange(id, age) %>% 
@@ -394,18 +400,130 @@ Clean <- RTraj_clean %>%
          y_dur_inactive = clock(x = state, clock_type = "duration", state = "Inactive")
          ) %>% 
   gather(key = "alignment",value="x",c("age","x_left_first_retire","x_right_first_employment")) %>% 
-  gather(key = "clock", value = "mean(duration)", c("y_step_up_inactive","y_step_down_inactive","y_dur_inactive")) %>% 
-  mutate(clock)
+  gather(key = "clock", value = "value", c("y_step_up_inactive","y_step_down_inactive","y_dur_inactive")) %>% 
+  filter(!is.na(value))
 
- Clean %>% 
-   group_by(alignment, clock, x) %>% 
-   summarize(value = mean(value, na.rm=TRUE)) %>% 
-   filter(!is.na(value)) %>% 
- ggplot(mapping = aes(x=x,y=value,color=clock)) +
-   geom_line() +
-   facet_wrap(~alignment, scales ="free_x")
-
+alignlabs <- c("Age","Entry first retirement", "Exit first employment")
+names(alignlabs) <- c("age","x_left_first_retire","x_right_first_employment")
 ```
 
-## Examples:
+```{r, warning=FALSE,message=FALSE, echo = FALSE}
+ RTraj_long %>% 
+   group_by(alignment, clock, x) %>% 
+   summarize(value = mean(value, na.rm=TRUE)) %>% 
+   #rename("mean(time)" = "value") %>% 
+ # head()
+ ggplot(mapping = aes(x=x,y=value,color=clock)) +
+   geom_line() +
+   facet_wrap(~alignment, scales ="free_x", labeller = labeller(alignment = alignlabs)) +
+   ylab("mean time inactive") +
+   xlab("") + 
+  ylim(0,10)+
+  labs(color = "Inactivity clocks")+
+  scale_color_manual(labels = c("Total duration", "Time to exit","Time since entry"), values = c("black","blue", "red")) +
+      theme(strip.text.x = element_text(size = 12),
+            axis.text=element_text(size=12), 
+            axis.title=element_text(size=12),
+            legend.text = element_text(size=12),
+            legend.title = element_text(size=14))
+```
+
+## Macro Patterns: ADL step clocks, 4 alignments, 1996
+
+```{r, include = FALSE, cache = TRUE}
+# dplyr + ggplot attempts
+RHRS_long <- readRDS(here("Spells","Data","HRS","RHRS_long.rds"))
+
+alignlabs <- c("Age","First health exit", "Last health exit","Time to death")
+names(alignlabs) <- c("age","x_exit_health_first","x_exit_health_last","x_death")
+```
+
+```{r, warning=FALSE,message=FALSE, echo = FALSE}
+ RHRS_long %>% 
+   filter(year == 1996) %>% 
+   group_by(alignment, clock, x) %>% 
+   summarize(value = mean(value, na.rm=TRUE)) %>% 
+   #rename("mean(time)" = "value") %>% 
+ # head()
+ ggplot(mapping = aes(x=x,y=value,color=clock)) +
+   geom_line() +
+   facet_wrap(~alignment, scales ="free_x", labeller = labeller(alignment = alignlabs)) +
+   ylab("mean time disabled") +
+   xlab("") + 
+  ylim(0,20)+
+  labs(color = "ADL clocks")+
+  scale_color_manual(labels = c("Total duration", "Time to exit","Time since entry"), values = c("black","blue", "red")) +
+      theme(strip.text.x = element_text(size = 12),
+            axis.text=element_text(size=12), 
+            axis.title=element_text(size=12),
+            legend.text = element_text(size=12),
+            legend.title = element_text(size=14))
+```
+
+## Macro Patterns: ADL step clocks, 4 alignments, 2006
+
+```{r, warning=FALSE,message=FALSE, echo = FALSE}
+ RHRS_long %>% 
+   filter(year == 2006) %>% 
+   group_by(alignment, clock, x) %>% 
+   summarize(value = mean(value, na.rm=TRUE)) %>% 
+   #rename("mean(time)" = "value") %>% 
+ # head()
+ ggplot(mapping = aes(x=x,y=value,color=clock)) +
+   geom_line() +
+   facet_wrap(~alignment, scales ="free_x", labeller = labeller(alignment = alignlabs)) +
+   ylab("mean time disabled") +
+   xlab("") + 
+  ylim(0,20)+
+  labs(color = "ADL clocks")+
+  scale_color_manual(labels = c("Total duration", "Time to exit","Time since entry"), values = c("black","blue", "red")) +
+      theme(strip.text.x = element_text(size = 12),
+            axis.text=element_text(size=12), 
+            axis.title=element_text(size=12),
+            legend.text = element_text(size=12),
+            legend.title = element_text(size=14))
+```
+
+## Macro Patterns: ADL step clocks, 4 alignments, 2014
+
+```{r, include = FALSE, cache = TRUE}
+# dplyr + ggplot attempts
+
+```{r, warning=FALSE,message=FALSE, echo = FALSE}
+ RHRS_long %>% 
+   filter(year == 2014) %>% 
+   group_by(alignment, clock, x) %>% 
+   summarize(value = mean(value, na.rm=TRUE)) %>% 
+   #rename("mean(time)" = "value") %>% 
+ # head()
+ ggplot(mapping = aes(x=x,y=value,color=clock)) +
+   geom_line() +
+   facet_wrap(~alignment, scales ="free_x", labeller = labeller(alignment = alignlabs)) +
+   ylab("mean time disabled") +
+   xlab("") + 
+  ylim(0,20)+
+  labs(color = "ADL clocks")+
+  scale_color_manual(labels = c("Total duration", "Time to exit","Time since entry"), values = c("black","blue", "red")) +
+      theme(strip.text.x = element_text(size = 12),
+            axis.text=element_text(size=12), 
+            axis.title=element_text(size=12),
+            legend.text = element_text(size=12),
+            legend.title = element_text(size=14))
+```
+
+## Conclusions
+
+\Large
+> - Many potential measures
+> - Measures translate to natural language
+> - `R` package `Spells` in beta version
+> - grammar still in development
+> - Searching for diverse applications
+
+## 
+
+Thanks! ![](SpellsHex.pdf){width=200px}
+
+Tim Riffe & Andrés Castro
+
 
