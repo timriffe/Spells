@@ -1,0 +1,529 @@
+---
+title: "Alignment, Clocking, and Macro Patterns of Episodes in the Life Course"
+author: "Tim Riffe and Andrés Castro"
+date: "9 Oct. 2019"
+colortheme: "dove"
+output: beamer_presentation
+header-includes:
+  - \usepackage{color}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Backstory
+
+\Large
+Sequence analysis for *pathways-to-event* questions can be tricky (Hu presentation, 2017) .
+
+\pause
+
+\Large
+Idea: Realign sequences on transition. ![](idea.pdf){width=70px}
+
+## Backstory
+
+\Large
+Markov matrix expression for average episode count (Dudel & Myrskylä, 2017-).
+
+\pause
+
+\Large
+Question: What else might we derive?  ![](thought.pdf){width=70px}
+ 
+## Example questions:
+
+\Large
+> - Do disability episodes get shorter or longer with age? And over time?
+> - What is the distribution of other state episode durations before cancer?
+> - How much of an expectancy is composed of short vs long episodes?
+> - How do parity-specific birth interval distributions vary by completed fertility?
+
+##  
+ 
+\Large 
+\begin{block}{\textbf{Problem}}
+Tools for answering such questions are scattered.
+\end{block}
+
+<br>
+\pause
+
+\begin{block}{\textbf{Corollary}}
+Questions are posed less often, and new pattern discovery less frequent.
+\end{block}
+
+## 
+
+\Large
+\begin{block}{\textbf{Solution}}
+We develop a framework (or grammar) of data operations to flexibly derive aggregate patterns.
+\end{block}
+
+<br>
+\pause
+
+\begin{block}{\textbf{Approach}}
+Define episode pre-aggregation operations: \textbf{Clocks}\\
+Define time structuring operations: \textbf{Alignment} 
+\end{block}
+<!-- if simulated then there is likely a markov expression waiting to be written -->
+
+## Approach
+
+\Large
+\begin{block}{\textbf{Clocks}}
+Within episodes of state \textbf{s}, count time \textcolor{red}{steps} or episode  \textcolor{red}{order} up or down, or total episode  \textcolor{red}{duration} conditional on time of episode entry, exit, or neither.
+\end{block}
+
+## Approach
+
+\Large
+\begin{block}{\textbf{Alignment}}
+  \textcolor{red}{left}, \textcolor{red}{right}, \textcolor{red}{center}, etc. on the \textcolor{blue}{first}, \textcolor{blue}{last}, \textcolor{blue}{longest}, \textcolor{blue}{shortest}, \textcolor{blue}{$n^{th}$}, \textcolor{blue}{$n^{th}$ from last} episode of state \textbf{s}. 
+\end{block}
+
+## Illustrations
+
+\Large
+10 lives simulated from Dudel & Myrskylä (2017)
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+library(tidyverse)
+library(Spells)
+library(colorspace)
+library(here)
+library(reshape2)
+source(here::here("Spells","R","DrawSequences.R"))
+#cols   <- c(qualitative_hcl(5, palette = "Dark 3")[c(3,2,4)],NA)
+palette_OkabeIto <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999")
+cols             <- c(palette_OkabeIto[c(3,1,2)],NA)
+# plot(NULL, xlim=c(0,length(palette_OkabeIto)), ylim=c(0,1), 
+#     xlab="", ylab="", xaxt="n", yaxt="n")
+# rect(0:(length(palette_OkabeIto)-1), 0, 1:length(palette_OkabeIto), 1, col=palette_OkabeIto)
+
+# background colors for clock measures:
+cols2            <- lighten(desaturate(cols,.3),.3)
+states           <- c("Employed", "Inactive","Retired","Dead")
+yvals            <- 9:0 * 1.1
+X                <- readRDS(here("Spells","LabTalk","X.rds"))
+RTraj_clean      <- readRDS(here("Spells","LabTalk","RTraj_clean.rds"))
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence2(X[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+```
+
+## Illustration: Age structured prevalence.
+
+\Large 
+\emph{Identity} clock in employment state
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+Ones            <- X == "Employed"
+Ones[Ones]      <- 1
+Ones[Ones == 0] <- NA
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(Ones[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Age structured prevalence.
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+XX       <- readRDS(here::here("Spells","LabTalk","RTraj_clean.rds"))
+Ones     <- XX == "Employed"
+Ones[XX == "Dead"] <- NA
+PrevEmpl <- rowMeans(Ones, na.rm=TRUE)
+```
+```{r}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,1), axes = FALSE, xlab = "", ylab = "")
+lines(50:100, PrevEmpl, lwd = 2)
+axis(1)
+text(43,.5,"Prevalence",xpd=TRUE,srt=90)
+axis(2, las = 1)
+```
+
+## Illustration: Clocks: Duration (unconditional)
+
+```{r}
+# unconditional durations
+Dur      <- apply(X,2,clock,clock_type="duration",state = "Inactive")
+# conditional on age at entry:
+# (function not yet wrapped in clock())
+DurEntry      <- apply(X,2,spell_dur_conditional,state = "Inactive", entry = TRUE)
+DurExit      <- apply(X,2,spell_dur_conditional,state = "Inactive", entry = FALSE)
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(Dur[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Duration \textcolor{red}{conditioned on entry}
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(DurEntry[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Duration \textcolor{blue}{conditioned on exit}
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(DurExit[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Order \textcolor{red}{Ascending}
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+OrdUp   <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=TRUE, step_size = 1)
+OrdDown <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=FALSE, step_size = 1)
+```
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(OrdUp[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Order \textcolor{blue}{Descending}
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(OrdDown[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Steps \textcolor{red}{Ascending}
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+StepUp   <- apply(X,2,clock,clock_type="step",state = "Inactive",increasing=TRUE, step_size = 1)
+StepDown <- apply(X,2,clock,clock_type="step",state = "Inactive",increasing=FALSE, step_size = 1)
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(floor(StepUp)[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Steps \textcolor{blue}{Descending}
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(floor(StepDown)[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Alignment: Age = Birth alignment
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,130), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence2(X[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+```
+
+## Illustration: Alignment: Death
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+XdeathAlign <- apply(X,2,align,state = "Dead",type="left")
+```
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-80,0), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=XdeathAlign[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(-80,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-83,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-40,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+```
+
+## Illustration: Alignment: \emph{Entry} to \emph{first} retirement
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+XretirefirstAlign <- apply(X,2,align,state = "Retired",type="left",spell = "first")
+```
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=XretirefirstAlign[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(-30,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-33,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Alignment: \emph{Exit} from \emph{first} employment
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+Xemployexitfirst <- apply(X,2,align,state = "Employed",type="right",spell = "first")
+```
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=Xemployexitfirst[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(-30,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-33,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Alignment: \emph{Exit} from \emph{longest} employment
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+Xemployexitlongest<- apply(X,2,align,state = "Employed",type="right",spell = "longest")
+```
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=Xemployexitlongest[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(-30,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-33,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Alignment: \emph{Centered} on \emph{longest} spell of inactivity
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+Xemploycenterlongest<- apply(X,2,align,state = "Inactive",type="center",spell = "longest")
+```
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=Xemploycenterlongest[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(-30,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-30-3,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## 
+
+\Large
+\begin{block}{\textbf{Macro patterns}}
+Combine clocks and alignment to aggregate (e.g. means, quantiles)
+\end{block}
+
+## Macro patterns: Inactivity step clocks by 3 alignments
+\Large
+```{r, include = FALSE, cache = TRUE}
+# dplyr + ggplot attempts
+
+RTraj_long <- RTraj_clean %>% 
+  melt(varnames = c("age","id"), value.name = "state") %>% 
+  mutate(state = as.character(state)) %>% 
+  arrange(id, age) %>% 
+  group_by(id) %>% 
+  mutate(x_left_first_retire = align(x = state, state = "Retired", type = "left", spell="first"),
+         x_right_first_employment = align(x = state, state = "Employed", type = "right", spell="first"),
+         y_step_up_inactive = clock(x = state, clock_type = "step", increasing = TRUE, state = "Inactive"),
+         y_step_down_inactive = clock(x = state, clock_type = "step", increasing = FALSE, state = "Inactive"),
+         y_dur_inactive = clock(x = state, clock_type = "duration", state = "Inactive")
+         ) %>% 
+  gather(key = "alignment",value="x",c("age","x_left_first_retire","x_right_first_employment")) %>% 
+  gather(key = "clock", value = "value", c("y_step_up_inactive","y_step_down_inactive","y_dur_inactive")) %>% 
+  filter(!is.na(value))
+
+alignlabs <- c("Age","Entry first retirement", "Exit first employment")
+names(alignlabs) <- c("age","x_left_first_retire","x_right_first_employment")
+```
+
+```{r, warning=FALSE,message=FALSE, echo = FALSE}
+ RTraj_long %>% 
+   group_by(alignment, clock, x) %>% 
+   summarize(value = mean(value, na.rm=TRUE)) %>% 
+   #rename("mean(time)" = "value") %>% 
+ # head()
+ ggplot(mapping = aes(x=x,y=value,color=clock)) +
+   geom_line() +
+   facet_wrap(~alignment, scales ="free_x", labeller = labeller(alignment = alignlabs)) +
+   ylab("mean time inactive") +
+   xlab("") + 
+  ylim(0,10)+
+  labs(color = "Inactivity clocks")+
+  scale_color_manual(labels = c("Total duration", "Time to exit","Time since entry"), values = c("black","blue", "red")) +
+      theme(strip.text.x = element_text(size = 12),
+            axis.text=element_text(size=12), 
+            axis.title=element_text(size=12),
+            legend.text = element_text(size=12),
+            legend.title = element_text(size=14))
+```
+
+## Macro Patterns: ADL step clocks, 4 alignments, 1996
+
+```{r, include = FALSE, cache = TRUE}
+# dplyr + ggplot attempts
+RHRS_long <- readRDS(here("Spells","Data","HRS","RHRS_long.rds"))
+
+alignlabs <- c("Age","First health exit", "Last health exit","Time to death")
+names(alignlabs) <- c("age","x_exit_health_first","x_exit_health_last","x_death")
+```
+
+```{r, warning=FALSE,message=FALSE, echo = FALSE}
+ RHRS_long %>% 
+   filter(year == 1996) %>% 
+   group_by(alignment, clock, x) %>% 
+   summarize(value = mean(value, na.rm=TRUE)) %>% 
+   #rename("mean(time)" = "value") %>% 
+ # head()
+ ggplot(mapping = aes(x=x,y=value,color=clock)) +
+   geom_line() +
+   facet_wrap(~alignment, scales ="free_x", labeller = labeller(alignment = alignlabs)) +
+   ylab("mean time disabled") +
+   xlab("") + 
+  ylim(0,20)+
+  labs(color = "ADL clocks")+
+  scale_color_manual(labels = c("Total duration", "Time to exit","Time since entry"), values = c("black","blue", "red")) +
+      theme(strip.text.x = element_text(size = 12),
+            axis.text=element_text(size=12), 
+            axis.title=element_text(size=12),
+            legend.text = element_text(size=12),
+            legend.title = element_text(size=14))
+```
+
+## Macro Patterns: ADL step clocks, 4 alignments, 2006
+
+```{r, warning=FALSE,message=FALSE, echo = FALSE}
+ RHRS_long %>% 
+   filter(year == 2006) %>% 
+   group_by(alignment, clock, x) %>% 
+   summarize(value = mean(value, na.rm=TRUE)) %>% 
+   #rename("mean(time)" = "value") %>% 
+ # head()
+ ggplot(mapping = aes(x=x,y=value,color=clock)) +
+   geom_line() +
+   facet_wrap(~alignment, scales ="free_x", labeller = labeller(alignment = alignlabs)) +
+   ylab("mean time disabled") +
+   xlab("") + 
+  ylim(0,20)+
+  labs(color = "ADL clocks")+
+  scale_color_manual(labels = c("Total duration", "Time to exit","Time since entry"), values = c("black","blue", "red")) +
+      theme(strip.text.x = element_text(size = 12),
+            axis.text=element_text(size=12), 
+            axis.title=element_text(size=12),
+            legend.text = element_text(size=12),
+            legend.title = element_text(size=14))
+```
+
+## Macro Patterns: ADL step clocks, 4 alignments, 2014
+
+```{r, include = FALSE, cache = TRUE}
+# dplyr + ggplot attempts
+
+```{r, warning=FALSE,message=FALSE, echo = FALSE}
+ RHRS_long %>% 
+   filter(year == 2014) %>% 
+   group_by(alignment, clock, x) %>% 
+   summarize(value = mean(value, na.rm=TRUE)) %>% 
+   #rename("mean(time)" = "value") %>% 
+ # head()
+ ggplot(mapping = aes(x=x,y=value,color=clock)) +
+   geom_line() +
+   facet_wrap(~alignment, scales ="free_x", labeller = labeller(alignment = alignlabs)) +
+   ylab("mean time disabled") +
+   xlab("") + 
+  ylim(0,20)+
+  labs(color = "ADL clocks")+
+  scale_color_manual(labels = c("Total duration", "Time to exit","Time since entry"), values = c("black","blue", "red")) +
+      theme(strip.text.x = element_text(size = 12),
+            axis.text=element_text(size=12), 
+            axis.title=element_text(size=12),
+            legend.text = element_text(size=12),
+            legend.title = element_text(size=14))
+```
+
+## Conclusions
+
+\Large
+> - Many potential measures
+> - Measures translate to natural language
+> - `R` package `Spells` in beta version
+> - grammar still in development
+> - Searching for diverse applications
+
+## 
+
+Thanks! ![](SpellsHex.pdf){width=200px}
+
+Tim Riffe & Andrés Castro
+
+

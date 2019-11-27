@@ -19,7 +19,7 @@ TM <- as.matrix(
 		read.csv(TM_path,
 				check.names = FALSE)
 )
-
+dim(TM)
 
 # transpose for standard MC stuff.
 # demographers do stuff transposed...
@@ -33,6 +33,7 @@ mcEmpl <- new("markovchain", states = rownames(TM),
 # how many sequences should we generate?
 N      <- 1e4
 
+set.seed(1)
 # each assuming a start in employment at age 50.
 RTraj  <- replicate(N,
 		rmarkovchain(n = 50, object = mcEmpl, t0 = "50::Employed", parallel = TRUE)
@@ -41,4 +42,4 @@ RTraj                 <- rbind(rep("50::Employed",N), RTraj)
 RTraj_clean           <- gsub(".*:","",RTraj)
 rownames(RTraj_clean) <- 50:100
 
-
+# ------------------
