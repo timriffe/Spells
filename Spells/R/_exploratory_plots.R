@@ -1,8 +1,17 @@
 
-setwd("U:/Cloud/Spells/Spells/Data/Castro")
-load('cas_wom_seqs.RData')
-
+#setwd("U:/Cloud/Spells/Spells/Data/Castro")
+library(here)
+library(devtools)
 library(TraMineR)
+library(tidyverse)
+library(reshape2)
+
+load_all(here("Spells","R","Spells"))
+
+
+load(here("Spells","Data","Castro","cas_wom_seqs.RData"))
+
+
 
 df$tbirths<-apply(m_births, 1, sum, na.rm=T)
 table(df$tbirths)
@@ -33,9 +42,7 @@ abline(h=c(5000, 42004), lwd=2)
 dev.off()
 
 getwd()
-library(devtools)
-library(here)
-load_all(here("Spells","R","Spells"))
+
 
 
 x <- c(sample(c("A","I"),size=10,replace = TRUE, prob = c(.8,.2)),
@@ -57,8 +64,12 @@ head(step_up_1)
 ######################################
 # build a tidy object
 
-library(tidyverse)
-library(reshape2)
+# orders to long
+m_orders           <- as.matrix(m_orders)
+dimnames(m_orders) <- list(1:nrow(m_births),10:50)
+o_tidy             <- reshape2::melt(m_orders, 
+                                     varnames = c("id","age"), 
+                                     value.name = "order")
 
 # births to long
 m_births           <- as.matrix(m_births)
@@ -83,23 +94,27 @@ u_tidy             <- reshape2::melt(m_unions,
 # join operation takes a little time
 db_tidy <- 
   left_join(b_tidy, p_tidy, by = c("id","age")) %>% 
-  left_join(u_tidy, by = c("id","age"))
+  left_join(u_tidy, by = c("id","age")) %>% 
+  left_join(o_tidy, by = c("id","age")) 
 
-db_tidy %>% 
+
+db_to_summarize_and_plot <- db_tidy %>% 
   mutate(birth = as.character(birth),
          parity = as.character(parity),
          union = as.character(union)) %>% 
   group_by(id) %>% 
-  mutate(ceb = max(as.numeric(parity)),
+  # need to filter on ever-union, if we use it to align.
+  mutate(ev_union = any(union == "Married/In union", na.rm = TRUE),
+         ceb = max(as.numeric(parity)),
          ceb = ifelse(ceb > 3, 4, ceb),
          left_union = align(x = union,
                             state = "Never m/u", 
-                            type ="right",
+                            type ="left",
                             spell = "first"),
-         # left_par1 = aligns(x = parity,
-         #                    state = "1", 
-         #                    type ="left",
-         #                    spell = "first"),
+         left_par1 = align(x = parity,
+                            state = "1", 
+                            type ="left",
+                            spell = "first"),
          c_step_down_par1 = clock(
                             x = parity,
                             state = "1", 
@@ -107,10 +122,39 @@ db_tidy %>%
                             increasing  = FALSE)
          ) %>% 
   ungroup() %>% 
-  filter(ceb >= 2) %>% 
-  group_by(ceb, left_union) %>% 
-  summarize(med_time_left = median(c_step_down_par1, na.rm=TRUE)) %>% 
-  ggplot(mapping = aes(x = left_union, y = med_time_left)) + 
-  geom_line()
-  
+  filter(ceb >= 2,
+         !is.na(age)) %>% 
+  group_by(id) %>% 
+  mutate(afb = min(as.numeric(age[birth == "1"])),
+         afb5 = afb - afb %% 5) 
 
+# left union time left to second birth, stratified by
+# ceb AND age at first birth
+db_to_summarize_and_plot %>% 
+  # aligned on ev union, so need to filter on it.
+  filter(ev_union) %>% 
+  group_by(ceb, left_union, afb5) %>% 
+  summarize(med_time_left = median(c_step_down_par1, na.rm=TRUE),
+            mean_time_left = mean(c_step_down_par1, na.rm=TRUE))  %>% 
+  ggplot(mapping = aes(x = left_union, 
+                       y = mean_time_left, 
+                       color = as.factor(ceb))) + 
+  geom_line() + 
+  geom_vline(xintercept = 1) +
+  facet_wrap(~afb5) + 
+  guides(color=guide_legend(title="CEB"))
+  
+# left align on first birth, mean time left to second birth, stratified by
+# ceb AND age at first birth. CED already filtered
+db_to_summarize_and_plot %>% 
+  group_by(ceb, left_par1, afb5) %>% 
+  summarize(med_time_left = median(c_step_down_par1, na.rm=TRUE),
+            mean_time_left = mean(c_step_down_par1, na.rm=TRUE))  %>% 
+  ggplot(mapping = aes(x = left_par1, 
+                       y = mean_time_left, 
+                       color = as.factor(ceb))) + 
+  geom_line() + 
+  geom_vline(xintercept = 0) +
+  facet_wrap(~afb5) + 
+  guides(color=guide_legend(title="CEB")) +
+  xlim(0,20)
