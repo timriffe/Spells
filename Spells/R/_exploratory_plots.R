@@ -128,6 +128,7 @@ db_to_summarize_and_plot <- db_tidy %>%
   mutate(afb = min(as.numeric(age[birth == "1"])),
          afb5 = afb - afb %% 5) 
 
+
 # left union time left to second birth, stratified by
 # ceb AND age at first birth
 db_to_summarize_and_plot %>% 
