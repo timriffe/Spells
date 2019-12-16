@@ -1,18 +1,146 @@
-
-#setwd("U:/Cloud/Spells/Spells/Data/Castro")
-library(here)
-library(devtools)
-library(TraMineR)
-library(tidyverse)
+library(here); library(devtools)
+library(TraMineR); library(tidyverse)
 library(reshape2)
 
 load_all(here("Spells","R","Spells"))
-
-
 load(here("Spells","Data","Castro","cas_wom_seqs.RData"))
 
+db_tidy <- dat
+
+db_to_summarize_and_plot <- db_tidy %>% 
+  mutate(parity = as.character(parity),
+         bparity = as.character(bparity),
+         gparity = as.character(gparity)) %>% 
+  group_by(ident) %>% 
+  # need to filter on ever-union, if we use it to align.
+  mutate(dfb = min(dob, na.rm=T),
+         wdb = min(v011, na.rm=T),
+         afb = floor((dfb- wdb)/12), afb5 = afb - afb %% 5,
+         sexf = na.omit(sex)[1],
+         ev_union = any(evmar == "M", na.rm = TRUE),
+         ceb = max(as.numeric(parity)),
+         ceb = ifelse(ceb > 3, 4, ceb),
+         
+         # Alingments
+         left_union = align(x = ev_union,
+                            state = "NM", 
+                            type ="left",
+                            spell = "first"),
+         
+         left_par1 = align(x = parity,
+                           state = "1", 
+                           type ="left",
+                           spell = "first"),
+         
+         la_fboy = align(x = bparity, state = "1", type ="left", spell = "first"),
+         
+         la_fgir = align(x = gparity, state = "1", type ="left", spell = "first"),
+         
+         # Clocks
+         c_step_down_par1 = clock(x = parity, state = "1",  clock_type  = "step", 
+           increasing  = FALSE),
+         
+         c_step_down_boy1 = clock(x = bparity, state = "1", clock_type  = "step", 
+           increasing  = FALSE),
+         
+         c_step_down_gir1 = clock(x = gparity, state = "1", clock_type  = "step", 
+           increasing  = FALSE)
+  ) %>% 
+  ungroup() %>% 
+  filter(ceb >= 2, !is.na(mage))
+
+glimpse(db_to_summarize_and_plot)  
+table(db_to_summarize_and_plot$ceb, db_to_summarize_and_plot$afb)
+
+# left first BIRTH time left to second birth, stratified by
+# sex of the first birth AND age at first birth
+db_to_summarize_and_plot %>% 
+  # aligned on ev union, so need to filter on it.
+  group_by(sexf, afb5, left_par1) %>% 
+  summarize(med_time_left = median(c_step_down_par1, na.rm=TRUE),
+            mean_time_left = mean(c_step_down_par1, na.rm=TRUE))  %>% 
+  ggplot(mapping = aes(x = left_par1, 
+                       y = mean_time_left, 
+                       color = as.factor(sexf))) + 
+  geom_line() + 
+  geom_vline(xintercept = 1) +
+  facet_wrap(~afb5) + 
+  guides(color=guide_legend(title="Sex of the first child"))
 
 
+# left first BIRTH time left to second BOY, stratified by
+# sex of the first birth AND age at first birth
+db_to_summarize_and_plot %>% 
+  # aligned on ev union, so need to filter on it.
+  group_by(sexf, afb5, la_fboy) %>% 
+  summarize(med_time_left = median(c_step_down_boy1, na.rm=TRUE),
+            mean_time_left = mean(c_step_down_boy1, na.rm=TRUE))  %>% 
+  ggplot(mapping = aes(x = la_fboy, 
+                       y = mean_time_left, 
+                       color = as.factor(sexf))) + 
+  geom_line() + 
+  geom_vline(xintercept = 1) +
+  facet_wrap(~afb5) + 
+  guides(color=guide_legend(title="Sex of the first child"))
+
+
+# left first BIRTH time left to second GIRL, stratified by
+# sex of the first birth AND age at first birth
+db_to_summarize_and_plot %>% 
+  # aligned on ev union, so need to filter on it.
+  group_by(sexf, afb5, la_fgir) %>% 
+  summarize(med_time_left = median(c_step_down_gir1, na.rm=TRUE),
+            mean_time_left = mean(c_step_down_gir1, na.rm=TRUE))  %>% 
+  ggplot(mapping = aes(x = la_fgir, 
+                       y = mean_time_left, 
+                       color = as.factor(sexf))) + 
+  geom_line() + 
+  geom_vline(xintercept = 1) +
+  facet_wrap(~afb5) + 
+  guides(color=guide_legend(title="Sex of the first child"))
+
+
+
+
+
+## first two pipes for plotting
+
+# left union time left to second birth, stratified by
+# ceb AND age at first birth
+db_to_summarize_and_plot %>% 
+  # aligned on ev union, so need to filter on it.
+  filter(ev_union) %>% 
+  group_by(ceb, left_union, afb5) %>% 
+  summarize(med_time_left = median(c_step_down_par1, na.rm=TRUE),
+            mean_time_left = mean(c_step_down_par1, na.rm=TRUE))  %>% 
+  ggplot(mapping = aes(x = left_union, 
+                       y = mean_time_left, 
+                       color = as.factor(ceb))) + 
+  geom_line() + 
+  geom_vline(xintercept = 1) +
+  facet_wrap(~afb5) + 
+  guides(color=guide_legend(title="CEB"))
+
+# left align on first birth, mean time left to second birth, stratified by
+# ceb AND age at first birth. CED already filtered
+db_to_summarize_and_plot %>% 
+  group_by(ceb, left_par1, afb5) %>% 
+  summarize(med_time_left = median(c_step_down_par1, na.rm=TRUE),
+            mean_time_left = mean(c_step_down_par1, na.rm=TRUE))  %>% 
+  ggplot(mapping = aes(x = left_par1, 
+                       y = mean_time_left, 
+                       color = as.factor(ceb))) + 
+  geom_line() + 
+  geom_vline(xintercept = 0) +
+  facet_wrap(~afb5) + 
+  guides(color=guide_legend(title="CEB")) +
+  xlim(0,20)
+
+
+
+
+
+### old stuff
 df$tbirths<-apply(m_births, 1, sum, na.rm=T)
 table(df$tbirths)
 
@@ -144,7 +272,7 @@ db_to_summarize_and_plot %>%
   geom_vline(xintercept = 1) +
   facet_wrap(~afb5) + 
   guides(color=guide_legend(title="CEB"))
-  
+
 # left align on first birth, mean time left to second birth, stratified by
 # ceb AND age at first birth. CED already filtered
 db_to_summarize_and_plot %>% 
