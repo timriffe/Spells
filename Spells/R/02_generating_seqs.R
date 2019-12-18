@@ -39,6 +39,8 @@ dat <- db %>%
   ungroup() %>% 
   arrange(ident, mage) 
   
-remove(list=ls()[-c(grep("dsets",ls()), grep("dat",ls()), grep("vars",ls()))])
-setwd(here('Spells', 'Data', 'Castro'))
-save.image('cas_wom_seqs.RData')
+# remove(list=ls()[-c(grep("dsets",ls()), grep("dat",ls()), grep("vars",ls()))])
+# setwd(here('Spells', 'Data', 'Castro'))
+# save.image('cas_wom_seqs.RData')
+# TR: changed this so that when data read in we don't get the whole workspace.
+saveRDS(dat,here("Spells","Data","Castro","cas_wom_tidy.rds"))

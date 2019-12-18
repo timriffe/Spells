@@ -1,11 +1,17 @@
 library(here); library(devtools)
 library(TraMineR); library(tidyverse)
-library(reshape2)
+library(reshape2); library(colorspace)
 
 load_all(here("Spells","R","Spells"))
-load(here("Spells","Data","Castro","cas_wom_seqs.RData"))
+# load(here("Spells","Data","Castro","cas_wom_seqs.RData"))
 
-db_tidy <- dat
+db_tidy <- readRDS(here("Spells","Data","Castro","cas_wom_tidy.rds"))
+
+
+first_sex <- function(x){
+  x[!is.na(x)][1]
+}
+
 
 db_to_summarize_and_plot <- db_tidy %>% 
   mutate(parity = as.character(parity),
@@ -16,7 +22,7 @@ db_to_summarize_and_plot <- db_tidy %>%
   mutate(dfb = min(dob, na.rm=T),
          wdb = min(v011, na.rm=T),
          afb = floor((dfb- wdb)/12), afb5 = afb - afb %% 5,
-         sexf = na.omit(sex)[1],
+         sexf = first_sex(sex),
          ev_union = any(evmar == "M", na.rm = TRUE),
          ceb = max(as.numeric(parity)),
          ceb = ifelse(ceb > 3, 4, ceb),
@@ -32,8 +38,8 @@ db_to_summarize_and_plot <- db_tidy %>%
                            type ="left",
                            spell = "first"),
          
+         # Note: if first birth is a girl, la_fboy just starts at 0
          la_fboy = align(x = bparity, state = "1", type ="left", spell = "first"),
-         
          la_fgir = align(x = gparity, state = "1", type ="left", spell = "first"),
          
          # Clocks
@@ -52,6 +58,8 @@ db_to_summarize_and_plot <- db_tidy %>%
 glimpse(db_to_summarize_and_plot)  
 table(db_to_summarize_and_plot$ceb, db_to_summarize_and_plot$afb)
 
+saveRDS(db_to_summarize_and_plot, here("Spells","Data","Castro","cas_wom_measures.rds"))
+
 # left first BIRTH time left to second birth, stratified by
 # sex of the first birth AND age at first birth
 db_to_summarize_and_plot %>% 
@@ -63,41 +71,53 @@ db_to_summarize_and_plot %>%
                        y = mean_time_left, 
                        color = as.factor(sexf))) + 
   geom_line() + 
-  geom_vline(xintercept = 1) +
+  #geom_vline(xintercept = c(0,1)) +
+  # transparent band presumed to isolate twins
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5,
+           alpha = .2) +
   facet_wrap(~afb5) + 
-  guides(color=guide_legend(title="Sex of the first child"))
+  xlim(0,25) + 
+  guides(color=guide_legend(title="Sex of the first child")) + 
+  xlab("time since first birth") + 
+  ylab("mean time to second birth")
 
 
+# TR: this one is freaking cool!
 # left first BIRTH time left to second BOY, stratified by
 # sex of the first birth AND age at first birth
 db_to_summarize_and_plot %>% 
   # aligned on ev union, so need to filter on it.
-  group_by(sexf, afb5, la_fboy) %>% 
+  group_by(sexf, afb5, left_par1) %>% 
   summarize(med_time_left = median(c_step_down_boy1, na.rm=TRUE),
             mean_time_left = mean(c_step_down_boy1, na.rm=TRUE))  %>% 
-  ggplot(mapping = aes(x = la_fboy, 
+  ggplot(mapping = aes(x = left_par1, 
                        y = mean_time_left, 
                        color = as.factor(sexf))) + 
   geom_line() + 
-  geom_vline(xintercept = 1) +
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5,
+           alpha = .2) +
   facet_wrap(~afb5) + 
-  guides(color=guide_legend(title="Sex of the first child"))
+  guides(color=guide_legend(title="Sex of the first child")) + 
+  xlim(0,25)
 
 
+# TR: OMG they balance out!
 # left first BIRTH time left to second GIRL, stratified by
 # sex of the first birth AND age at first birth
 db_to_summarize_and_plot %>% 
   # aligned on ev union, so need to filter on it.
-  group_by(sexf, afb5, la_fgir) %>% 
+  group_by(sexf, afb5, left_par1) %>% 
   summarize(med_time_left = median(c_step_down_gir1, na.rm=TRUE),
             mean_time_left = mean(c_step_down_gir1, na.rm=TRUE))  %>% 
-  ggplot(mapping = aes(x = la_fgir, 
+  ggplot(mapping = aes(x = left_par1, 
                        y = mean_time_left, 
                        color = as.factor(sexf))) + 
   geom_line() + 
-  geom_vline(xintercept = 1) +
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5,
+           alpha = .2) +
   facet_wrap(~afb5) + 
-  guides(color=guide_legend(title="Sex of the first child"))
+  guides(color=guide_legend(title="Sex of the first child"))+ 
+  xlim(0,25)
 
 
 
@@ -117,9 +137,12 @@ db_to_summarize_and_plot %>%
                        y = mean_time_left, 
                        color = as.factor(ceb))) + 
   geom_line() + 
-  geom_vline(xintercept = 1) +
-  facet_wrap(~afb5) + 
-  guides(color=guide_legend(title="CEB"))
+  # annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5,
+  #          alpha = .2) +
+  facet_wrap(~afb5, scales="free_x") + 
+  guides(color=guide_legend(title="CEB")) + 
+  scale_color_discrete_sequential(palette = "Peach", rev = TRUE, nmax = 3) 
+
 
 # left align on first birth, mean time left to second birth, stratified by
 # ceb AND age at first birth. CED already filtered
@@ -131,10 +154,12 @@ db_to_summarize_and_plot %>%
                        y = mean_time_left, 
                        color = as.factor(ceb))) + 
   geom_line() + 
-  geom_vline(xintercept = 0) +
+  # annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5,
+  #          alpha = .2) +
   facet_wrap(~afb5) + 
   guides(color=guide_legend(title="CEB")) +
-  xlim(0,20)
+  xlim(0,20)+
+  scale_color_discrete_sequential(palette = "Peach",rev = TRUE, nmax = 3)
 
 
 
