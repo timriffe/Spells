@@ -25,7 +25,7 @@ Idea: Realign sequences on transitions. ![](idea.pdf){width=70px}
 ## Backstory
 
 \Large
-Markov matrix expression for average episode count (Dudel & Myrskylä, 2017-).
+Matrix algebra expression for average episode count (Dudel & Myrskylä, 2017-).
 
 \pause
 
@@ -58,14 +58,14 @@ Questions are posed less often, and new pattern discovery less frequent.
 
 \Large
 \begin{block}{\textbf{Solution}}
-We develop a framework (or grammar) of data operations to flexibly derive aggregate patterns.
+We develop a framework (or grammar) of data operations to flexibly derive aggregate patterns from trajectory data.
 \end{block}
 
 <br>
 \pause
 
 \begin{block}{\textbf{Approach}}
- \textbf{Clocks} are within and between episode time operations.\\
+ \textbf{Clocks} are within and between episode timekeeping operations.\\
  \textbf{Alignment} is a time structuring operation.  
 \end{block}
 <!-- if simulated then there is likely a markov expression waiting to be written -->
