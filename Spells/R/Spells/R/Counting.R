@@ -250,6 +250,42 @@ spell_order <- function(x, state = "Inactive", increasing = TRUE, step_size = 1)
 	out
 }
 
+# TR: clock works for a single trajectory, ok. how to deal w censoring?
+# two args left_censor (logical) and right_censor (logical) ? In that case,
+# would need to be applied differently for step, duration, and order clocks.
+
+# Step clocks censoring behavior:
+
+# clock_type = step, left_censor = TRUE, increasing = TRUE
+#    *if very first step is state, then NA first spell
+# clock_type = step, left_censor = TRUE, increasing = FALSE 
+#    *nothing to do.
+# clock_type = step, right_censor = TRUE, increasing = TRUE
+#    *nothing to do.
+# clock_type = step, right_censor = TRUE, increasing = FALSE 
+#    *if very last step is state, then NA last spell
+
+# -----------------------
+# Duration clock censoring behavior:
+
+# clock_type = duration, left_censor = TRUE
+#    *if very first step is state, then NA first spell
+# clock_type = duration, right_censor = TRUE
+#    *if very last step is state, then NA last spell
+
+# ------------------------
+# Order clock censoring behavior:
+
+# clock_type = order, left_censor = TRUE, increasing = TRUE
+#    *NA whole series?
+# clock_type = order, left_censor = TRUE, increasing = FALSE 
+#    *nothing to do.
+# clock_type = order, right_censor = TRUE, increasing = TRUE
+#    *nothing to do.
+# clock_type = order, right_censor = TRUE, increasing = FALSE 
+#    *NA whole series?
+
+
 #' impute clock measures
 #' @description Given a discrete trajectory, impute clock measures to a given reference state or set of states (treating them ar merged). Clocks include 1) step clocks, those that count up from the start of an episode or down toward the end of it. 2) duration clocks, which record the total episode duration in each time step within the episode. 3) order clocks, which record the episode order in each time step within episodes, and which either count up or down.
 #' @details Since sometimes we deal with left-censoring, step and duration measures have an option argument \code{not_first} to throw out counting within the very first episode (which may or may not be the reference episode). The argument \code{step_size} is only relevant for duration and step clocks. Discrete time intervals are assumed equal.
@@ -295,7 +331,7 @@ clock <- function(x,
                   state, 
                   clock_type = c("step", "duration", "order"), 
                   increasing = TRUE, 
-                  not_first = FALSE, 
+                  not_first = FALSE,
                   step_size = 1,
                   dead_state = "Dead"){
   
