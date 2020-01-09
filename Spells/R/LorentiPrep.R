@@ -2,7 +2,8 @@ library(here)
 library(tidyverse)
 library(markovchain)
 library(reshape2)
-library(Spells)
+#library(Spells)
+library(devtools)
 # 0) load functions
 source(here::here("Spells","R","LorentiFunctions.R"))
 
@@ -24,9 +25,9 @@ FImc <- closeout(FI)
 
 # 4)
 # simulation global parameter
-Ntraj <- 30000
+Ntraj <- 50000
 
-# each assuming a start healthy at age 50.
+# each assuming a start healthy at age 16
 # *If you wanted some fraction to start
 # in healthy and some in disability, then
 # you'd need to repeat this with round(Ntraj * init[1])
