@@ -6,6 +6,9 @@ library(Spells)
 # 0) load functions
 source(here::here("Spells","R","LorentiFunctions.R"))
 
+# I need this line to load Spells (candres)
+load_all(here("Spells","R","Spells"))
+
 # 1) read in ITSILC data:
 
 TR <- readRDS(here("Spells","Data","Lorenti","SILC_tr_prob12_15.RDS"))

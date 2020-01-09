@@ -53,12 +53,13 @@ db_to_summarize_and_plot <- db_tidy %>%
            increasing  = FALSE)
   ) %>% 
   ungroup() %>% 
-  filter(ceb >= 2, !is.na(mage))
+  filter(ceb >= 2 & afb<40, !is.na(mage))
 
 glimpse(db_to_summarize_and_plot)  
 table(db_to_summarize_and_plot$ceb, db_to_summarize_and_plot$afb)
 
 saveRDS(db_to_summarize_and_plot, here("Spells","Data","Castro","cas_wom_measures.rds"))
+setwd(here("Spells","Figures"))
 
 # left first BIRTH time left to second birth, stratified by
 # sex of the first birth AND age at first birth
@@ -73,14 +74,14 @@ db_to_summarize_and_plot %>%
   geom_line() + 
   #geom_vline(xintercept = c(0,1)) +
   # transparent band presumed to isolate twins
-  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5,
-           alpha = .2) +
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5, alpha = .2) +
   facet_wrap(~afb5) + 
-  xlim(0,25) + 
-  guides(color=guide_legend(title="Sex of the first child")) + 
-  xlab("time since first birth") + 
-  ylab("mean time to second birth")
-
+  xlim(0,15) + 
+  scale_color_manual(labels = c("Boy", "Girl"), values = c("blue", "red")) +
+  guides(color=guide_legend(title="First child")) + 
+  xlab("Time since first birth") + 
+  ylab("Mean time to second birth")
+dev.print(device=pdf, 'mt_second_birth_by_sex_first.pdf', width=7, height=5)
 
 # TR: this one is freaking cool!
 # left first BIRTH time left to second BOY, stratified by
@@ -94,11 +95,15 @@ db_to_summarize_and_plot %>%
                        y = mean_time_left, 
                        color = as.factor(sexf))) + 
   geom_line() + 
-  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5,
-           alpha = .2) +
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 10, alpha = .2) +
   facet_wrap(~afb5) + 
-  guides(color=guide_legend(title="Sex of the first child")) + 
-  xlim(0,25)
+  xlim(0,15) + 
+  scale_color_manual(labels = c("Boy", "Girl"), values = c("blue", "red")) +
+  guides(color=guide_legend(title="First child")) + 
+  xlab("Time since first birth") + 
+  ylab("Mean time to second boy")
+dev.print(device=pdf, 'mt_second_boy_by_sex_first.pdf', width=7, height=5)
+
 
 
 # TR: OMG they balance out!
@@ -113,11 +118,14 @@ db_to_summarize_and_plot %>%
                        y = mean_time_left, 
                        color = as.factor(sexf))) + 
   geom_line() + 
-  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5,
-           alpha = .2) +
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 10, alpha = .2) +
   facet_wrap(~afb5) + 
-  guides(color=guide_legend(title="Sex of the first child"))+ 
-  xlim(0,25)
+  xlim(0,15) + 
+  scale_color_manual(labels = c("Boy", "Girl"), values = c("blue", "red")) +
+  guides(color=guide_legend(title="First child")) + 
+  xlab("Time since first birth") + 
+  ylab("Mean time to second girl")
+dev.print(device=pdf, 'mt_second_gir_by_sex_first.pdf', width=7, height=5)
 
 
 
