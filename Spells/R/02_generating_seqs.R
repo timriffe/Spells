@@ -27,6 +27,7 @@ dat <- db %>%
          bparity = cumsum(bparity),
          gparity = ifelse(!is.na(sex) & sex == 2, 1, 0),
          gparity = cumsum(gparity),
+         res = v025[which.max(mage)],
          pwt = unique(v005[!is.na(v005)]),
          v008 = unique(v008[!is.na(v008)]),
          yr = v008 / 12 + 1900,
