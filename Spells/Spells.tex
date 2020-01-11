@@ -42,12 +42,12 @@
 
 \begin{abstract}
 
-\absdiv{Background}Individuals are often either observed or modeled as passing through a sequence of discrete states. These are usually either simplified into transition probabilities for Markov-derived aggregate statistics, or else retained for pattern and group detection using sequence analysis. Markov-derived statistics are of limited scope (moment stats), and sequence analysis doesn't typically lead to heuristic understanding of macro patterns.
-\absdiv{Objective}We broaden the scope of aggregate patterns and summary indices that may be calculated from trajectory data, including trajectories generated from Markov models. For example, one might calculate the time-since-event or time-to-event pattern of episode duration.
+\absdiv{Background}Individuals are often observed passing through a sequence of discrete states in trajectory data. These are usually either simplified into transition probabilities to derive asymptotic values of aggregate statistics using Markov assumptions, or else retained for pattern and group detection using sequence analysis. Markov-derived aggregate statistics are of limited scope, and sequence analysis appears aimed at inferring typologies than generating aggregates.
+\absdiv{Objective}We broaden the scope of aggregate patterns and summary indices that may be calculated from trajectory data, including trajectories generated from Markov models by proposing a simple grammar of operations for trajectory data.
 \absdiv{Methods}We introduce the concepts of clocking and alignment as a new framework for generating novel statistics from trajectories. 
-\absdiv{Data}We use different data to demonstrate concepts and give example applications. We use published transition probabilities (originally derived from US HRS data) to simulate discrete trajectories of employment states. We will use fertility and union trajectories derived from Colombian DHS data for example applications. We will also have health applications from either directly observed or simulated trajectories, tbd.
-\absdiv{Results}We demonstrate several new measures in the areas of health, family, and labor demography.
-\absdiv{Conclusions}We generate several new patterns and measures in the areas of health, family, and labor demography. An R package is presented to facilitate experimentation with these operations.
+\absdiv{Data}We use different data to demonstrate concepts and give example applications. We use published transition probabilities to simulate discrete trajectories of employment states to demonstrate concepts. We  use retrospective fertility and union trajectories from Colombian DHS data and disability trajectories simulated from Italian SILC data for example applications.
+\absdiv{Results}We demonstrate  several new demographic aggregate patterns in the areas of disability inequalities and birth intervals.
+\absdiv{Conclusions}We demonstrate the flexibility of this framework and the ease of generating macro patterns. An R package is provided to facilitate experimentation with these operations.
 \end{abstract}
 
 \section{Introduction}
@@ -60,8 +60,7 @@
 % 
 % 
 % Most of what we know about demography (levels, trends) stands on a Markovian foundation: The lifetable is a Markov process, as are most multistate models in practice, and these two analytic instruments underly what we know about longevity, healthy years lived, years worked, and many other of the primary concerns of demography. Results of this approach tend to be synthetic indices, a number or two to summarize an average lifetime from a possibly rich set of age-structured demographic rates or probabilities. And age-structured rates are already an abstraction from an even richer sequence of events and states. Moment statistics, such as life expectancy, are useful metrics, but we're not so sure that they
-
-There is a void between the methodological approaches of Markov statistics and sequence analysis. Markov-generated quantities, like trends and levels, are useful metrics but such information does not necessarily lead to an understanding of processes or of typical experiences. The age-structured data that underlie such Markov calculations are surely appreciated for their articulated and often-regular patterns, but (i) the estimation of such rates already blurs over the features of underlying life trajectories, and (ii) such age patterns serve the objective statistic. Insofar as sequence analysis retains and reasonably typifies life trajectories it might be used to infer processes and identify new patterns. We propose a two-part framework to extract patterns hidden within trajectory data. Such patterns might be age-like patterns of novel prevalence, state-episode-occupancy time measures, or they may be used to derive new rates. Using this framework, we aim to zoom in on demographic patterns that emerge at various stages of the life course, and so describe a given demographic phenomenon (state) from a variety of perspectives. 
+We propose a measurement framework consisting in a two-element grammar designed to extract macro patterns hidden within trajectory data. Such patterns might be age-like patterns of novel prevalence, state-episode-occupancy time measures. Using this framework, we aim to zoom in on demographic patterns that emerge at various stages of the life course, and so describe a given demographic phenomenon (state) from a variety of perspectives. 
 
 We first define \emph{clock} measures, a way to inscribe time, order, prevalence, or other measures into individual life trajectories. This step is analogous to defining a rewards matrix in multistate Markov models \citep[see e.g.][]{caswell2018matrix}, and the ends are not entirely dissimilar. As an example of a concrete Markov link, \citet{dudel2017b} defines a matrix algebra approach to estimate the expected number of episodes of a given state that individuals experience in a given multistate world. Taken together with the total expected state occupancy time, one can infer an average episode duration. And there are both clunky and elegant approaches close at hand to derive an age pattern of expected episode duration. Such measures (even that hasn't been done before) would already add insight to demographic processes. Clock measures are much more flexible than this, and enable the researcher to decompose expected episode durations into expected time spent and left within episodes. Further one can visualize full distributions of these and other prevalence or episode order statistics.
 
@@ -292,18 +291,23 @@ Plots go here and get interpreted
 
  We use clock and alignment operations to examine the mean time to the second birth over the 15 years following the first birth. We compare these mean times according to the age at first birth (five-year age groups) and the sex of the first child. These comparisons help us answer the question of whether or not the sex of the first child increases the risk (i.e., reduces the mean time) of the second birth. 
  
- In addition, we explore the mean times to the second birth conditional on being a girl and a boy separately. Conditioning on the sex of the second birth allows us to examine, for example, if having a first girl imply a faster next girl, or, if having a first boy imply a faster next boy. All together, these comparisons show how birth interval differential vary substantially by age at first birth and also according to the sex of the first and second child.
+ In addition, we explore the mean times to the next girl and to the next boy separately. Conditioning on the sex of the next birth allows us to examine, for example, if having a first girl imply a faster next girl, or, if having a first boy imply a faster next boy. 
+ 
+ All together, these comparisons show how birth interval differentials vary substantially by age at first birth and also according to the sex of the first and second child.
  
 \subsubsection{Data}
 
-We draw our data from seven waves of the Colombian Demographic and Health Survey (CDHS) collected between 1985 and 2015. The CDHS are nationally representative surveys of women in reproductive ages (15 to 49).
+We draw our data from seven waves of the Colombian Demographic and Health Survey (CDHS) collected between 1985 and 2015. The CDHS are nationally representative surveys of women in reproductive ages (15 to 49). All these surveys are publicly available upon registration at: https://www.dhsprogram.com/data/.
 
-We use full birth histories to reconstruct the reproductive trajectory of all women in the CDHS. We focus on women with at least two children ever born. We show results only for women who had their first birth before age 39 because the proportion of women having their first birth after this age is very small (X\%).
+We use full birth histories to reconstruct the reproductive trajectory of women with at least two children ever born. Hence, we are able to calculate conditional mean time to second births diminishing the influence of right censoring. The bias of right censoring affects more the mean times to next boy and next girl. We do not know the mean time to next boy or girl for women with two children of the same sex at the survey moment. Moreover, we do not know, for example, if a woman with two girls eventually had a boy. To avoid this bias, our calculations of mean time to next boy and next girl are based on the sub-sample of women ages 39 and above. This sub-sample of women are more likely to have finished their reproductive periods, which reduces the influence of right censoring.
 
-Table \ref{tfert_01} shows the total number of women by groups of age at first birth. According to this table, most of the first births occur between ages 15 and 24.
+We show results only for women who had their first birth before age 39 because the proportion of women having their first birth after this age is very small (X\%).
+
+Table \ref{tfert_01} shows the total number of women by groups of age at first birth. According to this table, most of the first births occur between ages 15 and 24, while a very small proportion are to women age 35 to 39 (0.23\%). 
 
 \begin{table}[ht]
 \centering
+\caption{Total number of women with at least two children ever born by age at first birth and children ever born - Colombian Demographic and Health Surveys, 1985 - 2015}
 \begin{tabular}{crrrr}
   \hline
 Age at  & \multicolumn{4}{c}{Children ever born} \\ 
@@ -321,21 +325,25 @@ first birth & Two & Three & Four+ & Total \\
 \label{tfert_01}
 \end{table}
 
+Note that calculations of the mean time to next boy and girl are based on two different sub-samples, one for boys and one for girls. These two samples only include women ages 39 and above at the survey moment (around 30\% of the total sample). In addition, the sample for boys only include women who had boys at parities above one (second, third, etc.), and the sample for girls only include women with girls at parities above one. See detailed sample sizes in the appendix.
+
 \subsubsection{Grammatical operations}
 
-We use one alignment operation and three different clocks to get at the aggregate-patterns of mean time to second birth. We align women's reproductive trajectory on the age at first birth. For illustrative proposes consider a women interviewed at age 35 who had three children at ages 25, 28 and 33. The first two were girls and the last one a boy. The following table represents her reproductive trajectory.
+We use one alignment operation and three different clocks to get at the aggregate-patterns of mean time to second birth and mean time to next boy and girl. We align women's reproductive trajectory on the age at first birth. For illustrative proposes, consider a women interviewed at age 39 who had three children at ages 25, 28 and 33. The first two were girls and the last one a boy. The following illustration represents her reproductive trajectory.
 
 \begin{center}
 \begin{tabular}{c|ccccccccccccc}
 \hline
-    Age & 15 & $...$ & 25 & 26 & 27 & 28 & 29 & 30 & 31 & 32 & 33 & 34 & 35 \\
-    Sex & - & $...$ & girl & - & - & girl & - & - & - & - & boy & - & - \\\hline
+    Age & 15 & $...$ & 25 & 26 & 27 & 28 & 29 & 30 & 31 & 32 & 33 & $...$ & 39 \\
+    Sex & - & $...$ & girl & - & - & girl & - & - & - & - & boy & $...$ & - \\\hline
 \end{tabular}
 \end{center}
 
-The first clock counts the number of years to the second birth. Following the previous example, the aligned-clocked sub-sequence for ages 25 to 28 will look like this: 3-2-1-0. This sub-sequence means that when the first birth occur (at age 25) this women had three years left, before the second birth. At age 26, she had two years left, etc. By age 28, she had a second birth, for which the clock equals zero.
+After alignment, the time zero for this woman is age 25, i.e, the age of the first birth. Using this age as a reference, the first clock counts the number of years to the second birth. The aligned-clocked sub-sequence for ages 25 to 28 for this woman looks like this: 3-2-1-0. This sub-sequence means that when the first birth occur (at age 25) this women had three years left before the second birth. At age 26, she had two years left, etc. By age 28, she had a second birth, for which the clock equals zero.
 
-We define two analogous clocks to examine differences by the sex of the second birth. In the first case, the clock counts the remaining years to the next boy. In the second case, the clock counts the remaining years to the next girls. If a woman did not have a boy or a gilt, the clock does....(what does it do?). Table X displays the aligned sequence, starting at time zero (age at first birth, and the three clocks that input time into women's reproductive trajectory.
+We define two analogous clocks to examine differences by the sex of the second birth. In the first case, the clock counts the remaining years to the next boy; in the second case, the clock counts the remaining years to the next girls. 
+
+The following illustration displays the aligned sequence and the three clocks for the woman in our example.
 
 \begin{center}
 \begin{tabular}{l|ccccccccccc}
@@ -344,49 +352,55 @@ We define two analogous clocks to examine differences by the sex of the second b
     Age & 25 & 26 & 27 & 28 & 29 & 30 & 31 & 32 & 33 & 34 & 35 \\
     Sex & girl & - & - & girl & - & - & - & - & boy & - & - \\
     %\multicolumn{11}{l}{\textbf{Clocks}}\\
-    Clock: To second birth & 3 & 2 & 1 & 0 & - & - & - & - & - & - & - \\
-    Clock: To next boy & 8 & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 & - & - \\
-    Clock: To next girl & 3 & 2 & 1 & 0 & - & - & - & - & - & - & - \\\hline
+    1st. Clock: To second birth & 3 & 2 & 1 & 0 & - & - & - & - & - & - & - \\
+    2nd. Clock: To next boy & 8 & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 & - & - \\
+    3rd. Clock: To next girl & 3 & 2 & 1 & 0 & - & - & - & - & - & - & - \\\hline
 \end{tabular}
 \end{center}
 
-Note the information that is ignore AND the coincidence between the to clocks.
+Note that the 2nd. and 3rd. clocks can only be defined if there is at least one boy and one girls after the first birth. This implies that the samples for the mean time to next boy and mean time to next girl are not identical. This difference between the samples is not problematic given the mere illustrative propose of our application. Moreover, clocks and sub-samples can be defined differently so that the two sample became identical, enhancing comparability.
 
-Once this alignment operation is performed and the three clocks are computed for all women in the sample, we take the mean of the columns. These means should be interpreted as conditional mean time to second birth, to next boy, and next girl.
 
 \subsubsection{Results}
-Figure \ref{fert_01} displays the aggregated patterns of the mean time to the second birth over the 10 years after the first child by women's age at first birth, and according to the sex of the first child. Overall, the mean time to second births range between 0.5 and slightly more than 3 years. There are significant difference across age at first birth groups
+Figure \ref{fert_01} displays the aggregated patterns of the mean time to the second birth over the 10 years after the first child by women's age at first birth, and according to the sex of the first child. Overall, the mean time to the second birth range between 0.5 and slightly more than 3 years. There are significant difference across age at first birth groups, and much more moderate discrepancies according to the sex of the first birth.
 
 \begin{figure}[H]
-    \centering
-    \caption{Mean time to second birth by age at first birth (five-year age groups) and sex of the first child. Colombian DHS 1985-2015}
-    \includegraphics{Spells/Figures/mt_second_birth_by_sex_first.pdf}
+\centering
+\caption{Mean time to second birth by age at first birth (five-year age groups) and sex of the first child. Colombian DHS 1985-2015}
+    \includegraphics[scale=0.8]{Spells/Figures/mt_second_birth_by_sex_first.pdf}\\
+    %\includegraphics[scale=0.8]{Spells/Figures/mt_second_birth_by_sex_first_cohort.pdf}
     \label{fert_01}
     Note: the gray rectangle of one year width indicate the birth of twins, i.e., mean time to next birth less than one year.
 \end{figure}
 
-Among the first three age at first birth groups, the mean time to second birth is relatively flat over the 10 years following the first birth meaning that for women who had their first birth between ages 10 and 19 (and moved on to have at least one more), the risk of a second birth is constant over the period after the first child. On average, between 2.5 and 3 years precede the birth of a second child. Additionally, in the first age group, the birth of a boy is associated with higher mean time to second birth during the 10 years after the first birth.
+Among the first three age at first birth groups (10-14, 15-19, and 20-24), the mean time to second birth is relatively flat over the 10 years following the first birth meaning that the risk of a second birth is constant over the period after the first child. On average, between 2.5 and 3 years precede the birth of a second child. Additionally, in the first age group, the birth of a boy is associated with higher mean time to second birth during the 10 years after the first birth.
 
-Among the other three age at first birth groups, the mean time to second birth decline over time. This decline is specially marked among the last two groups which is consistent with the limit of the reproductive period for women. In these three groups, difference by sex of the first birth are very small, however in the 25-29 age group these small differences are consistent over the ten-year period after the first birth, which suggests they may be important when aggregated. Finally, erratic patterns in the last age groups may be due to small sample size, i.e., very few women having their first child after age 35.
+Among the other three age at first birth groups, the mean time to second birth decline over time. This decline is consistent with the fact that our sample include women with at least two children, i.e., we are certain that a second birth would eventually occurs. In these three groups, difference by sex of the first birth are very small. Finally, the erratic patterns in the last age groups are due to small sample size.
 
-Figure \ref{fert_02} examine the mean time to next boy, i.e., the mean number of years that precede a male birth, again, by women's age at first birth and the sex of the first child. Because of the way clock are defined, the mean time to next boy are about twice the mean time to second birth (refer to Figure \ref{fert_01}. Overall, right after the first birth, the mean number of year that precede a male birth among women who eventually had it is between five and 7.5 years.
+Figure \ref{fert_02} examine the mean time to next boy, i.e., the mean number of years that precede a male birth, again, by women's age at first birth and the sex of the first child. Because of the way clock are defined, the mean time to next boy are about twice the mean time to second birth (refer to Figure \ref{fert_01}. As for the mean time to second birth, differences by age at first birth are substantial, and differences by the sex of the first child are not.
+
+According to Figure \ref{fert_02}, early transition to first birth is associated with increasing mean time to next boy. In other words, when the first birth occur before age 15, the risk of having a boy decreases linearly over time. This is an interesting pattern because it is unique to women who had their first birth before age 15, and it does not depend on the sex of the first child. On the contrary, the pattern of the mean time to next boy for women who had their first birth between ages 15 and 24 looks more like an inverted U. By construction, the mean time to next boy among the last three age groups decline linearly.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics{Spells/Figures/mt_second_boy_by_sex_first.pdf}
-    \caption{Caption}
+ \centering
+    \caption{Mean time to next boy by age at first birth (five-year age groups) and sex of the first child. Colombian DHS 1985-2015}
+    %\includegraphics[scale=0.8]{Spells/Figures/mt_second_boy_by_sex_first.pdf}
+    \includegraphics[scale=0.8]{Spells/Figures/mt_second_boy_by_sex_first_cohort.pdf}\\
     \label{fert_02}
+    Note: the gray rectangle of one year width indicate the birth of twins, i.e., mean time to next birth less than one year.
 \end{figure}
 
-In addition, figure \ref{fert_02} shows that, between ages 15 and 34, having a male first birth is associated with a faster transition to a second male birth regardless. These are the ages where fertility is concentrated for which this association is robust. Consistently with the definitions of the clocks, the sex gap widens a little over time, as eventual female births give higher values to the clock that counts the time to next boy, and narrows towards the en of the ten-year period, because male birth finally occur. 
+Figure \ref{fert_02} also shows that, between ages 15 and 34, having a male first birth is associated with a faster transition to a second male birth at least during the first ten years after the first birth. Interestingly, these differences are larger among the 25-29 age group, and even more significant in the 30-34 age groups. Consistently with the definitions of the clocks, the sex gap narrows towards the end of the ten-year period because male births eventually occur. 
 
-A similar pattern is observed in Figure \ref{fert_03} for the mean time to next girl. On average, between five and 7.5 years precede the birth of a girl after the birth of a first child. Female births are associated with a faster transition to a female birth
+A similar pattern is observed in Figure \ref{fert_03} for the mean time to next girl. The mean time to next girls increases over time for women who had their first child before age 15, and it displays an inverted U-shaped pattern for ages 15 to 24. Consistently, female births are associated with a faster transition to a female birth in these first three age groups.
 
 \begin{figure}[H]
     \centering
-    \includegraphics{Spells/Figures/mt_second_gir_by_sex_first.pdf}
-    \caption{Caption}
+    \caption{Mean time to second birth by age at first birth (five-year age groups) and sex of the first child. Colombian DHS 1985-2015}
+    %\includegraphics[scale=0.8]{Spells/Figures/mt_second_gir_by_sex_first.pdf}
+    \includegraphics[scale=0.8]{Spells/Figures/mt_second_gir_by_sex_first_cohort.pdf}\\
     \label{fert_03}
+    Note: the gray rectangle of one year width indicate the birth of twins, i.e., mean time to next birth less than one year.
 \end{figure}
 
 Compared to the mean time to the next boy, the mean time to next girl displays larger differences by sex of the first child. In other words, the positive association between the sex of the first birth and the mean time of a birth of the same sex, is stronger for girl than boys.
@@ -395,17 +409,17 @@ Righ censoring issues...
 
 \section{Discussion}
 
-We propose a grammar of data operations to allow for creative derivation of demographic macro patterns. Our examples makeup a small subset of those possible, even with the small state space used in our example. To give a sense of the number of macro patterns possible, multiply (1) the number of state categories, (2) episode selection options (first, last, longest, etc), (3) alignment options (left, right, center, etc), and clock options (duration, time spent/left, order, and many others), and it becomes evident that we might have produced over one hundred different macro patterns, just for this relatively simple example case. 
+We propose a two-part grammar of data operations to facilitate the creative derivation of demographic macro patterns. Our two applications for cases of birth interval differentials and disability inequalities demonstrate some of the flexibility and power of this grammar. The two grammatical elements, clocks and alignment operations, each have several potential variants. These steps may be executed in isolation or together for the same set of trajectories. We demonstrate clocks building from the simplest case of age-structured prevalence, and generalizing to a portfolio of yet-unexplored clock types. Some of these may already be familiar in specific contexts. For example birth parity would be considered an ascending order clock in our framework. Alignment operations are also already familiar in specific contexts, for example time-to-death patterns of morbidity or health expenditure would be considered a right-alignment on the end of life. We generalize alignment operations by allowing for conditional alignment, for example on entry or exit from the first, last or longest episode of a given state or merged set of states.
 
-It may be surprising to notice that most of these patterns, even though ours resulted from a simple Markov process with a small set of simple and monotonic age patterns, have some character to them. They contain information. Presumably the age patterns that entered into said Markov model do not capture the entire story, and raw observed state sequences are expected to bear stronger degrees of co-dependency. And if we wish to learn something new about a given demographic process, the researcher has (i) large degrees of freedom in selecting macro episode patterns, and (ii) is limited only by one's own creativity in doing so. 
+The clocks and alignment framework was developed in order to accelerate experimentation with new macro patterns. Some of these operations might have tractable analogs in using Markov assumptions and matrix algebra approach, but with an extra derivation step, and the solutions will not necessarily be computationally efficient. For the case of patterns derived from observed trajectories, as in our example of retrospective fertility histories, the results of such an exercise would also not be guaranteed to produce identical results as this framework. This is because the Markov approach is based on transition probabilities, which are not guaranteed to imply the same trajectory structure from which they were derived, whereas the clocks and alignment approach retains this original structure. 
 
-The purpose of episode clocks and sequence realignment is to detect important patterns in data (or model results) that are likely to otherwise go unnoticed. Some reasonable priors might include that (i) life course events condition each other; (ii) temporal proximity to life course transitions is likely to be an important predictor of other transitions; (iii) within-episode patterns of other characteristics might be monotonically increasing or decreasing, concave, or convex. Aggregate patterns derived after such operations may be sharper and of more obvious interpretation and consequence than are age patterns. 
+The data operations we describe may also be complementary to sequence analysis (SA), or may even be considered a subset of it, or implied by some of its algorithms. We suppose that the operations we describe could also be used within SA as a trajectory pre-processing step. For example, one of the inspirations to design this framework was a sequence analysis of disease states preceding death conducted by peer scientists. This exercise was frustrated and abandoned due to heterogeneity in length of life, but a methods constraint for trajectories to be of equal length. Alignment on end of life, and truncation to the N preceding years would then allow for a variety of sequence clustering algorithms. This is essentially the exercise of \citet{potente2018disability} and \citet{raab2018pathways}. We hope our expanded set of alignment variants facilitates more diverse and flexible pattern detection of this kind.
 
-\section*{Promises}
-This manuscript is an early draft. In a future version we will offer vignette-style applications for a selection of different demographic phenomena, including health and fertility/family demography, resident status of migrants, each with a variety of programmatically generated macro patterns. 
+The purpose of episode clocks and trajectory realignment is to detect important patterns in data (or model results) that are likely to otherwise go unnoticed. Some reasonable priors might include that (i) life course events condition each other; (ii) temporal proximity to life course transitions is likely to be an important predictor of other transitions; (iii) within-episode patterns of other characteristics might be monotonically increasing or decreasing, concave, or convex. Aggregate patterns derived after such operations may be sharper and of more obvious interpretation and consequence than are age patterns. We think that this simple grammar has the potential to stimulate new questions and lead to new discoveries as well as better understandings of seemingly understood phenomena. Its generality is ensured by the provision of structure, such that the definition of new operations and further variants of clocks and alignments.
+
 
 \section*{Acknowledgements}
-This work has benefitted from discussions with Christian Dudel, Erik Vickstrom, Marcus Ebeling, Jutta Gampe, and Maarten Bijlsma. Indeed, some may even become coauthors as this work progresses.
+This work has benefited from discussions with Christian Dudel, Erik Vickstrom, Marcus Ebeling, Jutta Gampe, and Maarten Bijlsma. 
 
 \FloatBarrier
 \singlespacing
