@@ -45,6 +45,9 @@ DisStats <-
 # mean spell duration for spells
 # starting in age x
 DisStats %>% 
+  ungroup() %>% 
+  mutate(InQ = case_when(InQ == "I" ~ "lowest 20%",
+                         InQ == "V" ~ "highest 20%")) %>% 
   filter(state != "Dead", 
          first,
          !is.na(dis_dur)) %>% 
@@ -54,10 +57,17 @@ DisStats %>%
   ggplot(mapping = aes(x = age, 
                        y = dur_first_mean, 
                        color = InQ)) + 
-  geom_line(size=2) + 
+  geom_line(size=1.5) + 
   xlim(16,70) +
-  labs(x = "Age", y = "mean spell duration",
-       main = "Mean disability spell duration of spells starting in age x")
+  labs(x = "Age", y = "conditional mean spell duration (years)",
+       main = "Mean disability spell duration of spells starting in age x")+
+  guides(color=guide_legend(title="Inc. Quintile"))+
+  theme(
+    axis.title.x = element_text(size = 16),
+    axis.text.x = element_text(size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title.y = element_text(size = 16))
+
 
 library(reshape2)
 X <- DisStats %>% 
