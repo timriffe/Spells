@@ -21,7 +21,7 @@ DisStats <-
   group_by(InQ, id) %>% 
   mutate(dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
   ungroup() %>% 
-  filter(dead,
+  filter(#dead,
          state != "Dead") %>% 
 
   group_by(InQ, id) %>% 
