@@ -45,7 +45,7 @@
 \absdiv{Background}Individuals are often observed passing through a sequence of discrete states in trajectory data. These are usually either simplified into transition probabilities to derive asymptotic values of aggregate statistics using Markov assumptions, or else retained for pattern and group detection using sequence analysis. Markov-derived aggregate statistics are of limited scope, and sequence analysis appears aimed at inferring typologies than generating aggregates.
 \absdiv{Objective}We broaden the scope of aggregate patterns and summary indices that may be calculated from trajectory data, including trajectories generated from Markov models by proposing a simple grammar of operations for trajectory data.
 \absdiv{Methods}We introduce the concepts of clocking and alignment as a new framework for generating novel statistics from trajectories. 
-\absdiv{Data}We use different data to demonstrate concepts and give example applications. We use published transition probabilities to simulate discrete trajectories of employment states to demonstrate concepts. We  use retrospective fertility and union trajectories from Colombian DHS data and disability trajectories simulated from Italian SILC data for example applications.
+\absdiv{Data}We use different data to demonstrate concepts and give example applications. We use published transition probabilities to simulate discrete trajectories of employment states to demonstrate concepts. We use retrospective fertility and union trajectories from Colombian Demographic and Health Surveys data and disability trajectories simulated from European Statistics on Income and Living Conditions for Italy (EU-SILC) for example applications.
 \absdiv{Results}We demonstrate  several new demographic aggregate patterns in the areas of disability inequalities and birth intervals.
 \absdiv{Conclusions}We demonstrate the flexibility of this framework and the ease of generating macro patterns. An R package is provided to facilitate experimentation with these operations.
 \end{abstract}
@@ -232,6 +232,10 @@ types.}
 
 These examples are subset of many possible alignments, in this case column shifting within rows of a matrix. Alignment as shown here is probably insufficient to reveal patterns if one is visualizing raw trajectories, as in these demonstrative figures. One would probably want to define \emph{sort} operations (row-swapping) for this, and that is not something we have ventured to do at this point. In the present, we instead aggregate up to macro patterns.
 
+Two caveats to the use of alignments and clocks are worth noting. First, aggregate measures based on clocks and alignment operations can be biased due to the left- or right-censoring of trajectories, i.e., when the observation window of sequences does not cover the full period over which events (change in states) can be observed. In the previous section, we discussed an example that may be affected by left censoring because we do not know the employment status of individuals before age 50. To partially correct this, the data were simulated so that all individuals are employed by age 50, making all mean calculations based on stepping clocks, conditional on being employed at this age. Likewise, since not all individuals die before age 80, descending clocks (e.g., mean time to death) are affected by right censoring, especially at ages that are close to the end of the observation window (age 80). Hence, users should be careful about the potential bias of the aggregate measures and make clear the conditional nature of them when necessary.
+
+Second, users should be careful when conducting alignment operations as some observations will not be included in the aggregate measures if they do not experience the event that serves to align the trajectories. For example, individuals without spells of unemployment will not be included in the calculation of the mean time to next employment after a first job loss. Although these examples seem trivial, we encourage careful thinking when defining alignments, clocks, and aggregate measures.
+
 The following section presents two examples where clocks and alignment operations are used to examine sequence data. In the first example we rely on X clock measures and X alignment(s) to examine XYZ. In the second example we use three clocks and one alignment operation to study the mean duration of birth intervals according to the age of the mother at first birth, and the sex of the first child.
 
 %\footnote{Possibly the \texttt{TraMineR} universe already has \emph{sort} functionality, we need to check.}. Other visualization techniques (ignoring clocks for now) might follow an alignment operation \citep[e.g.][]{fasang2014visualizing}. 
@@ -285,10 +289,28 @@ The following section presents two examples where clocks and alignment operation
 \subsection{Health inequalities}
 Population level studies of disability typically report values such as mean time spent disabled, either derived from a multistate model of disability \citep{crimmins2009change} or derived using the Sullivan method \citep{Sullivan1970,Crimmins1997}. It is rare to see other model statistics reported, even for results based on simulated disability trajectories. Especially for the case of describing group inequalities, it may be interesting to measure quantities beyond health expectancies, such as the age pattern of disability spell length. Do new bouts of disability tend to get longer or shorter with age? Who has longer spells of disability, the rich or the poor?
 
+We aim to show some preliminary results using and example of an age-structured clock (the default alignment).
+Long term disability trajectories over the life course of individuals are typically not recorded, except in rare cohort studies, or in long-running health registers. To produce our base set of trajectories, we first estimate transition probabilities, then we simulate over a wide age range. We then demonstrate clock aggregation for the case of disability spell duration. This is proposed as an interesting metric for health inequalities.
+
 \subsubsection{Data}
-Angelo will tell us about the data and how he gets the transition probabilities and give code for a state space graph.
+We use the Italian survey of the EU-SILC (European Statistics on Income and Living Condition), 2012-2015. The EU-SILC is the European Union (EU) reference source for comparative statistics on income and living conditions for all the countries in the EU. Member States conduct the survey annually, collecting nationally representative household and personal data. There is a cross-sectional and a longitudinal component. The longitudinal Italian EU-SILC is based on the rotational design proposed by Eurostat; each year, a new sample representative of the whole Italian population enters the study, and it is followed for four years. In the initial year, the sample is representative of the population 14 years old and over; for individuals aged over 80, the exact age is not made available in the data.
+
+We use data for individuals who were first interviewed in 2012, 2013, and 2014 and re-interviewed in subsequent years. Thus, in our data, we have 16,872 individuals, 7,919 men and 8,687 women, followed over two, three, or four consecutive years.  
+
+To estimate the transition probabilities between healthy and disabled states, we use the general question about how a person perceives his/her general health. Possibles' answers are: ``Very good'', ``Good'', ``Fair'', ``Bad'', and ``Very Bad''. We aggregate Bad and Very Bad into Disabled and the remaining options into Healthy. For those lost to the follow-up, information about death are provided by other household members.
+
+Individuals aged 15 can be healthy or disabled, and those who survive up to age 16 can stay healthy or move to the disabled state; the process continues at each successive age, up to 79.
+
+We estimate the transition probabilities by means of multinomial regressions \citep{Allison1982}. We model the probability of being in state $i$ (Healthy, Disabled, Dead) at time $t + 1$ as a function of the state $j$ at time $t$ (Healthy, Disabled) and age and income quintiles, separately by sex. In each of the regressions, age is modelled as a cubic spline. This approach accounts for non-linearity in the relationship between age and the probability of being in a state $i$. For each sex and income quintile, we produce transition probabilities $p_{i,j}$ for 65 age groups (single ages 15 to 79), and 6 possible transitions.
+
 \subsubsection{Simulated trajectories}
-We produce standard Markov transition matrices.. to be continued.
+The following exercise is done for females only. We arrange transition probabilities into standard Markov transition matrices, and then simulate 50,000 trajectories using the \texttt{rmarkovchain} package \citep{spedicato2017} and assuming that everyone starts healthy at age 15. Each trajectory consists in 65 time steps. To reduce (but not eliminate) bias with right-censoring, we (aggressively) filter the sample down to include only those individuals that die before the age of 80. This reduces the number of simulated trajectories to 10,716.
+
+
+
+
+
+
 
 For all disability measures we produce, we simulate  right censoring can bias results if due care is not taken.
 \subsubsection{Grammatical operations}
@@ -317,7 +339,7 @@ Plots go here and get interpreted
 
 We draw our data from seven waves of the Colombian Demographic and Health Survey (CDHS) collected between 1985 and 2015. The CDHS are nationally representative surveys of women in reproductive ages (15 to 49). All these surveys are publicly available upon registration at: \url{https://www.dhsprogram.com/data/}.
 
-We use full birth histories to reconstruct the reproductive trajectory of women with at least two children ever born. We are interested in the patterns of the mean time to second birth, mean time to next boy, and mean time to next girl. The starting point of our observation is, naturally, the year of the first birth. Using clocks and alignments, we are able to calculate the conditional mean time to second births diminishing the influence of right censoring, because all women in our sample had at least two children. However, the bias of right censoring affects more the mean times to next boy and next girl. We do not know the mean time to next boy or girl for women whose children are all of the same sex at the survey moment. Moreover, we do not know, for example, if a woman of age 20 with two girls would eventually have a boy in the future. The younger the women, the more likely our calculations will be biased. To avoid this bias, our calculations of mean time to next boy and next girl are based on the sub-sample of women ages 39 and above. This sub-sample of women are more likely to have finished their reproductive periods, which reduces the influence of right censoring \footnote{We show results only for women who had their first birth before age 39 because the proportion of women having their first birth after this age is very small (X\%).}
+We use full birth histories to reconstruct the reproductive trajectory of women with at least two children ever born. We are interested in the patterns of the mean time to second birth, mean time to next boy, and mean time to next girl. The starting point of our observation is, naturally, the year of the first birth. Using clocks and alignments, we are able to calculate the conditional mean time to second births diminishing the influence of right censoring, because all women in our sample had at least two children. However, the bias of right censoring affects more the mean times to next boy and next girl. We do not know the mean time to next boy or girl for women whose children are all of the same sex at the survey moment. Moreover, we do not know, for example, if a woman of age 20 with two girls would eventually have a boy in the future. The younger the women, the more likely our calculations will be biased. To avoid this bias, our calculations of mean time to next boy and next girl are based on the sub-sample of women ages 39 and above (53\% of the sample). This sub-sample of women are more likely to have finished their reproductive periods, which reduces the influence of right censoring.
 
 Table \ref{tfert_01} shows the total number of women by groups of age at first birth. According to this table, most of the first births occur between ages 15 and 24, while a very small proportion are to women age 35 to 39 (0.23\%). 
 
@@ -345,7 +367,7 @@ Note that calculations of the mean time to next boy and girl are based on two di
 
 \subsubsection{Grammatical operations}
 
-We use one alignment operation and three different clocks to get at the aggregate-patterns of mean time to second birth and mean time to next boy and girl. We align women's reproductive trajectory on the age at first birth. Consider a women interviewed at age 39 who had three children at ages 25, 28 and 33. The first two were girls and the last one a boy. The following illustration represents her reproductive trajectory.\\
+We use one alignment operation and three different clocks to get at the aggregate-patterns of mean time to second birth and mean time to next boy and girl. We align women's reproductive trajectory on the age at first birth. Consider a women interviewed at age 39 who had three children at ages 25, 28, and 33. The first two were girls and the last one a boy. The following illustration represents her reproductive trajectory.\\
 
 \begin{center}
 \begin{tabular}{cccccccccccccc}
