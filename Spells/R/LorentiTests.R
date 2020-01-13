@@ -6,7 +6,8 @@ library(Spells)
 # 0) load functions
 
 # need to source LorentiFunctions.R and LorentiPrep.R to do this
-Dat <- readRDS(here::here("Spells","Data","Lorenti","SILCsim.rds"))
+
+
 # now this is tidy and can be analyzed
 # head(Dat)
 
@@ -22,6 +23,7 @@ DisStats <-
   ungroup() %>% 
   filter(dead,
          state != "Dead") %>% 
+
   group_by(InQ, id) %>% 
   # say we want average duration of disability
   # * spells starting in age x
