@@ -232,11 +232,11 @@ types.}
 
 These examples are subset of many possible alignments, in this case column shifting within rows of a matrix. Alignment as shown here is probably insufficient to reveal patterns if one is visualizing raw trajectories, as in these demonstrative figures. One would probably want to define \emph{sort} operations (row-swapping) for this, and that is not something we have ventured to do at this point. In the present, we instead aggregate up to macro patterns.
 
-Two caveats to the use of alignments and clocks are worth noting. First, aggregate measures based on clocks and alignment operations can be biased due to the left- or right-censoring of trajectories, i.e., when the observation window of sequences does not cover the full period over which events (change in states) can be observed. In the previous section, we discussed an example that may be affected by left censoring because we do not know the employment status of individuals before age 50. To partially correct this, the data were simulated so that all individuals are employed by age 50, making all mean calculations based on stepping clocks, conditional on being employed at this age. Likewise, since not all individuals die before age 80, descending clocks (e.g., mean time to death) are affected by right censoring, especially at ages that are close to the end of the observation window (age 80). Hence, users should be careful about the potential bias of the aggregate measures and make clear the conditional nature of them when necessary.
+Two caveats to the use of alignments and clocks are worth noting. First, aggregate measures based on clocks and alignment operations can be biased due to the left- or right-censoring of trajectories, i.e., when the observation window of sequences does not cover the full period over which events (change in states) can be observed. In the previous section, we discussed an example that may be affected by left censoring because we do not know the employment status of individuals before age 50. To partially correct this, the data were simulated so that all individuals are employed by age 50, making all mean calculations based on step clocks conditional on being employed at this age. Right censoring can be a problem for descending clocks (e.g., mean remaining time in a spell), especially at ages that are close to the end of the observation window (e.g. age 80 in our disability example below). Hence, researchers should be careful about the potential bias of the aggregate measures and make clear the conditional nature of them when necessary.
 
-Second, users should be careful when conducting alignment operations as some observations will not be included in the aggregate measures if they do not experience the event that serves to align the trajectories. For example, individuals without spells of unemployment will not be included in the calculation of the mean time to next employment after a first job loss. Although these examples seem trivial, we encourage careful thinking when defining alignments, clocks, and aggregate measures.
+Second, care should be taken when conducting alignment operations as some observations will not be included in the aggregate measures if they do not experience the reference event for alignment. For example, individuals without spells of unemployment will not be included in the calculation of the mean time to next employment after a first job loss. Although these examples seem trivial, we encourage careful thinking when defining alignments, clocks, and aggregate measures.
 
-The following section presents two examples where clocks and alignment operations are used to examine sequence data. In the first example we rely on X clock measures and X alignment(s) to examine XYZ. In the second example we use three clocks and one alignment operation to study the mean duration of birth intervals according to the age of the mother at first birth, and the sex of the first child.
+The following section presents two examples where clocks and alignment operations are used to examine trajectory data. In the first example we rely on an ascending step clock measures and the standard age alignment to produce a disability spell pattern. In the second example we use three clocks and one alignment operation to study the mean duration of birth intervals according to the age of the mother at first birth, and the sex of the first child.
 
 %\footnote{Possibly the \texttt{TraMineR} universe already has \emph{sort} functionality, we need to check.}. Other visualization techniques (ignoring clocks for now) might follow an alignment operation \citep[e.g.][]{fasang2014visualizing}. 
 
@@ -290,7 +290,7 @@ The following section presents two examples where clocks and alignment operation
 Population level studies of disability typically report values such as mean time spent disabled, either derived from a multistate model of disability \citep{crimmins2009change} or derived using the Sullivan method \citep{Sullivan1970,Crimmins1997}. It is rare to see other model statistics reported, even for results based on simulated disability trajectories. Especially for the case of describing group inequalities, it may be interesting to measure quantities beyond health expectancies, such as the age pattern of disability spell length. Do new bouts of disability tend to get longer or shorter with age? Who has longer spells of disability, the rich or the poor?
 
 We aim to show some preliminary results using and example of an age-structured clock (the default alignment).
-Long term disability trajectories over the life course of individuals are typically not recorded, except in rare cohort studies, or in long-running health registers. To produce our base set of trajectories, we first estimate transition probabilities, then we simulate over a wide age range. We then demonstrate clock aggregation for the case of disability spell duration. This is proposed as an interesting metric for health inequalities.
+Long term disability trajectories over the life course of individuals are typically not recorded, except in rare cohort studies, or in long-running health registers. To produce our base set of trajectories, we first estimate transition probabilities, then we simulate over a wide age range. We then demonstrate clock aggregation to calculate the average duration of new spells of disability. This is proposed as an interesting metric for health inequalities.
 
 \subsubsection{Data}
 We use the Italian survey of the EU-SILC (European Statistics on Income and Living Condition), 2012-2015. The EU-SILC is the European Union (EU) reference source for comparative statistics on income and living conditions for all the countries in the EU. Member States conduct the survey annually, collecting nationally representative household and personal data. There is a cross-sectional and a longitudinal component. The longitudinal Italian EU-SILC is based on the rotational design proposed by Eurostat; each year, a new sample representative of the whole Italian population enters the study, and it is followed for four years. In the initial year, the sample is representative of the population 14 years old and over; for individuals aged over 80, the exact age is not made available in the data.
@@ -303,29 +303,32 @@ Individuals aged 15 can be healthy or disabled, and those who survive up to age 
 
 We estimate the transition probabilities by means of multinomial regressions \citep{Allison1982}. We model the probability of being in state $i$ (Healthy, Disabled, Dead) at time $t + 1$ as a function of the state $j$ at time $t$ (Healthy, Disabled) and age and income quintiles, separately by sex. In each of the regressions, age is modelled as a cubic spline. This approach accounts for non-linearity in the relationship between age and the probability of being in a state $i$. For each sex and income quintile, we produce transition probabilities $p_{i,j}$ for 65 age groups (single ages 15 to 79), and 6 possible transitions.
 
-\subsubsection{Simulated trajectories}
-The following exercise is done for females only. We arrange transition probabilities into standard Markov transition matrices, and then simulate 50,000 trajectories using the \texttt{rmarkovchain} package \citep{spedicato2017} and assuming that everyone starts healthy at age 15. Each trajectory consists in 65 time steps. To reduce (but not eliminate) bias with right-censoring, we (aggressively) filter the sample down to include only those individuals that die before the age of 80. This reduces the number of simulated trajectories to 10,716.
+The following exercise is done for females only. We arrange transition probabilities into standard Markov transition matrices, and then simulate 50,000 trajectories using the \texttt{rmarkovchain} package \citep{spedicato2017} and assuming that everyone starts healthy at age 15. Each trajectory consists in 65 time steps.
 
-
-
-
-
-
-
-For all disability measures we produce, we simulate  right censoring can bias results if due care is not taken.
 \subsubsection{Grammatical operations}
  
-Describe the recipes (3)
+We illustrate the disability clocks calculated using 10 randomly generated trajectories starting at age 50 and ignoring younger ages. In order to calculate the mean duration of spells starting in age $x$, we impute the spell duration in the first time step of each disability spell, following the pattern in Fig.~\ref{fig:disdurex}. This is essentially a single step because we retain the default age alignment.
+\begin{figure}
+    \centering
+    \includegraphics[scale=.7]{Spells/Figures/DisTrajExample.pdf}
+    \caption{Ten example trajectories, with disability spell duration imputed in the first time step of each spell. Light green is healthy and brown is disabled. Ages below 50 are ignored in this illustration.}
+    \label{fig:disdurex}
+\end{figure}
+In this example, only individuals deceased before age 80 are shown, but in the full sample some individuals reach age 80 in a state of disability, which may continue into higher ages if we had the transition probabilities to simulate so far. This introduces a downward bias in spell duration that grows in magnitude with the approach to age 80. For this reason, we right truncate results for aggregates at age 70. To aggregate macro patterns from this, we take conditional means within each age, throwing out any values that are not the first time step in a disability spell. This produces two age patterns, one for the highest and one for the lowest income quintile. 
+
+\FloatBarrier
 
 \subsubsection{Results}
-Plots go here and get interpreted
+Fig.~\ref{fig:disdur} shows the results of this exercise. We see that new disability spells are expected to be of longer duration as age increases. We also see that disability spells are considerably longer on average for women in the lowest income quintile. From such an aggregate picture, a researcher could make various kinds of summary statements: at age 60, new disability spells for the poor are expected to be 40\% longer than for the rich. Or one could make statements on the age scale: new disability spells among the poor hit an average of two years duration by age 53, a level only hit by the rich around age 67.
 
 \begin{figure}
     \centering
     \includegraphics[scale=.8]{Spells/Figures/MeanDisabilitySpellDurationAge.pdf}
     \caption{Spells of disability get longer on average with age until at least age 70, and they are considerably longer on average for the lowest income quintile than for the highest.}
-    \label{fig:my_label}
+    \label{fig:disdur}
 \end{figure}
+
+This stylized exercise evokes a number of follow-up questions that we do not here pursue: Are these differences caused by onset, recovery, or mortality differences? Is this income gradient really a geographic gradient? How does this age pattern close out as age increases?-- Surely disability spell duration must start decreasing in higher ages when the force of mortality starts to dominate. Surely it would be worth experimenting with other clocks and alignments in this domain of research.
 
 \subsection{Birth interval differentials}
 
