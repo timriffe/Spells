@@ -1,29 +1,16 @@
-# These extracted from FiguresSeq.R so that they can be sourced in Rmarkdown presentation as well.
-# Probably ought to clean these up since they will be used in future presentations.
 
-draw_sequence2 <- function(state_seq, states, cols, y = 0,...){
-  xvals       <- 1:length(state_seq) - 1 + 50
-  names(cols) <- states
-  col_seq     <- cols[state_seq]
-  
-  rect(xvals,y,xvals+1,y+1,col=col_seq,...)
-}
-draw_sequence3 <- function(durs, y = 0,...){
-  xvals             <- 1:length(durs) - 1 + 50	
-  durs[is.na(durs)] <- ""
-  text(xvals+.5,y+.5,durs,...)
-}
-# alignment
-draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
-  names(cols) <- states
-  col_seq     <- cols[state_seq]
-  rect(x,y,x+1,y+1,col=col_seq,...)
-}
+#' example trajectory data
+#'
+#' Ten simulated labor trajectories, used in examples.
+#' @docType data
+#' @format
+#'   A character matrix, with individual trajectories in columns and age in rows (ages 50-100)
+#'
+#' @source
+#' Simulated based on transition probabilities published in:
+#'   Dudel, Christian, and Mikko Myrskylä. "Working life expectancy at age 50 in the United States and the impact of the great recession." Demography 54.6 (2017): 2101-2123.
+"X"
 
-# ---------------------------------------------------------- #
-# Clean versions, to be in used in future presentations      #
-# and in order to have a consistent style in the manuscript. #
-# ---------------------------------------------------------- #
 
 #' draw a sequence, for examples
 #' @description draws a single sequence using base functions. For use in illustrative diagrams
@@ -41,6 +28,7 @@ draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
 #' @param box logical do we draw a box outline around the whole sequence?
 #' @param ... optional arguments passed to \code{rect()} or \copde{text()}
 #'
+#' @export
 #'@examples
 #'\dontrun{
 #' library(Spells)
@@ -77,12 +65,12 @@ draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
 #' }
 
 draw_sequence <- function(state_seq, 
-              x = 1:length(state_seq)-1, 
-              labels, 
-              cols,  
-              y = 0, 
-              box = TRUE,
-              ...){
+                          x = 1:length(state_seq)-1, 
+                          labels, 
+                          cols,  
+                          y = 0, 
+                          box = TRUE,
+                          ...){
   
   col_seq     <- cols[state_seq]
   rect(x, y, x + 1, y + 1, col = col_seq, ...)
@@ -98,18 +86,3 @@ draw_sequence <- function(state_seq,
          border = gray(.4), lwd = .5)
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

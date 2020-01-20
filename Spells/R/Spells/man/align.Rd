@@ -4,8 +4,12 @@
 \alias{align}
 \title{shift lower time interval bounds of state sequence}
 \usage{
-align(x, state = "Inactive", type = c("left", "right", "center"),
-  spell = c("first", "last", "longest"))
+align(
+  x,
+  state = "Inactive",
+  type = c("left", "right", "center"),
+  spell = c("first", "last", "longest")
+)
 }
 \arguments{
 \item{x}{character vector representing a state sequence}

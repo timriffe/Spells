@@ -2,6 +2,7 @@
 
 export(align)
 export(clock)
+export(draw_sequence)
 export(intervalfan)
 export(intervalpoly)
 export(qdens)

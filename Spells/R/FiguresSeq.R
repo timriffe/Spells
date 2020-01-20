@@ -283,7 +283,7 @@ DurEntry      <- apply(X, 1, spell_dur_conditional,state = "D", entry = TRUE)
 
 DurEntry <- t(DurEntry)
 
-here()
+# this appears in draft manuscript
 pdf(here("Spells","Figures","DisTrajExample.pdf"),width=7,height=4.5)
 colsHD <- c("#add996","#bf9319",Dead="#FFFFFF00")
 par(mai=c(.8,1,0,0))
@@ -296,6 +296,7 @@ for (i in 1:10){
 axis(1)
 text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
 text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-10,-2,fill = colsHD[1:2], legend = c("Healthy","Disabled"),horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
 

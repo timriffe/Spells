@@ -4,8 +4,7 @@
 \alias{spell_dur_conditional}
 \title{impute conditional durations of episodes in specified reference state}
 \usage{
-spell_dur_conditional(x, state = "Inactive", entry = TRUE,
-  step_size = 1)
+spell_dur_conditional(x, state = "Inactive", entry = TRUE, step_size = 1)
 }
 \arguments{
 \item{x}{character vector of state in each time step}

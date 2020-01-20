@@ -4,9 +4,15 @@
 \alias{clock}
 \title{impute clock measures}
 \usage{
-clock(x, state, clock_type = c("step", "duration", "order"),
-  increasing = TRUE, not_first = FALSE, step_size = 1,
-  dead_state = "Dead")
+clock(
+  x,
+  state,
+  clock_type = c("step", "duration", "order"),
+  increasing = TRUE,
+  not_first = FALSE,
+  step_size = 1,
+  dead_state = "Dead"
+)
 }
 \arguments{
 \item{x}{character vector of state in each time step}
