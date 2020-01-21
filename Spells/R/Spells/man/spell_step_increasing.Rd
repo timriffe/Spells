@@ -23,10 +23,10 @@ Values are returned as midpoints. \code{NA} are given for other states. \code{st
 x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired", 
 				"Dead"), c(7,  8,  3,  3, 25,  5))
 # a single 8-year spell of inactivity, counting upwards from left
-spell_step_increasing(x, "Inactive", not_first = FALSE)
+spell_step_increasing(x, "Inactive")
 # merges first consecutive employment and inactivity spells into a single spell,
 # also catches second employment after retirement
-spell_step_increasing(x, c("Inactive","Employed"), not_first = FALSE)
-# total lifespan 50+
-spell_step_increasing(x, c("Inactive","Employed","Retired"), not_first = FALSE)
+spell_step_increasing(x, c("Inactive","Employed"))
+# total remaining lifespan at 50
+spell_step_increasing(x, c("Inactive","Employed","Retired"))
 }

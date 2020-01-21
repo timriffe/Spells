@@ -9,6 +9,7 @@ clock(
   state,
   clock_type = c("step", "duration", "order"),
   increasing = TRUE,
+  dur_condition = c("total", "entry", "exit"),
   not_first = FALSE,
   step_size = 1,
   dead_state = "Dead"
@@ -23,15 +24,21 @@ clock(
 
 \item{increasing}{logical. Default \code{TRUE}. If \code{clock_type} is either \code{"step"} or \code{"order"} do we count up or count down?}
 
+\item{dur_condition}{character. For duration clocks, one of \code{"total"}, \code{"entry"}, or \code{"exit"}. Default \code{"total"}.}
+
 \item{not_first}{logical. Shall we ignore the first episode of the given state? Default \code{FALSE}}
 
 \item{step_size}{numeric. Default \code{1}. What is the time interval for the discrete bins in \code{x}.}
+
+\item{dead_state}{state name used for the absorbing state}
 }
 \description{
 Given a discrete trajectory, impute clock measures to a given reference state or set of states (treating them ar merged). Clocks include 1) step clocks, those that count up from the start of an episode or down toward the end of it. 2) duration clocks, which record the total episode duration in each time step within the episode. 3) order clocks, which record the episode order in each time step within episodes, and which either count up or down.
 }
 \details{
-Since sometimes we deal with left-censoring, step and duration measures have an option argument \code{not_first} to throw out counting within the very first episode (which may or may not be the reference episode). The argument \code{step_size} is only relevant for duration and step clocks. Discrete time intervals are assumed equal.
+Since sometimes we deal with left-censoring, step and duration measures have an option argument \code{not_first} to throw out counting within the very first episode (which may or may not be the reference episode). The argument \code{step_size} is only relevant for duration and step clocks. Discrete time intervals are assumed equal. 
+
+States can be merged by specifying a vector of state names. To merge all states, one can also specify \code{state = "ALL"}.
 }
 \examples{
 x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired", 
@@ -50,16 +57,21 @@ clock(x, "Employed", clock_type = "step", increasing = FALSE, not_first = FALSE)
 clock(x, "Employed", clock_type = "duration", not_first = TRUE)
 # TODO: pathological case: inactivity spells not left censored. Need better ID.
 clock(x, "Inactivity", clock_type = "duration", not_first = TRUE)#
+
+# total duration at entry or exit of spell:
+clock(x, "Inactivity", clock_type = "duration", dur_condition = "entry", not_first = TRUE)
+clock(x, "Inactivity", clock_type = "duration", dur_condition = "exit", not_first = TRUE)
 # merges first consecutive employment and inactivity spells into a single spell,
 # also catches second employment after retirement
 clock(x, c("Inactive","Employed"), clock_type = "step", increasing = FALSE, not_first = FALSE)
 # count down spell order
 clock(x, c("Employed"), clock_type = "order", increasing = FALSE, not_first = FALSE)
 # again w merged states
-clock(x, c("Inactive","Employed"), clock_type = "order", increasing = FALSE, not_first = #'FALSE)
+clock(x, c("Inactive","Employed"), clock_type = "order", increasing = FALSE, not_first = FALSE)
 clock(x, c("Employed"), clock_type = "order", increasing = FALSE, not_first = FALSE)
-# total lifespan 50+
-clock(x, c("Inactive","Employed","Retired"), clock_type = "duration", not_first = FALSE)
+# total lifespan after 50
+
+clock(x, state = c("Inactive","Employed","Retired"), clock_type = "duration", not_first = FALSE)
 # shortcut for the same:
 clock(x, "ALL", clock_type = "duration", increasing = FALSE, not_first = FALSE)
 # remaining lifespan

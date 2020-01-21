@@ -31,6 +31,7 @@ qdens <- function(X,p=.5){
 #' @param l numeric vector of lower bound
 #' @param ... optional arguments to pass to \code{polygon()}
 #' @return function renders a polygon in the graphics device.
+#' @importFrom graphics polygon
 #' @export
 intervalpoly <- function(x,u,l,...){
 	una <- is.na(u)
@@ -42,11 +43,11 @@ intervalpoly <- function(x,u,l,...){
 
 #' draw a polygon, used for interval fans
 #' @description Draw a confidence band
-#' @details upper and lower bounds must have the same time steps in \code{x}
+#' @details upper and lower bounds must have the same time steps in \code{x}.
+#' @param X numeric matrix, with time steps in rows and individuals in columns
 #' @param x numeric vector of time steps
-#' @param u numeric vector of upper bound
-#' @param l numeric vector of lower bound
-#' @param ... optional arguments to pass to \code{polygon()}
+#' @param alphas central fractions, translated to quantiles
+#' @param ... optional arguments to pass to \code{intervalpoly()}
 #' @return function renders a polygon in the graphics device.
 #' @export
 #' @examples 

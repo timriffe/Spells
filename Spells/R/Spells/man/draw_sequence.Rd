@@ -27,7 +27,7 @@ draw_sequence(
 
 \item{box}{logical do we draw a box outline around the whole sequence?}
 
-\item{...}{optional arguments passed to \code{rect()} or \copde{text()}}
+\item{...}{optional arguments passed to \code{rect()} or \code{text()}}
 }
 \description{
 draws a single sequence using base functions. For use in illustrative diagrams

@@ -27,6 +27,6 @@ spell_dur(x, "Inactive")
 # merges first consecutive employment and inactivity spells into a single spell,
 # also catches second employment after retirement
 spell_dur(x, c("Inactive","Employed"))
-# total lifespan 50+
+# total remaining lifespan at 50
 spell_dur(x, c("Inactive","Employed","Retired"))
 }

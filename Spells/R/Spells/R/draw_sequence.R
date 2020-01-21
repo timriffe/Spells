@@ -26,8 +26,10 @@
 #' @param cols vector of colors, with names equal to state space. 
 #' @param y height at which to draw the sequence, assumed 1 unit tall.
 #' @param box logical do we draw a box outline around the whole sequence?
-#' @param ... optional arguments passed to \code{rect()} or \copde{text()}
-#'
+#' @param ... optional arguments passed to \code{rect()} or \code{text()}
+#' @importFrom grDevices gray
+#' @importFrom graphics rect
+#' @importFrom graphics text
 #' @export
 #'@examples
 #'\dontrun{

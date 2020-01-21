@@ -25,7 +25,7 @@ x <- rep(c("Employed", "Inactive", "Retired", "Employed", "Retired",
 # a single 8-year spell of inactivity, counting down from left
 # merges first consecutive employment and inactivity spells into a single spell,
 # also catches second employment after retirement
-spell_step_decreasing(x, c("Inactive","Employed"), not_first = FALSE)
+spell_step_decreasing(x, c("Inactive","Employed"))
 # catches just last employment spell
-spell_step_decreasing(x, c("Inactive","Employed","Retired"), not_first = FALSE)
+spell_step_decreasing(x, c("Inactive","Employed","Retired"))
 }

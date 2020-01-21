@@ -7,13 +7,13 @@
 intervalfan(X, x = 50:100, alphas = seq(0.1, 0.9, by = 0.1), ...)
 }
 \arguments{
+\item{X}{numeric matrix, with time steps in rows and individuals in columns}
+
 \item{x}{numeric vector of time steps}
 
-\item{...}{optional arguments to pass to \code{polygon()}}
+\item{alphas}{central fractions, translated to quantiles}
 
-\item{u}{numeric vector of upper bound}
-
-\item{l}{numeric vector of lower bound}
+\item{...}{optional arguments to pass to \code{intervalpoly()}}
 }
 \value{
 function renders a polygon in the graphics device.
@@ -22,7 +22,7 @@ function renders a polygon in the graphics device.
 Draw a confidence band
 }
 \details{
-upper and lower bounds must have the same time steps in \code{x}
+upper and lower bounds must have the same time steps in \code{x}.
 }
 \examples{
 X <- runif(5000)
