@@ -35,8 +35,6 @@ cols2 <- lighten(desaturate(cols,.3),.3)
 states <- c("Employed", "Inactive","Retired","Dead")
 yvals  <- 9:0 * 1.1
 
-
-
 X <- RTraj_clean[,1:10]
 
 saveRDS(RTraj_clean, here("Spells","LabTalk","RTraj_clean.rds"))
