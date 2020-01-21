@@ -9,7 +9,7 @@ clock(
   state,
   clock_type = c("step", "duration", "order"),
   increasing = TRUE,
-  dur_condition = c("total", "entry", "exit"),
+  condition = c("total", "entry", "exit"),
   not_first = FALSE,
   step_size = 1,
   dead_state = "Dead"
@@ -24,7 +24,7 @@ clock(
 
 \item{increasing}{logical. Default \code{TRUE}. If \code{clock_type} is either \code{"step"} or \code{"order"} do we count up or count down?}
 
-\item{dur_condition}{character. For duration clocks, one of \code{"total"}, \code{"entry"}, or \code{"exit"}. Default \code{"total"}.}
+\item{condition}{character. For duration clocks, one of \code{"total"}, \code{"entry"}, or \code{"exit"}. Default \code{"total"}.}
 
 \item{not_first}{logical. Shall we ignore the first episode of the given state? Default \code{FALSE}}
 
@@ -59,8 +59,8 @@ clock(x, "Employed", clock_type = "duration", not_first = TRUE)
 clock(x, "Inactivity", clock_type = "duration", not_first = TRUE)#
 
 # total duration at entry or exit of spell:
-clock(x, "Inactivity", clock_type = "duration", dur_condition = "entry", not_first = TRUE)
-clock(x, "Inactivity", clock_type = "duration", dur_condition = "exit", not_first = TRUE)
+clock(x, "Inactivity", clock_type = "duration", condition = "entry", not_first = TRUE)
+clock(x, "Inactivity", clock_type = "duration", condition = "exit", not_first = TRUE)
 # merges first consecutive employment and inactivity spells into a single spell,
 # also catches second employment after retirement
 clock(x, c("Inactive","Employed"), clock_type = "step", increasing = FALSE, not_first = FALSE)

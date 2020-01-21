@@ -14,7 +14,7 @@ library(Spells)
 Dat <- readRDS(here::here("Spells","Data","Lorenti","SILCsim.rds"))
 Dat$state <- as.character(Dat$state)
 
-X <- Dat %>% 
+XX <- Dat %>% 
   filter(age < 80) %>% 
   group_by(InQ, id) %>% 
   mutate(dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
@@ -26,25 +26,55 @@ X <- Dat %>%
                            state == "Disabled" ~ "D",
                            TRUE ~ "Dead")) %>%
   acast(id~age, value.var = "state") 
-X <- X[1:10,]
-DurEntry      <- apply(X, 1, clock, state = "D", clock_type = "duration", entry = TRUE)
+XX <- XX[1:10,]
 
-DurEntry <- t(DurEntry)
 
-# this appears in draft manuscript
-pdf(here("Spells","Figures","DisTrajExample.pdf"),width=7,height=4.5)
-colsHD <- c("#add996","#bf9319",Dead="#FFFFFF00")
+colsHD <- c(H = "#add996",D="#bf9319",Dead="#FFFFFF00")
+pdf(here::here("Spells","Figures","App1_grammar1.pdf"),width=10,height=4)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,81), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
-  draw_sequence2(X[i,],states = c("H","D","Dead"),colsHD,y=yvals[i], border = NA)
-  draw_sequence3(DurEntry[i,],y=yvals[i])
-  rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+  draw_sequence(
+    state_seq = XX[i,],
+    x = 50:79,
+    labels = clock(XX[i,], 
+                   state = "D", 
+                   clock_type = "duration", 
+                   dur_condition = "entry"),
+    cols = colsHD,
+    y = i-1,
+    box = TRUE,
+    border = FALSE
+  )
 }
 axis(1)
-text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(50,9:0+.5,1:10,pos=2,xpd=TRUE)
 text(47,6,"Random individual i",xpd=TRUE,srt=90)
-legend(-10,-2,fill = colsHD[1:2], legend = c("Healthy","Disabled"),horiz = TRUE,xpd=TRUE,bty="n")
+legend(-10,-2,fill = colsHD[c("H","D")], legend = c("Healthy","Disabled"),horiz = TRUE,xpd=TRUE,bty="n")
+dev.off()
+
+# grammar 2
+pdf(here::here("Spells","Figures","App1_grammar2.pdf"),width=10,height=4)
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,81), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence(
+    state_seq = XX[i,],
+    x = 50:79,
+    labels = clock(XX[i,], 
+                   state = "D", 
+                   clock_type = "order", 
+                   increasing = TRUE,
+    cols = colsHD,
+    y = i-1,
+    box = TRUE,
+    border = FALSE
+  )
+}
+axis(1)
+text(50,9:0+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-10,-2,fill = colsHD[c("H","D")], legend = c("Healthy","Disabled"),horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
 

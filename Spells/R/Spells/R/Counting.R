@@ -225,7 +225,13 @@ spell_step_decreasing <- function(x, state = "Inactive",  step_size = 1){
 #' spell_order(x, state = "Employed", increasing = TRUE)
 #' spell_order(x, state = "Employed", increasing = FALSE)
 
-spell_order <- function(x, state = "Inactive", increasing = TRUE, step_size = 1){
+spell_order <- function(x, 
+                        state = "Inactive", 
+                        increasing = TRUE, 
+                        step_size = 1, 
+                        condition = c("total","entry","exit")){
+  condition         <- match.arg(condition)
+  
 	x_age             <- (1:length(x) - 1) * step_size
 	names(x_age)      <- x
 	
@@ -247,6 +253,25 @@ spell_order <- function(x, state = "Inactive", increasing = TRUE, step_size = 1)
 	durs              <- sec$lengths
   out               <- rep(order1, durs)
 	names(out)        <- x_age
+	
+	# TR: adding in conditional on entry option
+	if (condition == "entry"){
+	  out1     <- out
+	  # first step in spell:
+	  ind      <- cumsum(durs) - durs + 1
+	  ind      <- ind[!is.na(out1[ind])]
+	  out      <- NA * out
+	  out[ind] <- out1[ind]
+	} 
+	if (condition == "exit"){
+	  out1     <- out
+	  # last step in spell:
+	  ind      <- cumsum(durs)
+	  ind      <- ind[!is.na(out1[ind])]
+	  out      <- NA * out
+	  out[ind] <- out1[ind]
+	}
+
 	out
 }
 
@@ -296,7 +321,7 @@ spell_order <- function(x, state = "Inactive", increasing = TRUE, step_size = 1)
 #' @param state character. The reference state. Could be a vector of states too.
 #' @param clock_type character, one of \code{"step"}, \code{"duration"}, or \code{"order"}
 #' @param increasing logical. Default \code{TRUE}. If \code{clock_type} is either \code{"step"} or \code{"order"} do we count up or count down?
-#' @param dur_condition character. For duration clocks, one of \code{"total"}, \code{"entry"}, or \code{"exit"}. Default \code{"total"}.
+#' @param condition character. For duration clocks, one of \code{"total"}, \code{"entry"}, or \code{"exit"}. Default \code{"total"}.
 #' @param not_first logical. Shall we ignore the first episode of the given state? Default \code{FALSE}
 #' @param step_size numeric. Default \code{1}. What is the time interval for the discrete bins in \code{x}.
 #' @param dead_state state name used for the absorbing state
@@ -320,8 +345,8 @@ spell_order <- function(x, state = "Inactive", increasing = TRUE, step_size = 1)
 #' clock(x, "Inactivity", clock_type = "duration", not_first = TRUE)#
 #' 
 #' # total duration at entry or exit of spell:
-#' clock(x, "Inactivity", clock_type = "duration", dur_condition = "entry", not_first = TRUE)
-#' clock(x, "Inactivity", clock_type = "duration", dur_condition = "exit", not_first = TRUE)
+#' clock(x, "Inactivity", clock_type = "duration", condition = "entry", not_first = TRUE)
+#' clock(x, "Inactivity", clock_type = "duration", condition = "exit", not_first = TRUE)
 #' # merges first consecutive employment and inactivity spells into a single spell,
 #' # also catches second employment after retirement
 #' clock(x, c("Inactive","Employed"), clock_type = "step", increasing = FALSE, not_first = FALSE)
@@ -341,7 +366,7 @@ clock <- function(x,
                   state, 
                   clock_type = c("step", "duration", "order"), 
                   increasing = TRUE, 
-                  dur_condition = c("total","entry","exit"),
+                  condition = c("total","entry","exit"),
                   not_first = FALSE,
                   step_size = 1,
                   dead_state = "Dead"){
@@ -363,7 +388,7 @@ clock <- function(x,
   }
   
   clock_type    <- match.arg(clock_type)
-  dur_condition <- match.arg(dur_condition)
+  condition <- match.arg(condition)
   # --------------------------
   # step increasing or decreasing
   if (clock_type == "step"){
@@ -383,20 +408,20 @@ clock <- function(x,
   # --------------------------
   # total duration (increasing ignored)
   if (clock_type == "duration"){
-    if (dur_condition == "total"){
+    if (condition == "total"){
       out <- spell_dur(
                x = x, 
                state = state, 
                step_size = step_size)
     }
-    if (dur_condition == "entry"){
+    if (condition == "entry"){
       out <- spell_dur_conditional(
                x = x, 
                state = state, 
                entry = TRUE, 
                step_size = step_size)
     }
-    if (dur_condition == "exit"){
+    if (condition == "exit"){
       out <- spell_dur_conditional(
                x = x, 
                state = state, 
@@ -412,7 +437,8 @@ clock <- function(x,
              x = x,
              state = state,
              increasing = increasing, 
-             step_size = step_size)
+             step_size = step_size,
+             condition = condition)
   }
   
   # --------------------------
