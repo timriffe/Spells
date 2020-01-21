@@ -40,7 +40,7 @@ for (i in 1:10){
     labels = clock(XX[i,], 
                    state = "D", 
                    clock_type = "duration", 
-                   dur_condition = "entry"),
+                   condition = "entry"),
     cols = colsHD,
     y = i-1,
     box = TRUE,
@@ -65,6 +65,7 @@ for (i in 1:10){
                    state = "D", 
                    clock_type = "order", 
                    increasing = TRUE,
+                   condition = "entry"),
     cols = colsHD,
     y = i-1,
     box = TRUE,
@@ -78,4 +79,27 @@ legend(-10,-2,fill = colsHD[c("H","D")], legend = c("Healthy","Disabled"),horiz 
 dev.off()
 
 
-
+# grammar 3
+pdf(here::here("Spells","Figures","App1_grammar2.pdf"),width=10,height=4)
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,81), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence(
+    state_seq = XX[i,],
+    x = 50:79,
+    labels = clock(XX[i,], 
+                   state = "D", 
+                   clock_type = "order", 
+                   increasing = TRUE,
+                   condition = "entry"),
+    cols = colsHD,
+    y = i-1,
+    box = TRUE,
+    border = FALSE
+  )
+}
+axis(1)
+text(50,9:0+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-10,-2,fill = colsHD[c("H","D")], legend = c("Healthy","Disabled"),horiz = TRUE,xpd=TRUE,bty="n")
+dev.off()

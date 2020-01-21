@@ -1,6 +1,6 @@
 Package: Spells
 Title: Realign and count time or episodes within sequences to derive macro patterns
-Version: 0.1.07
+Version: 0.1.08
 Authors@R: person("Tim", "Riffe", email = "tim.riffe@gmail.com",
                   role = c("aut", "cre"))
 Description: Shift sequences to left, right, or center-align on a given reference state, with various selection criteria. Derive new macro patterns of demgoraphic or other time-structured phenomena by imputing various time or episode counting variables and then aggregating up.
