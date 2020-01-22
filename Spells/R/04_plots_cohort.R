@@ -1,0 +1,49 @@
+library(here); library(devtools); library(TraMineR); library(tidyverse)
+remove(list=ls())
+
+db<-readRDS(here("Spells","Data","Castro","cas_wom_cohort.rds"))
+
+# left first BIRTH time left to second birth, stratified by
+# sex of the first birth AND age at first birth
+db %>% 
+  # aligned on ev union, so need to filter on it.
+  group_by(sexf, afb5, left_par1) %>% 
+  summarize(med_time_left = median(c_step_down_par1, na.rm=TRUE),
+            mean_time_left = weighted.mean(c_step_down_par1, w=pwt, na.rm=TRUE))  %>% 
+  ggplot(mapping = aes(x = left_par1, 
+                       y = mean_time_left, 
+                       color = as.factor(sexf))) + 
+  geom_line() + 
+  #geom_vline(xintercept = c(0,1)) +
+  # transparent band presumed to isolate twins
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5, alpha = .2) +
+  facet_wrap(~afb5) + 
+  xlim(0,10)+ ylim(0,5) + 
+  scale_color_manual(labels = c("Boy", "Girl"), values = c("blue", "red")) +
+  guides(color=guide_legend(title="First child")) + 
+  xlab("Time since first birth") + 
+  ylab("Mean time to second birth")
+dev.print(device=pdf, 'mt_second_birth_by_sex_first_cohort.pdf', width=7, height=5)
+
+
+
+# TR: this one is freaking cool!
+# left first BIRTH time left to second BOY, stratified by
+# sex of the first birth AND age at first birth
+db %>% 
+  # aligned on ev union, so need to filter on it.
+  group_by(sexf, afb5, left_par1) %>% 
+  summarize(med_time_left = median(c_step_down_boy1, na.rm=TRUE),
+            mean_time_left = weighted.mean(c_step_down_boy1, w=pwt, na.rm=TRUE))  %>% 
+  ggplot(mapping = aes(x = left_par1, 
+                       y = mean_time_left, 
+                       color = as.factor(sexf))) + 
+  geom_line() + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 13, alpha = .2) +
+  facet_wrap(~afb5) + 
+  xlim(0,10) + ylim(0,14) +
+  scale_color_manual(labels = c("Boy", "Girl"), values = c("blue", "red")) +
+  guides(color=guide_legend(title="First child")) + 
+  xlab("Time since first birth") + 
+  ylab("Mean time to next boy")
+dev.print(device=pdf, 'mt_second_boy_by_sex_first_cohort.pdf', width=7, height=5)
