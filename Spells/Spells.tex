@@ -8,6 +8,9 @@
 \usepackage{setspace}
 \usepackage{float}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows,calc,positioning,shapes.geometric}
+\usepackage[left=1.25in,right=1.25in,top=1.25in,bottom=1.25in]{geometry}
 %\usepackage[active,tightpage]{preview}
 \usepackage{natbib}
 \bibpunct{(}{)}{,}{a}{}{;} 
@@ -299,11 +302,38 @@ We use data for individuals who were first interviewed in 2012, 2013, and 2014 a
 
 To estimate the transition probabilities between healthy and disabled states, we use the general question about how a person perceives his/her general health. Possibles' answers are: ``Very good'', ``Good'', ``Fair'', ``Bad'', and ``Very Bad''. We aggregate Bad and Very Bad into Disabled and the remaining options into Healthy. For those lost to the follow-up, information about death are provided by other household members.
 
-Individuals aged 15 can be healthy or disabled, and those who survive up to age 16 can stay healthy or move to the disabled state; the process continues at each successive age, up to 79.
+Individuals aged 15 can be healthy or disabled, and those who survive up to age 16 can stay healthy or move to the disabled state; the process continues at each successive age, up to 79. The state space and valid transitions for this model is depicted in Fig.~\ref{fig:statespace}.
 
-We estimate the transition probabilities by means of multinomial regressions \citep{Allison1982}. We model the probability of being in state $i$ (Healthy, Disabled, Dead) at time $t + 1$ as a function of the state $j$ at time $t$ (Healthy, Disabled) and age and income quintiles, separately by sex. In each of the regressions, age is modelled as a cubic spline. This approach accounts for non-linearity in the relationship between age and the probability of being in a state $i$. For each sex and income quintile, we produce transition probabilities $p_{i,j}$ for 65 age groups (single ages 15 to 79), and 6 possible transitions.
+\begin{figure}[t!]\centering
+\begin{tikzpicture}[scale=0.7, ->,>=stealth',shorten >=1pt,auto,node distance=3.5cm,
+  thick,main node/.style={circle,draw},square/.style={regular polygon,regular polygon sides=4}]
 
-The following exercise is done for females only. We arrange transition probabilities into standard Markov transition matrices, and then simulate 50,000 trajectories using the \texttt{rmarkovchain} package \citep{spedicato2017} and assuming that everyone starts healthy at age 15. Each trajectory consists in 65 time steps.
+  \node[main node] (1) at (0,0) [square,draw]{Healthy};
+  \node[main node] (2) at (4,-2.5) [square,draw] {Disabled};
+  \node[main node] (3) at (1.5,-6) [square,draw] {Dead};  
+
+  \path[every node/.style={font=\sffamily\small}]
+    
+    (1) edge node [left] {} (3)
+   	 (1) edge [bend right] node [left] {} (2)
+    
+    (2) edge node [right] {} (3)
+       (2) edge [bend right] node [left] {} (1)
+    
+    (1) edge [loop left] node {} (1)
+    (2) edge [loop right] node {} (2)
+    (3) edge [loop below] node {} (3)
+ 
+    ;
+\end{tikzpicture}
+%\caption{Simplified state space of the healthy LE ignoring age.}\label{fig:state1}
+\caption{A state space diagram depicting states and transitions for a single age step. States are in boxes and valid transitions are shown as arrows.}
+\label{fig:statespace}
+\end{figure}
+
+We estimate the transition probabilities using multinomial regression \citep{Allison1982}. We model the probability of being in state $i$ (Healthy, Disabled, Dead) at time $t + 1$ as a function of the state $j$ at time $t$ (Healthy, Disabled) and age and income quintiles, separately by sex. In each of the regressions, age is modelled as a cubic spline. This approach accounts for non-linearity in the relationship between age and the probability of being in a state $i$. For each sex and income quintile, we produce transition probabilities $p_{i,j}$ for 65 age groups (single ages 15 to 79), and 6 possible transitions.
+
+The following exercise is done for females only. We arrange transition probabilities into standard Markov transition matrices, and then simulate 50,000 trajectories using the \texttt{rmarkovchain} package \citep{spedicato2017} and assuming that everyone starts healthy at age 15. Each trajectory consists in 65 age steps.
 
 \subsubsection{Grammatical operations}
  
@@ -315,6 +345,8 @@ We illustrate the disability clocks calculated using 10 randomly generated traje
     \label{fig:disdurex}
 \end{figure}
 In this example, only individuals deceased before age 80 are shown, but in the full sample some individuals reach age 80 in a state of disability, which may continue into higher ages if we had the transition probabilities to simulate so far. This introduces a downward bias in spell duration that grows in magnitude with the approach to age 80. For this reason, we right truncate results for aggregates at age 70. To aggregate macro patterns from this, we take conditional means within each age, throwing out any values that are not the first time step in a disability spell. This produces two age patterns, one for the highest and one for the lowest income quintile. 
+
+[add 1) order clock, and 2) death alignment. Then each application has 3 graphs]
 
 \FloatBarrier
 
