@@ -2,6 +2,7 @@ library(here); library(devtools); library(TraMineR); library(tidyverse)
 remove(list=ls())
 
 db<-readRDS(here("Spells","Data","Castro","cas_wom_period.rds"))
+col7<-c(brewer.pal(9, "PuBu")[4:6], brewer.pal(9, "PuRd")[4:6], 'gray90')
 
 cc<-db$ceb>=2 & db$afb<40 & db$mage == db$maget & db$maget>=39
 ct<-db$ceb>=2 & db$afb<40 & db$mage == db$maget
@@ -32,7 +33,7 @@ db %>%
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 5, alpha = .2) +
   facet_wrap(~afb5) + 
   xlim(0,10)+ ylim(0,5) + 
-  scale_color_manual(labels = c("Boy", "Girl"), values = c("blue", "red")) +
+  scale_color_manual(labels = c("Boy", "Girl"), values = col7[c(2,5)]) +
   guides(color=guide_legend(title="First child")) + 
   xlab("Time since first birth") + 
   ylab("Mean time to second birth")
@@ -53,7 +54,7 @@ db %>%
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 9, alpha = .2) +
   facet_wrap(~afb5) + 
   xlim(0,10) + ylim(0,9) +
-  scale_color_manual(labels = c("Boy", "Girl"), values = c("blue", "red")) +
+  scale_color_manual(labels = c("Boy", "Girl"), values = col7[c(2,5)]) +
   guides(color=guide_legend(title="First child")) + 
   xlab("Time since first birth") + 
   ylab("Mean time to next boy")
@@ -76,7 +77,7 @@ db %>%
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 9, alpha = .2) +
   facet_wrap(~afb5) + 
   xlim(0,10) + ylim(0,9) +
-  scale_color_manual(labels = c("Boy", "Girl"), values = c("blue", "red")) +
+  scale_color_manual(labels = c("Boy", "Girl"), values = col7[c(2,5)]) +
   guides(color=guide_legend(title="First child")) + 
   xlab("Time since first birth") + 
   ylab("Mean time to next girl")

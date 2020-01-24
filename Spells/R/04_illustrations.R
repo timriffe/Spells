@@ -8,22 +8,24 @@ db<-db[db$ceb==4,]
 
 db$sexpar<-paste(car::recode(db$sex, "1='B'; 2='G'; NA='NB'"), 
                  recode(pmax(as.numeric(db$bparity), as.numeric(db$gparity)),
-                        "3:19='3+'"), sep='-')
-db$sexpar<-factor(recode(db$sexpar, "'NB-0'='NB'; 'NB-1'='NB';
-                  'NB-2'='NB'; 'NB-3+'='NB'"))
+                        "3:19='3+'"), sep='')
+db$sexpar<-factor(recode(db$sexpar, "'NB0'='NB'; 'NB1'='NB';
+                  'NB2'='NB'; 'NB3+'='NB'"))
 
 table(db$sexpar)
 
+setwd(here("Spells","Figures"))
 set.seed(22012020)
 n<-floor(runif(10, 1, length(unique(db$ident))))
 
 col7<-c(brewer.pal(9, "PuBu")[4:6], brewer.pal(9, "PuRd")[4:6], 'gray90')
 names(col7)<-levels(db$sexpar)
+cex8<-0.7
 
 # case 8
 mpar<-NULL; seqs<-NULL; bpar<-NULL; gpar<-NULL
 for(i in 1:length(n)){
-  cons<-db$mage>=15 & db$mage<=39 & db$ident==unique(db$ident)[n[i]]
+  cons<-db$mage>=10 & db$mage<=39 & db$ident==unique(db$ident)[n[i]]
   
   cona<-db$left_par1>=0 & db$left_par1<=15 & db$ident==unique(db$ident)[n[i]]
   
@@ -38,16 +40,11 @@ for(i in 1:length(n)){
 }
 
 par(mfrow=c(2,2), mar=c(3,3,1,1))
-plot(NULL, type="n", xlim=c(15,40),  ylim=c(0,12), axes = FALSE, xlab="", ylab="",
+plot(NULL, type="n", xlim=c(10,40),  ylim=c(0,12), axes = FALSE, xlab="", ylab="",
      main='Original data')
 for (i in 1:10){
-  draw_sequence(seqs[,i], 
-                x=15:39, 
-                y=i, 
-                labels=seqs[,i],
-                cols=col7,
-                border = NA,
-                box = TRUE, cex=0.55)
+  draw_sequence(seqs[,i], x=10:39, y=i, labels=seqs[,i], cols=col7, border = NA,
+                box = TRUE, cex=cex8)
 }
 
 plot(NULL, type="n", xlim=c(1,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab="",
@@ -55,7 +52,7 @@ plot(NULL, type="n", xlim=c(1,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
 for (i in 1:10){
    draw_sequence(seqs[,i], x=align(mpar[,i], state="1", type='left'), y=i, cols=col7,
                  labels=clock(x=mpar[,i], state="1",clock_type="step",increasing=FALSE),
-                 border=NA, box = TRUE, cex=0.65)
+                 border=NA, box = TRUE, cex=cex8)
 }
 
 plot(NULL, type="n", xlim=c(1,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab="",
@@ -63,7 +60,7 @@ plot(NULL, type="n", xlim=c(1,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
 for (i in 1:10){
   draw_sequence(seqs[,i], x=align(mpar[,i], state="1", type='left'), y=i, cols=col7,
                 labels=clock(x=bpar[,i], state="1",clock_type="step",increasing=FALSE),
-                border=NA, box = TRUE, cex=0.65)
+                border=NA, box = TRUE, cex=cex8)
 }
 
 plot(NULL, type="n", xlim=c(1,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab="",
@@ -71,10 +68,6 @@ plot(NULL, type="n", xlim=c(1,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
 for (i in 1:10){
   draw_sequence(seqs[,i], x=align(mpar[,i], state="1", type='left'), y=i, cols=col7,
                 labels=clock(x=gpar[,i], state="1",clock_type="step",increasing=FALSE),
-                border=NA, box = TRUE, cex=0.65)
+                border=NA, box = TRUE, cex=cex8)
 }
-
-
-
-
-
+dev.print(device=pdf, 'illu_fertility.pdf', width=14, height=9)
