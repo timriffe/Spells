@@ -393,7 +393,7 @@ clock <- function(x,
   
   # identity clocks for just prevalence
   if (clock_type == "identity"){
-    out <- ifelse(x == "REFSTATE",1,
+    out <- ifelse(x == state, 1,
                   ifelse(x == dead_state, NA, 0))
   }
   
