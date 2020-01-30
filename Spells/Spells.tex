@@ -342,9 +342,24 @@ The following exercise is done for females only. We arrange transition probabili
 We illustrate the disability clocks calculated using 10 randomly generated trajectories starting at age 50 and ignoring younger ages. In order to calculate the mean duration of spells starting in age $x$, we impute the spell duration in the first time step of each disability spell, following the pattern in Fig.~\ref{fig:disdurex}. This is essentially a single step because we retain the default age alignment.
 \begin{figure}
     \centering
-    \includegraphics[scale=.7]{Spells/Figures/DisTrajExample.pdf}
-    \caption{Ten example trajectories, with disability spell duration imputed in the first time step of each spell. Light green is healthy and brown is disabled. Ages below 50 are ignored in this illustration.}
+    \begin{subfigure}{\textwidth}
+    \includegraphics[scale=.6]{Spells/Figures/App1_grammar1.pdf}
+    \caption{The first time step in each disability spell is imputed with the spell length, all other values are thrown out.}
     \label{fig:disdurex}
+    \end{subfigure}
+    
+        \begin{subfigure}{\textwidth}
+    \includegraphics[scale=.6]{Spells/Figures/App1_grammar2.pdf}
+    \caption{The first time step in each disability spell is imputed with an ascending spell order clock, all other values are thrown out.}
+    \label{fig:disdurex}
+    \end{subfigure}
+    
+        \begin{subfigure}{\textwidth}
+    \includegraphics[scale=.6]{Spells/Figures/App1_grammar3.pdf}
+    \caption{A prevalence clock, with trajectories aligned on the year of death. Healthy years are interpreted as 0s.}
+    \label{fig:disdurex}
+    \end{subfigure}
+    \caption{Ten example disability trajectories. Figs. a) and b) indicate clock operations, and Fig. c) shows an alignment operation. Ages below 50 are ignored in these illustrations.}
 \end{figure}
 In this example, only individuals deceased before age 80 are shown, but in the full sample some individuals reach age 80 in a state of disability, which may continue into higher ages if we had the transition probabilities to simulate so far. This introduces a downward bias in spell duration that grows in magnitude with the approach to age 80. For this reason, we right truncate results for aggregates at age 70. To aggregate macro patterns from this, we take conditional means within each age, throwing out any values that are not the first time step in a disability spell. This produces two age patterns, one for the highest and one for the lowest income quintile. 
 
