@@ -27,7 +27,7 @@ XX <- XX[1:10,]
 
 
 colsHD <- c(H = "#add996",D="#bf9319",Dead="#FFFFFF00")
-pdf(here::here("Spells","Figures","App1_grammar1.pdf"),width=10,height=4)
+pdf(here::here("Spells","Figures","App1_grammar1.pdf"),width=9,height=4)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,81), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -51,7 +51,7 @@ legend(-10,-2,fill = colsHD[c("H","D")], legend = c("Healthy","Disabled"),horiz 
 dev.off()
 
 # grammar 2
-pdf(here::here("Spells","Figures","App1_grammar2.pdf"),width=10,height=4)
+pdf(here::here("Spells","Figures","App1_grammar2.pdf"),width=9,height=4)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,81), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -78,7 +78,7 @@ dev.off()
 
 # grammar 3
 # align on death
-pdf(here::here("Spells","Figures","App1_grammar3.pdf"),width=10,height=4)
+pdf(here::here("Spells","Figures","App1_grammar3.pdf"),width=9,height=4)
 par(mai=c(.8,0,0,1))
 plot(NULL, type = "n", xlim = c(-30,0), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
