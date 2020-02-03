@@ -66,7 +66,7 @@
 % Most of what we know about demography (levels, trends) stands on a Markovian foundation: The lifetable is a Markov process, as are most multistate models in practice, and these two analytic instruments underly what we know about longevity, healthy years lived, years worked, and many other of the primary concerns of demography. Results of this approach tend to be synthetic indices, a number or two to summarize an average lifetime from a possibly rich set of age-structured demographic rates or probabilities. And age-structured rates are already an abstraction from an even richer sequence of events and states. Moment statistics, such as life expectancy, are useful metrics, but we're not so sure that they
 We propose a measurement framework consisting in a two-element grammar. These two elements serve to extract macro patterns hidden within trajectory data. Such patterns might be age-like patterns of novel prevalence, state-episode-occupancy time measures, or time left to next event. Using this framework, we aim to zoom in on demographic patterns that emerge at various stages of the life course, and so describe a given demographic phenomenon (state) from a variety of perspectives. 
 
-We first define \emph{clock} measures, a way to inscribe time, order, prevalence, or other measures into individual life trajectories. This step is analogous to defining a rewards matrix in multistate Markov models \citep[see e.g.][]{caswell2018matrix}, and the ends are not entirely dissimilar. As an example of a concrete Markov analogy, \citet{dudel2017b} defines an algebraic expression to estimate the expected number of episodes of a given state that individuals experience in a given multistate world. Taken together with the total expected state occupancy time, one can infer an average episode duration. And there are both clunky and elegant approaches close at hand to derive an age pattern of expected episode duration. Such measures (even that has not been done before) would already add insight to demographic processes. Clock measures are much more flexible than this, and enable the researcher to decompose expected episode durations into expected time spent and left within episodes, or even by episode length. To illustrate the flexibility of \emph{clocks}, we propose several other variants that go beyond this case.
+We first define \emph{clock} measures, a way to inscribe time, order, prevalence, or other measures into individual life trajectories. This step is analogous to defining a rewards matrix in multistate Markov models \citep[see e.g.][]{caswell2018matrix}, and the ends are not entirely dissimilar. As an example of a concrete Markov analogy, \citet{dudel2017b} defines an algebraic expression to estimate the expected number of episodes of a given state that individuals experience in a given multistate world. Taken together with the total expected state occupancy time, one can infer an average episode duration. And there are both clunky and elegant approaches close at hand to derive an age pattern of expected episode duration. Such measures (only reported once before to our knowledge \citep{laditka1998new}) would already add insight to demographic processes and outcomes. Clock measures are much more flexible than this, and enable the researcher to decompose expected episode durations into expected time spent and left within episodes, or even by episode length. To illustrate the flexibility of \emph{clocks}, we propose several other variants that go beyond this case.
 
 Second we define \emph{alignment} operations, which shift trajectories to have synchronous timing with respect to the entry to or exit from a given episode of a specified state. Researchers already do similar things: for example \citet{iacobelli2013multiple} propose a flexible use of time-since-event scales, and \citet{riffe2017unified} define flexible Lexis spaces in which life lines are aligned both on birth and on death, and this has been used to reveal hidden health patterns \citep{riffe2016time} and pathways \citep{potente2018disability, raab2018pathways}. We propose more flexible alignment procedures, which allow trajectory synchronization on the start or end of a conditionally specified episode (e.g., first, last, longest).
 
@@ -292,7 +292,7 @@ Age-like macro-patterns can be derived in trajectory data by aggregating clocks 
 \section{Applications}
 
 \subsection{Health inequalities}
-Population level studies of disability typically report values such as mean time spent disabled, either derived from a multistate model of disability \citep{crimmins2009change} or derived using the Sullivan method \citep{Sullivan1970,Crimmins1997}. It is rare to see other model statistics reported, even for results based on simulated disability trajectories. Especially for the case of describing group inequalities, it may be interesting to measure quantities beyond health expectancies, such as the age pattern of disability spell length. Do new bouts of disability tend to get longer or shorter with age? Who has longer spells of disability, the rich or the poor?
+Population level studies of disability typically report values such as mean time spent disabled, either derived from a multistate model of disability \citep{crimmins2009change} or derived using the Sullivan method \citep{Sullivan1970,Crimmins1997}. It is rare to see other model statistics reported for health disparities \citep{laditka1998new}, even for results based on simulated disability trajectories. Especially for the case of understanding group inequalities, it is valuable to measure quantities beyond health expectancies, such as the age pattern of disability spell length, whether . Do new bouts of disability tend to get longer or shorter with age? Who has longer spells of disability, the rich or the poor? We calculate age patterns for disability spell duration, disability spell order, and the prevalence of disability in the final years of life.
 
 We aim to show some preliminary results using and example of an age-structured clock (the default alignment).
 Long term disability trajectories over the life course of individuals are typically not recorded, except in rare cohort studies, or in long-running health registers. To produce our base set of trajectories, we first estimate transition probabilities, then we simulate over a wide age range. We then demonstrate clock aggregation to calculate the average duration of new spells of disability. This is proposed as an interesting metric for health inequalities.
@@ -337,34 +337,40 @@ We estimate the transition probabilities using multinomial regression \citep{All
 
 The following exercise is done for females only. We arrange transition probabilities into standard Markov transition matrices, and then simulate 50,000 trajectories using the \texttt{rmarkovchain} package \citep{spedicato2017} and assuming that everyone starts healthy at age 15. Each trajectory consists in 65 age steps.
 
+
+
 \subsubsection{Grammatical operations}
- 
-We illustrate the disability clocks calculated using 10 randomly generated trajectories starting at age 50 and ignoring younger ages. In order to calculate the mean duration of spells starting in age $x$, we impute the spell duration in the first time step of each disability spell, following the pattern in Fig.~\ref{fig:disdurex}. This is essentially a single step because we retain the default age alignment.
+We report three kinds of results for this application, which aim to illustrate some of the leverage that can be obtained from isolated clock or alignment operations. These include two clocks (spell duration and order), and one alignment (end of life). We illustrate the meaning of these operations using ten randomly generated trajectories left truncated at age 50 and conditioned on death before age 80. In order to calculate the mean duration of spells starting in age $x$, we impute the spell duration in the first time step of each disability spell, following the pattern in Fig.~\ref{fig:a1g2}. This first analysis requires only a single clock step because we retain the default age alignment. Calculation of the mean conditional spell order (Fig.~\ref{fig:a1g2}) is based on a similar setup, with an order indicator imputed in the first time step. These first two clocks are to be aggregated as conditional means (conditional on entering the spell in a given age), so all other values (healthy, dead, later time steps in the same spell) are discarded. The third analysis aims to compare disability prevalence patterns in the final years of life (Fig.~\ref{fig:a1g3}). This is based on i) an \emph{identity} clock, which places 1s in each time step within disability spells and 0s in time steps spent healthy, and ii) alignment on the end of life.
+
 \begin{figure}
     \centering
     \begin{subfigure}{\textwidth}
-    \includegraphics[scale=.6]{Spells/Figures/App1_grammar1.pdf}
+      \centering
+    \includegraphics[scale=.5]{Spells/Figures/App1_grammar1.pdf}
     \caption{The first time step in each disability spell is imputed with the spell length, all other values are thrown out.}
-    \label{fig:disdurex}
+    \label{fig:a1g1}
     \end{subfigure}
     
         \begin{subfigure}{\textwidth}
-    \includegraphics[scale=.6]{Spells/Figures/App1_grammar2.pdf}
+          \centering
+    \includegraphics[scale=.5]{Spells/Figures/App1_grammar2.pdf}
     \caption{The first time step in each disability spell is imputed with an ascending spell order clock, all other values are thrown out.}
-    \label{fig:disdurex}
+    \label{fig:a1g2}
     \end{subfigure}
     
         \begin{subfigure}{\textwidth}
-    \includegraphics[scale=.6]{Spells/Figures/App1_grammar3.pdf}
+          \centering
+          \includegraphics[scale=.5]{Spells/Figures/App1_grammar3.pdf}
     \caption{A prevalence clock, with trajectories aligned on the year of death. Healthy years are interpreted as 0s.}
-    \label{fig:disdurex}
+    \label{fig:a1g3}
     \end{subfigure}
     \caption{Ten example disability trajectories. Figs. a) and b) indicate clock operations, and Fig. c) shows an alignment operation. Ages below 50 are ignored in these illustrations.}
+    \label{fig:a1traj}
 \end{figure}
-In this example, only individuals deceased before age 80 are shown, but in the full sample some individuals reach age 80 in a state of disability, which may continue into higher ages if we had the transition probabilities to simulate so far. This introduces a downward bias in spell duration that grows in magnitude with the approach to age 80. For this reason, we right truncate results for aggregates at age 70. To aggregate macro patterns from this, we take conditional means within each age, throwing out any values that are not the first time step in a disability spell. This produces two age patterns, one for the highest and one for the lowest income quintile. 
 
-[add 1) order clock, and 2) death alignment. Then each application has 3 graphs]
+To aggregate macro patterns from the spell duration and order clocks, we calculate conditional means within each age, throwing out any values that are not the first time step in a disability spell. In the time-to-death prevalence we calculate conditional means within the time scale produced by death-alignment. In these examples, only individuals deceased before age 80 are shown, but in the full simulated sample some individuals reach age 80 in a state of disability, which may continue into higher ages if we had the transition probabilities to simulate so far. This introduces a downward bias in spell duration that grows in magnitude with the approach to age 80. For this reason, we right truncate results for spell duration aggregates at age 70. 
 
+This produces two age patterns, one for the highest and one for the lowest income quintile.
 \FloatBarrier
 
 \subsubsection{Results}
