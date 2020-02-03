@@ -44,7 +44,7 @@ db %>%
   geom_line() + 
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 13, alpha = .2) +
   facet_wrap(~afb5) + 
-  xlim(0,10) + ylim(0,14) +
+  xlim(0,10) + ylim(0,7) +
   scale_color_manual(labels = c("Boy", "Girl"), values = col7[c(2,5)]) +
   guides(color=guide_legend(title="First child")) + 
   xlab("Time since first birth") + 
@@ -66,7 +66,7 @@ db %>%
   geom_line() + 
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 13, alpha = .2) +
   facet_wrap(~afb5) + 
-  xlim(0,10) + ylim(0,14) +
+  xlim(0,10) + ylim(0,7) +
   scale_color_manual(labels = c("Boy", "Girl"), values = col7[c(2,5)]) +
   guides(color=guide_legend(title="First child")) + 
   xlab("Time since first birth") + 
