@@ -160,12 +160,17 @@ App1_macro3 <- Dat %>%
                        fill = InQ,
                        height = ttdprev)) + 
   geom_density_ridges(stat = "identity",alpha = .4) +
+  annotate("text",x=68,y=5.5,label="highest 20%") + 
+  geom_segment(aes(x=63,y=5.5,xend=59,yend=6.1),color = "black") +
+  annotate("text",x=49,y=6.7,label="lowest 20%") + 
+  geom_segment(aes(x=54,y=6.7,xend=58,yend=6.5),color = "black") +
   labs(x = "Age", y = "Prevalence by age at death",size=2)+
-  guides(fill=guide_legend(title="Inc. Quintile"),color=FALSE)+
+  guides(fill=FALSE,color=FALSE)+
   theme(
     axis.title.x = element_text(size = 13),
     axis.text.x = element_text(size = 13),
     axis.text.y = element_text(size = 13),
-    axis.title.y = element_text(size = 13))
+    axis.title.y = element_text(size = 13),
+    legend.position = c(0.9, 0.1))
 ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro3.pdf",
        App1_macro3, width = 7, height = 6)
