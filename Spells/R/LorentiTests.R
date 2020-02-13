@@ -43,10 +43,12 @@ DisStats <-
                           max(age) == 79, FALSE, first),
          last = ifelse(state == "Disabled" & 
                           max(age) == 79, FALSE, last)) 
- head(DisStats)
+
+# Macro 1
 # mean spell duration for spells
 # starting in age x
-App1_macro1 <- DisStats %>% 
+App1_macro1 <- 
+  DisStats %>% 
   ungroup() %>% 
   mutate(InQ = case_when(InQ == "I" ~ "lowest 20%",
                          InQ == "V" ~ "highest 20%")) %>% 
@@ -60,45 +62,83 @@ App1_macro1 <- DisStats %>%
                        y = dur_first_mean, 
                        color = InQ)) + 
   geom_line(size=1.5) + 
+  geom_segment(aes(x=53.5,y=2,xend=66,yend=2),color = "black") +
+  annotate("text", x = 58, y = 2.05, label = "13 years") + 
+  annotate("text", x = 40, y = 1.68, label = "lowest 20%") +
+  annotate("text", x = 40, y = 1.17, label = "highest 20%") +
   xlim(16,70) +
   labs(x = "Age", y = "conditional mean spell duration (years)",
        main = "Mean disability spell duration of spells starting in age x")+
-  guides(color=guide_legend(title="Inc. Quintile"))+
+  guides(color=FALSE)+
   theme(
-    axis.title.x = element_text(size = 16),
-    axis.text.x = element_text(size = 16),
-    axis.text.y = element_text(size = 16),
-    axis.title.y = element_text(size = 16))
+    axis.title.x = element_text(size = 13), # use 16 for presentations
+    axis.text.x = element_text(size = 13),
+    axis.text.y = element_text(size = 13),
+    axis.title.y = element_text(size = 13))
 ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro1.pdf",
-       App1_macro1)
+       App1_macro1, width = 7, height = 6)
 
-library(reshape2)
-X <- DisStats %>% 
-  filter(state != "Dead") %>% 
-  group_by(InQ, id) %>% 
-  filter(first,
-         !is.na(dis_dur),
-         InQ %in% c("I","V")) %>% 
-  group_by(sex, InQ, age) %>% 
-  summarize(dur_first_mean = mean(dis_dur, na.rm = TRUE)) %>% 
-  mutate(dur_first_mean = na_if(dur_first_mean, NaN)) %>% 
-  acast(age~InQ, value.var = "dur_first_mean")
-X[,1] / X[,2]  
+# library(reshape2)
+# X <- DisStats %>% 
+#   filter(state != "Dead") %>% 
+#   group_by(InQ, id) %>% 
+#   filter(first,
+#          !is.na(dis_dur),
+#          InQ %in% c("I","V")) %>% 
+#   group_by(sex, InQ, age) %>% 
+#   summarize(dur_first_mean = mean(dis_dur, na.rm = TRUE)) %>% 
+#   mutate(dur_first_mean = na_if(dur_first_mean, NaN)) %>% 
+#   acast(age~InQ, value.var = "dur_first_mean")
+# X[,1] / X[,2]  
 # mean spell duration for spells
 # ending in age x
-DisStats %>% 
+# DisStats %>% 
+#   filter(first,
+#          !is.na(dis_dur)) %>% 
+#   group_by(sex, InQ, age) %>% 
+#   summarize(dur_last_mean = mean(dis_dur, na.rm = TRUE)) %>% 
+#   mutate(dur_last_mean = na_if(dur_last_mean, NaN)) %>% 
+#   ggplot(mapping = aes(x = age, 
+#                        y = dur_last_mean, 
+#                        color = InQ)) + 
+#   geom_line(size=2) + 
+#   xlim(17,80)
+#   
+
+
+# Macro 2
+# mean spell order of spells
+# starting in age x
+App1_macro2 <- DisStats %>% 
   filter(first,
          !is.na(dis_dur)) %>% 
   group_by(sex, InQ, age) %>% 
-  summarize(dur_last_mean = mean(dis_dur, na.rm = TRUE)) %>% 
-  mutate(dur_last_mean = na_if(dur_last_mean, NaN)) %>% 
+  summarize(order_first_mean = mean(dis_order, na.rm = TRUE)) %>% 
+  mutate(order_first_mean = na_if(order_first_mean, NaN)) %>% 
   ggplot(mapping = aes(x = age, 
-                       y = dur_last_mean, 
+                       y = order_first_mean, 
                        color = InQ)) + 
-  geom_line(size=2) + 
-  xlim(17,80)
-  
+  geom_line(size=1.5) + 
+  xlim(16,70) + 
+  ylim(1,3.5) + 
+  geom_segment(aes(x=54,y=2,xend=65,yend=2),color = "black") +
+  annotate("text", x = 58, y = 2.05, label = "11 years") +
+  annotate("text", x = 40, y = 1.6, label = "lowest 20%") +
+  annotate("text", x = 40, y = 1.14, label = "highest 20%") +
+  labs(x = "Age", 
+       y = "mean episode order",
+       main = "New disability episodes are on average 2nd episodes by age 54 if you're poor, 65 if you're rich")+
+  guides(color=FALSE)+
+  theme(
+    axis.title.x = element_text(size = 13), # use 16 for presentations
+    axis.text.x = element_text(size = 13),
+    axis.text.y = element_text(size = 13),
+    axis.title.y = element_text(size = 13))
+ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro2.pdf",
+       App1_macro2, width = 7, height = 6)  
 
+
+# Macro 3
 library(ggridges)
 App1_macro3 <- Dat %>%
   filter(age < 80) %>% 
@@ -120,41 +160,12 @@ App1_macro3 <- Dat %>%
                        fill = InQ,
                        height = ttdprev)) + 
   geom_density_ridges(stat = "identity",alpha = .4) +
-  labs(x = "Time to death", y = "Prevalence by age at death",size=2)+
+  labs(x = "Age", y = "Prevalence by age at death",size=2)+
   guides(fill=guide_legend(title="Inc. Quintile"),color=FALSE)+
   theme(
-    axis.title.x = element_text(size = 16),
-    axis.text.x = element_text(size = 16),
-    axis.text.y = element_text(size = 16),
-    axis.title.y = element_text(size = 16))
+    axis.title.x = element_text(size = 13),
+    axis.text.x = element_text(size = 13),
+    axis.text.y = element_text(size = 13),
+    axis.title.y = element_text(size = 13))
 ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro3.pdf",
-       App1_macro3)
-
-# mean spell order of spells
-# starting in age x
-App1_macro2 <- DisStats %>% 
-  filter(first,
-         !is.na(dis_dur)) %>% 
-  group_by(sex, InQ, age) %>% 
-  summarize(order_first_mean = mean(dis_order, na.rm = TRUE)) %>% 
-  mutate(order_first_mean = na_if(order_first_mean, NaN)) %>% 
-  ggplot(mapping = aes(x = age, 
-                       y = order_first_mean, 
-                       color = InQ)) + 
-  geom_line(size=2.5) + 
-  xlim(16,70) + 
-  geom_segment(aes(x=54,y=2,xend=65,yend=2),color = "black") +
-  annotate("text", x = 58, y = 2.05, label = "11 years") +
-  labs(x = "Age", 
-       y = "mean episode order",
-       main = "New disability episodes are on average 2nd episodes by age 54 if you're poor, 65 if you're rich")+
-  guides(color=guide_legend(title="Inc. Quintile"))+
-  theme(
-    axis.title.x = element_text(size = 16),
-    axis.text.x = element_text(size = 16),
-    axis.text.y = element_text(size = 16),
-    axis.title.y = element_text(size = 16))
-ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro2.pdf",
-       App1_macro2)  
-
-
+       App1_macro3, width = 7, height = 6)
