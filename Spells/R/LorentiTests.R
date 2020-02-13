@@ -10,7 +10,7 @@ library(Spells)
 
 # now this is tidy and can be analyzed
 # head(Dat)
-
+Dat <- readRDS(here::here("Spells","Data","Lorenti","SILCsim.rds"))
 
 # TR: note also for all measures used here, we want to make sure right censoring doesn't mess up
 # stats. Those that die in the interval are not right censored, so they're safe. If results too
@@ -46,7 +46,7 @@ DisStats <-
  head(DisStats)
 # mean spell duration for spells
 # starting in age x
-DisStats %>% 
+App1_macro1 <- DisStats %>% 
   ungroup() %>% 
   mutate(InQ = case_when(InQ == "I" ~ "lowest 20%",
                          InQ == "V" ~ "highest 20%")) %>% 
@@ -69,7 +69,8 @@ DisStats %>%
     axis.text.x = element_text(size = 16),
     axis.text.y = element_text(size = 16),
     axis.title.y = element_text(size = 16))
-
+ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro1.pdf",
+       App1_macro1)
 
 library(reshape2)
 X <- DisStats %>% 
@@ -99,9 +100,12 @@ DisStats %>%
   
 
 library(ggridges)
-Dat %>% 
-  # remove age 80, since we closed out
-  filter(age < 80,
+App1_macro3 <- Dat %>%
+  filter(age < 80) %>% 
+  group_by(InQ, id) %>% 
+  mutate(dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
+  ungroup() %>% 
+  filter(dead,
          state != "Dead") %>% 
   group_by(InQ, id) %>% 
   mutate(ttd = max(age) - age,
@@ -110,16 +114,25 @@ Dat %>%
   filter(ad5 > 30) %>% 
   group_by(sex, InQ, ttd, ad5) %>% 
   summarize(ttdprev = mean(state == "Disabled")) %>% 
-  ggplot(mapping = aes(x = ttd, 
+  ggplot(mapping = aes(x = ad5-ttd, 
                        y = as.factor(ad5), 
                        color = InQ,
+                       fill = InQ,
                        height = ttdprev)) + 
-  geom_density_ridges(stat = "identity",fill = "transparent") 
-
+  geom_density_ridges(stat = "identity",alpha = .4) +
+  labs(x = "Time to death", y = "Prevalence by age at death",size=2)+
+  guides(fill=guide_legend(title="Inc. Quintile"),color=FALSE)+
+  theme(
+    axis.title.x = element_text(size = 16),
+    axis.text.x = element_text(size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title.y = element_text(size = 16))
+ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro3.pdf",
+       App1_macro3)
 
 # mean spell order of spells
 # starting in age x
-DisStats %>% 
+App1_macro2 <- DisStats %>% 
   filter(first,
          !is.na(dis_dur)) %>% 
   group_by(sex, InQ, age) %>% 
@@ -128,14 +141,20 @@ DisStats %>%
   ggplot(mapping = aes(x = age, 
                        y = order_first_mean, 
                        color = InQ)) + 
-  geom_line() + 
+  geom_line(size=2.5) + 
   xlim(16,70) + 
   geom_segment(aes(x=54,y=2,xend=65,yend=2),color = "black") +
   annotate("text", x = 58, y = 2.05, label = "11 years") +
   labs(x = "Age", 
        y = "mean episode order",
-       main = "New disability episodes are on average 2nd episodes by age 54 if you're poor, 65 if you're rich")
-  
-
+       main = "New disability episodes are on average 2nd episodes by age 54 if you're poor, 65 if you're rich")+
+  guides(color=guide_legend(title="Inc. Quintile"))+
+  theme(
+    axis.title.x = element_text(size = 16),
+    axis.text.x = element_text(size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title.y = element_text(size = 16))
+ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro2.pdf",
+       App1_macro2)  
 
 
