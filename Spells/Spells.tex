@@ -70,7 +70,7 @@ We first define \emph{clock} measures, a way to inscribe time, order, prevalence
 
 Second we define \emph{alignment} operations, which shift trajectories to have synchronous timing with respect to the entry to or exit from a given episode of a specified state. Researchers already do similar things: for example \citet{iacobelli2013multiple} propose a flexible use of time-since-event scales, and \citet{riffe2017unified} define flexible Lexis spaces in which life lines are aligned both on birth and on death, and this has been used to reveal hidden health patterns \citep{riffe2016time} and pathways \citep{potente2018disability, raab2018pathways}. We propose more flexible alignment procedures, which allow trajectory synchronization on the start or end of a conditionally specified episode (e.g., first, last, longest).
 
-In isolation or in combination, clock and alignment operations open a large space for the derivation of demographic macro patterns. In the following sections we give concrete examples to illustrate concepts on using a toy example of simulated employment old-age trajectories. We give two abbreviated example applications for the cases of disability inequalities in Italy and birth interval differentials in Colombia. Disability trajectories are simulated from transition probabilities estimated from Italian SILC data. Birth and union histories are recorded histories from the Colombian Demographic and Health surveys. We subject both the simulated and recorded trajectories to a few simple analyses based on our framework, therein defining novel and interpretable comparisons. Though superficial, these examples demonstrate the flexibility of the clocks and alignment framework for aggregations of trajectory data. Work shown here is fully reproducible, and we also offer an \texttt{R} package, \texttt{Spells}, which enables readers to experiment with flexible clock and alignment operations.
+In isolation or in combination, clock and alignment operations open a large space for the derivation of demographic macro patterns. In the following sections we give concrete examples to illustrate concepts on using a toy example of simulated employment old-age trajectories. We give two abbreviated example applications for the cases of disability inequalities in Italy and birth interval differentials in Colombia. Disability trajectories are simulated from transition probabilities estimated from Italian SILC data. Birth and union histories are recorded histories from the Colombian Demographic and Health surveys. We subject both the simulated and recorded trajectories to a few simple analyses based on our framework, therein defining novel and interpretable comparisons. These introductory examples demonstrate the flexibility of the clocks and alignment framework for aggregations of trajectory data. Work shown here is fully reproducible, and we also offer an experimental \texttt{R} package, \texttt{Spells}, which enables readers to easily apply flexible clock and alignment operations.
 % 
 % Incidence-based matrix
 % models are rather undeveloped with respect to tenure-statistics, and these
@@ -106,81 +106,80 @@ In isolation or in combination, clock and alignment operations open a large spac
 % used to generate results is immaterial.
 
 \section{Concepts}
-To demonstrate concepts, we simulate trajectories from a published transition matrix \citep{Dudel2017}. This matrix refers to black females aged 50-100 in 1994, and it contains age-structured transition probabilities for movements between employment, inactivity, and retirement, as well as mortality from these three states. Simulation is done using the \texttt{rmarkovchain()} function from the \texttt{R} package \texttt{markovchain} \citep{spedicato2017}. A glimpse of the first 10 randomly generated individuals is shown in Figure~\ref{fig:seq10}. These ten individuals will be recycled in all of the following data manipulations used to demonstrate concepts. All aggregate calculations of age patterns (and so on) are based on a simulated population of 10000 trajectories starting in employment at age 50.
+To demonstrate concepts, we simulate trajectories from a published transition matrix \citep{Dudel2017}. This matrix refers to black females aged 50-100 in 1994, and it contains age-structured transition probabilities for movements between employment, inactivity, and retirement, as well as mortality from these three states. Simulation is done using the \texttt{rmarkovchain()} function from the \texttt{R} package \texttt{markovchain} \citep{spedicato2017}. A glimpse of the first 10 randomly generated individuals is shown in Figure~\ref{fig:seq10}. These ten individuals will be recycled in all of the following data manipulations used to demonstrate concepts. 
 
 \begin{figure}[ht!]
 \centering
+\includegraphics[scale=.5]{Figures/Seq10.pdf}
 \caption{Ten randomly generated state sequences from the 1994 transition matrix
 of black females \citep{Dudel2017}}
 \label{fig:seq10}
-\includegraphics[scale=.5]{Figures/Seq10.pdf}
 \end{figure}
 
 \FloatBarrier
 
-\section{Clocks}
+\subsection{Clocks}
 \label{sec:clocks}
 
-\subsection{A binary trajectory matrix gives prevalence}
+\subsubsection{A binary trajectory matrix gives prevalence}
 Standard calculations of prevalence typically proceed by imputing reference states with 1s (with 0s elsewhere) and taking column means over survivors in each age. Figure~\ref{fig:seq10ones} shows such a data construct, where the state sequence matrix has been converted to a binary matrix, with 1s for employment episodes, 0s for other living states (shown blank). Typically one might impute \texttt{NA} values in dead states for this sort of calculation. Operations on objects such as this can yield age patterns of prevalence or expectancies, for example. This is not what we call a clock, but this data construct illustrates the setup. As the number of simulated trajectories increases, the resulting age pattern of prevalence will approach the values in the respective column of the so-called fundamental matrix in a Markov approach.
 
 \begin{figure}[ht!]
 \centering
+\includegraphics[scale=.5]{Figures/Seq10ones.pdf}
 \caption{Binary imputation of employment spells}
 \label{fig:seq10ones}
-\includegraphics[scale=.5]{Figures/Seq10ones.pdf}
 \end{figure}
 
-\subsection{Duration, step, and order clocks}
+\subsubsection{Duration, step, and order clocks}
 To derive measures other than prevalence, we simply change the 1s to other values. For example, to calculate an age-pattern of spell duration, instead impute time steps with episodes with values equal to the total episode length (Fig.~\ref{fig:seq10dur}). Column means of the resulting object would give the average episode duration conditional on being in any point of an episode. If instead one wanted to condition on episodes starting (ending) in each age then impute the same values in only the first (last) time step within each episode (not shown). One may also wish to calculate time spent or left in the state episode, per Fig.~\ref{fig:seq10timespent} or \ref{fig:seq10timeleft} \footnote{In practice we increment values by $\frac{1}{2}$ for mid-state clocking.}. Episodes can also be imputed with other markers, such as episode order, as in Fig.~\ref{fig:order} for the case of employment spells, or episode fractions. 
 
 \begin{figure}[ht!]
 \centering
-\caption{Inactivity spells from Figure~\ref{fig:seq10}
-are imputed with different duration count variables. It's probably better to add
-$\frac{1}{2}$ to the displayed \emph{running} values. }
-\label{fig:spentleft}
 
 \begin{subfigure}{\textwidth}
+\includegraphics[scale=.5]{Figures/Seq10dur.pdf}
 \caption{Static; Total episode duration of inactivity.}
 \label{fig:seq10dur}
-\includegraphics[scale=.5]{Figures/Seq10dur.pdf}
 \end{subfigure}
 
 \begin{subfigure}{\textwidth}
+\includegraphics[scale=.5]{Figures/Seq10timespent.pdf}
 \caption{Step; Time spent in episode of inactivity.}
 \label{fig:seq10timespent}
-\includegraphics[scale=.5]{Figures/Seq10timespent.pdf}
 \end{subfigure}
 
 \begin{subfigure}{\textwidth}
+\includegraphics[scale=.5]{Figures/Seq10timeleft.pdf}
 \caption{Step; Time left in episode of inactivity}
 \label{fig:seq10timeleft}
-\includegraphics[scale=.5]{Figures/Seq10timeleft.pdf}
 \end{subfigure}
+\caption{Inactivity spells from Figure~\ref{fig:seq10}
+are imputed with duration and step clocks.}
+\label{fig:spentleft}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
+
+\begin{subfigure}{\textwidth}
+\includegraphics[scale=.5]{Figures/Seq10ordUp.pdf}
+\caption{Employment episode order, increasing.}
+\label{fig:orderup}
+\end{subfigure}
+
+\begin{subfigure}{\textwidth}
+\includegraphics[scale=.5]{Figures/Seq10ordDown.pdf}
+\caption{Employment episode order, decreasing.}
+\label{fig:orderdown}
+\end{subfigure}
+
 \caption{Employment episodes from Figure~\ref{fig:seq10}
 are imputed with order count variables.}
 \label{fig:order}
-
-\begin{subfigure}{\textwidth}
-\caption{Employment episode order, increasing.}
-\label{fig:orderup}
-\includegraphics[scale=.5]{Figures/Seq10ordUp.pdf}
-\end{subfigure}
-
-\begin{subfigure}{\textwidth}
-\caption{Employment episode order, decreasing.}
-\label{fig:orderdown}
-\includegraphics[scale=.5]{Figures/Seq10ordDown.pdf}
-\end{subfigure}
-
 \end{figure}
 
-There is room for creativity in defining clock measures such as these, and we encourage experimentation along these lines. Clock measures are then aggregated in some way. In these examples, \emph{value} alignment is with respect to episodes, but \emph{aggregation} alignment is still structured by age, such that statistics across individuals in an array produce age patterns. However, one may wish to synchronize trajectories in ways other than time since birth.
+There is room for creativity in defining clock measures such as these, and we encourage experimentation along these lines. Clock measures follow simple rules of construction, but aggregation within time intervals may result in patterns that are difficult to foresee. The clocks shown in Figs.~\ref{fig:spentleft} and \ref{fig:order} are aligned on age, such that direct aggregation would result in age patterns.  One may wish to synchronize trajectories in ways other than age, thereby defining a different time structure that results in a different macro pattern after aggregation.
 
 \FloatBarrier
 \subsection{Alignment}
@@ -244,8 +243,9 @@ The following section presents two examples where clocks and alignment operation
 %\footnote{Possibly the \texttt{TraMineR} universe already has \emph{sort} functionality, we need to check.}. Other visualization techniques (ignoring clocks for now) might follow an alignment operation \citep[e.g.][]{fasang2014visualizing}. 
 
 \FloatBarrier
-\section{Trajectory aggregation}
-Age-like macro-patterns can be derived in trajectory data by aggregating clocks within discrete intervals. Aggregated clocks could assume any of the varied forms discussed here, or else new variants. Discrete time intervals may draw from the original time scale, often age or similar, or the result of an alignment operation. The aggregation function itself can be freely defined by the user. In our examples, we calculate means, but generally one may measure aspects of a distribution
+\subsection{Trajectory aggregation}
+Macro-patterns can be derived from trajectory data by aggregating clocks within time intervals. Aggregated clocks could assume any of the varied forms discussed here, or else new variants. Discrete time intervals may draw from the original time scale, for example age, or they may be the result of an alignment operation. The aggregation function itself can be freely defined by the user. In our examples, we calculate means, but generally one may calculate any measure from the distribution observed in each interval.
+
 %\section{Aggregate patterns}
 %Given the choices in clock measures and alignments, the researcher has many degrees of freedom in calculating episode statistics in the aggregate. As a first example, and with no substantive justification as of yet\footnote{We'll swap these examples out with something more substantively compelling.}, say we'd like to know about inactivity spell patterns by time since first employment exit. We calculate from the same simulated object used for previous exposition. Fig.~\ref{fig:macrofirst} displays mean conditional episode durations of inactivity structured by time since exiting one's first employment spell, ergo right-aligned on first employment spell and conditional on i) having exited employment, and ii) being in an inactivity spell. Time spent (red, per Fig.~\ref{fig:seq10timespent} ) and time left (blue, per Figure~\ref{fig:seq10timeleft}) sum to total duration (black, per Fig.~\ref{fig:seq10dur}) as one would hope. Figs~\ref{fig:macro2}, \ref{fig:macro3}, and \ref{fig:macro4} show that mean statistics deviate from median and don't necessarily represent the underlying distribution for any of these three measures. 
 
@@ -404,9 +404,9 @@ This stylized exercise evokes a number of follow-up questions that we do not her
 \FloatBarrier
 \subsection{Birth interval differentials}
 
- We use clock and alignment operations to examine the mean time to the second birth over the 15 years following the first birth. We compare these mean times according to the age at first birth (five-year age groups) and the sex of the first child. These comparisons help us answer the question of whether or not the sex of the first child increases the risk (i.e., reduces the mean waiting time) of the second birth. 
+ We use this framework to examine the mean time to the second birth over the 15 years following the first birth in Colombia. We compare these mean times according to the age at first birth (five-year age groups) and the sex of the first child and conditional on eventual progression to higher birth parities. These comparisons help us answer the question of whether or not the sex of the first child increases the speed of transition to the second birth net of fertility quantum. 
  
- In addition, we explore the mean times to the next girl and to the next boy separately. Conditioning on the sex of the next birth allows us to examine, for example, if having a first girl imply a faster next girl, or, if having a first boy imply a faster next boy. 
+ In addition, we explore the mean times to the next girl and to the next boy separately. Conditioning on the sex of the next birth allows us to examine, for example, if having a first girl implies a faster next girl, or, if having a first boy implies a faster next boy. 
  
  All together, these comparisons show how birth interval differentials vary substantially by age at first birth and also according to the sex of the first and second child.
  
