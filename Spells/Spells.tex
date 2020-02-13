@@ -292,10 +292,9 @@ Age-like macro-patterns can be derived in trajectory data by aggregating clocks 
 \section{Applications}
 
 \subsection{Health inequalities}
-Population level studies of disability typically report values such as mean time spent disabled, either derived from a multistate model of disability \citep{crimmins2009change} or derived using the Sullivan method \citep{Sullivan1970,Crimmins1997}. It is rare to see other model statistics reported for health disparities \citep{laditka1998new}, even for results based on simulated disability trajectories. Especially for the case of understanding group inequalities, it is valuable to measure quantities beyond health expectancies, such as the age pattern of disability spell length, whether . Do new bouts of disability tend to get longer or shorter with age? Who has longer spells of disability, the rich or the poor? We calculate age patterns for disability spell duration, disability spell order, and the prevalence of disability in the final years of life.
+Population level studies of disability typically report values such as mean time spent disabled, either derived from a multistate model of disability \citep{crimmins2009change} or derived using the Sullivan method \citep{Sullivan1970,Crimmins1997}. It is rare to see other model statistics reported for health disparities \citep{laditka1998new}, even for results based on simulated disability trajectories. Especially for the case of understanding group inequalities, it is valuable to measure quantities beyond health expectancies, such as the age pattern of disability spell length, or the extent to which disability is spread throughout life or concentrated at the end of life. Do new bouts of disability tend to get longer or shorter with age? Who has longer spells of disability, the rich or the poor? We demonstrate some basic clock and alignment operations that enable the calculation of age patterns for i) disability spell duration, ii) disability spell order, and iii) the prevalence of disability specifically in the final years of life.
 
-We aim to show some preliminary results using and example of an age-structured clock (the default alignment).
-Long term disability trajectories over the life course of individuals are typically not recorded, except in rare cohort studies, or in long-running health registers. To produce our base set of trajectories, we first estimate transition probabilities, then we simulate over a wide age range. We then demonstrate clock aggregation to calculate the average duration of new spells of disability. This is proposed as an interesting metric for health inequalities.
+Long term disability trajectories over the life course of individuals are typically not recorded, except in rare cohort studies, or in long-running health registers. To produce our base set of trajectories, we first estimate transition probabilities, then we simulate over a wide age range. Each of our three measures demonstrates the results of a particular combination of clock and/or alignment operations.
 
 \subsubsection{Data}
 We use the Italian survey of the EU-SILC (European Statistics on Income and Living Condition), 2012-2015. The EU-SILC is the European Union (EU) reference source for comparative statistics on income and living conditions for all the countries in the EU. Member States conduct the survey annually, collecting nationally representative household and personal data. There is a cross-sectional and a longitudinal component. The longitudinal Italian EU-SILC is based on the rotational design proposed by Eurostat; each year, a new sample representative of the whole Italian population enters the study, and it is followed for four years. In the initial year, the sample is representative of the population 14 years old and over; for individuals aged over 80, the exact age is not made available in the data.
@@ -346,44 +345,54 @@ We report three kinds of results for this application, which aim to illustrate s
     \centering
     \begin{subfigure}{\textwidth}
       \centering
-    \includegraphics[scale=.5]{Spells/Figures/App1_grammar1.pdf}
+    \includegraphics[scale=.45]{Spells/Figures/App1_grammar1.pdf}
     \caption{The first time step in each disability spell is imputed with the spell length, all other values are thrown out.}
     \label{fig:a1g1}
     \end{subfigure}
     
         \begin{subfigure}{\textwidth}
           \centering
-    \includegraphics[scale=.5]{Spells/Figures/App1_grammar2.pdf}
+    \includegraphics[scale=.45]{Spells/Figures/App1_grammar2.pdf}
     \caption{The first time step in each disability spell is imputed with an ascending spell order clock, all other values are thrown out.}
     \label{fig:a1g2}
     \end{subfigure}
     
         \begin{subfigure}{\textwidth}
           \centering
-          \includegraphics[scale=.5]{Spells/Figures/App1_grammar3.pdf}
+          \includegraphics[scale=.45]{Spells/Figures/App1_grammar3.pdf}
     \caption{A prevalence clock, with trajectories aligned on the year of death. Healthy years are interpreted as 0s.}
     \label{fig:a1g3}
     \end{subfigure}
-    \caption{Ten example disability trajectories. Figs. a) and b) indicate clock operations, and Fig. c) shows an alignment operation. Ages below 50 are ignored in these illustrations.}
+    \caption{Ten example disability trajectories. Figs. a) and b) indicate clock operations, and Fig. c) shows an alignment operation with a binary prevalence clock. Ages below 50 are ignored in these illustrations.}
     \label{fig:a1traj}
 \end{figure}
 
-To aggregate macro patterns from the spell duration and order clocks, we calculate conditional means within each age, throwing out any values that are not the first time step in a disability spell. In the time-to-death prevalence we calculate conditional means within the time scale produced by death-alignment. In these examples, only individuals deceased before age 80 are shown, but in the full simulated sample some individuals reach age 80 in a state of disability, which may continue into higher ages if we had the transition probabilities to simulate so far. This introduces a downward bias in spell duration that grows in magnitude with the approach to age 80. For this reason, we right truncate results for spell duration aggregates at age 70. 
+To aggregate macro patterns from the spell duration and order clocks (Figs.~\ref{fig:a1g1} and \ref{fig:a1g2}, we calculate conditional means within each age, throwing out any values that are not the first time step in a disability spell. In the time-to-death prevalence we calculate conditional means within the time scale produced by death-alignment. In these examples, only individuals deceased before age 80 are shown, but in the full simulated sample some individuals reach age 80 in a state of disability, which may continue into higher ages if we had the transition probabilities to simulate so far. This introduces a downward bias in spell duration that grows in magnitude with the approach to age 80. For this reason, we right truncate results for spell duration aggregates at age 70. 
 
 This produces two age patterns, one for the highest and one for the lowest income quintile.
 \FloatBarrier
 
 \subsubsection{Results}
-Fig.~\ref{fig:disdur} shows the results of this exercise. We see that new disability spells are expected to be of longer duration as age increases. We also see that disability spells are considerably longer on average for women in the lowest income quintile. From such an aggregate picture, a researcher could make various kinds of summary statements: at age 60, new disability spells for the poor are expected to be 40\% longer than for the rich. Or one could make statements on the age scale: new disability spells among the poor hit an average of two years duration by age 53, a level only hit by the rich around age 67.
+Fig.~\ref{fig:a1m1} shows the results of this exercise. We see that new disability spells are expected to be of longer duration as age increases. We also see that disability spells are considerably longer on average for women in the lowest income quintile. From such an aggregate picture, a researcher could make various kinds of summary statements: at age 60, new disability spells for the poor are expected to be 40\% longer than for the rich. Or one could make statements on the age scale: new disability spells among the poor hit an average of two years duration by age 53, a level only hit by the rich around age 67.
 
 \begin{figure}
     \centering
-    \includegraphics[scale=.8]{Spells/Figures/MeanDisabilitySpellDurationAge.pdf}
+    \includegraphics[scale=.6]{Spells/Figures/App1_macro1.pdf}
     \caption{Spells of disability get longer on average with age until at least age 70, and they are considerably longer on average for the lowest income quintile than for the highest.}
-    \label{fig:disdur}
+    \label{fig:a1m1}
 \end{figure}
 
-This stylized exercise evokes a number of follow-up questions that we do not here pursue: Are these differences caused by onset, recovery, or mortality differences? Is this income gradient really a geographic gradient? How does this age pattern close out as age increases?-- Surely disability spell duration must start decreasing in higher ages when the force of mortality starts to dominate. Surely it would be worth experimenting with other clocks and alignments in this domain of research.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.6]{Spells/Figures/App1_macro2.pdf}
+    \caption{The mean number of disability bouts of those experiencing disability increases with age faster for the lowest income quintile than for the highest.}
+    \label{fig:a1m2}
+\end{figure}
+
+
+This stylized exercise evokes a number of follow-up questions that we do not here pursue: Are these differences caused by onset, recovery, or mortality differences? Is this income gradient really a geographic gradient? How does this age pattern close out in ages higher than 80?-- Surely disability spell duration must start decreasing in higher ages when the force of mortality starts to dominate. Surely it would be worth experimenting with other clocks and alignments in this domain of research.
 
 \subsection{Birth interval differentials}
 
