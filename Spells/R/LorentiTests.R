@@ -164,8 +164,8 @@ App1_macro3 <- Dat %>%
   geom_segment(aes(x=63,y=5.5,xend=59,yend=6.1),color = "black") +
   annotate("text",x=49,y=6.7,label="lowest 20%") + 
   geom_segment(aes(x=54,y=6.7,xend=58,yend=6.5),color = "black") +
-  labs(x = "Age", y = "Prevalence by age at death",size=2)+
-  guides(fill=FALSE,color=FALSE)+
+  labs(x = "Age", y = "Prevalence by age at death",size=2) +
+  guides(fill=FALSE,color=FALSE) +
   theme(
     axis.title.x = element_text(size = 13),
     axis.text.x = element_text(size = 13),
@@ -174,3 +174,21 @@ App1_macro3 <- Dat %>%
     legend.position = c(0.9, 0.1))
 ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro3.pdf",
        App1_macro3, width = 7, height = 6)
+
+# Years spent healthy and disabled.
+# near-complete survival for both income groups,
+# but poorer spend more than twice as much time disabled.
+# summed expentancies show poorer survive a bit better,
+# presumably due to data quality? Need to find out 
+# These disability results based on SRH, will be swapped
+# out with functional disabiltiy anyway
+Dat %>% 
+  filter(age < 80) %>% 
+  group_by(InQ, id) %>%
+  summarize(H = sum(state == "Healthy"),
+            D = sum(state == "Disabled")) %>% 
+  ungroup() %>% 
+  group_by(InQ) %>% 
+  summarize(H = mean(H),
+            D = mean(D))
+
