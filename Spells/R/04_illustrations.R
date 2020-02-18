@@ -3,9 +3,9 @@ library(RColorBrewer); library(car); library(reshape2); library(toOrdinal)
 remove(list=ls())
 
 
-db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_cohort.rds")))
-db<-db[db$ceb==4,]
-
+#db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_cohort_colombia.rds")))
+db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_senegal.rds")))
+db<-db[db$ceb==4 & db$maget>=39,]
 
 
 db$sexpar<-factor(paste(car::recode(db$sex, "1='B'; 2='G'; NA=' '"), 
@@ -49,8 +49,8 @@ for (i in 1:10){
 }
 axis(side=1, line=0, at=seq(10,40,2))
 mtext(side=1, line=2, text="Age")
-text(7,6,"Random individual ith",xpd=TRUE,srt=90)
-text(10,1:10+0.5, labels=rev(sapply(1:10, toOrdinal)), pos=2,xpd=TRUE)
+text(7,6,"Random individual i",xpd=TRUE,srt=90)
+text(10,1:10+0.5, labels=10:1, pos=2,xpd=TRUE)
 legend(10, 1, fill = cols, legend=c('Boy','Girl','No birth'), horiz = TRUE,xpd=TRUE,bty="n")
 
 plot(NULL, type="n", xlim=c(0,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab="",
@@ -58,15 +58,15 @@ plot(NULL, type="n", xlim=c(0,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
 for (i in 1:10){
    x <- Spells::align(mpar[,i], state="1", type='left')
    draw_sequence(as.character(seqs[,i]), x=x, y=i, cols=cols,
-                 labels=clock(x=mpar[,i], state="1",clock_type="step",increasing=FALSE),
+                 labels=floor(clock(x=mpar[,i], state="1",clock_type="step",increasing=FALSE)),
                  border=NA, box = TRUE, cex=cex8)
    xr = sum(mpar[,i] == "1", na.rm = TRUE)
    rect(0,i,xr,i+1, border = "gray40", lwd=1)
 }
 axis(side=1, line=0, at=seq(0,24,2))
 mtext(side=1, line=2, text="Time since first birth")
-text(-3,6,"Random individual ith",xpd=TRUE,srt=90)
-text(-1, 1:10+0.5, labels=rev(sapply(1:10, toOrdinal)), pos=2,xpd=TRUE)
+text(-3,6,"Random individual i",xpd=TRUE,srt=90)
+text(-1, 1:10+0.5, labels=10:1, pos=2,xpd=TRUE)
 legend(0, 1, fill = cols, legend=c('Boy','Girl','No birth'), horiz = TRUE,xpd=TRUE,bty="n")
 
 
@@ -74,15 +74,15 @@ plot(NULL, type="n", xlim=c(0,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
      main='')
 for (i in 1:10){
   draw_sequence(seqs[,i], x=Spells::align(mpar[,i], state="1", type='left'), y=i, cols=cols,
-                labels=clock(x=bpar[,i], state="X",clock_type="step",increasing=FALSE),
+                labels=floor(clock(x=bpar[,i], state="X",clock_type="step",increasing=FALSE)),
                 border=NA, box = TRUE, cex=cex8)
   xr = sum(bpar[,i] == "X", na.rm = TRUE)
   rect(0,i,xr,i+1, border = "gray40", lwd=1)
 }
 axis(side=1, line=0, at=seq(0,24,2))
 mtext(side=1, line=2, text="Time since first birth")
-text(-3,6,"Random individual ith",xpd=TRUE,srt=90)
-text(-1, 1:10+0.5, labels=rev(sapply(1:10, toOrdinal)), pos=2,xpd=TRUE)
+text(-3,6,"Random individual i",xpd=TRUE,srt=90)
+text(-1, 1:10+0.5, labels=10:1, pos=2,xpd=TRUE)
 legend(0, 1, fill = cols, legend=c('Boy','Girl','No birth'), horiz = TRUE,xpd=TRUE,bty="n")
 
 
@@ -90,15 +90,15 @@ plot(NULL, type="n", xlim=c(0,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
      main="")
 for (i in 1:10){
   draw_sequence(seqs[,i], x=Spells::align(mpar[,i], state="1", type='left'), y=i, cols=cols,
-                labels=clock(x=gpar[,i], state="X",clock_type="step",increasing=FALSE),
+                labels=floor(clock(x=gpar[,i], state="X",clock_type="step",increasing=FALSE)),
                 border=NA, box = TRUE, cex=cex8)
   xr = sum(gpar[,i] == "X", na.rm = TRUE)
   rect(0,i,xr,i+1, border = "gray40", lwd=1)
 }
 axis(side=1, line=0, at=seq(0,24,2))
 mtext(side=1, line=2, text="Time since first birth")
-text(-3,6,"Random individual ith",xpd=TRUE,srt=90)
-text(-1, 1:10+0.5, labels=rev(sapply(1:10, toOrdinal)), pos=2,xpd=TRUE)
+text(-3,6,"Random individual i",xpd=TRUE,srt=90)
+text(-1, 1:10+0.5, labels=10:1, pos=2,xpd=TRUE)
 legend(0, 1, fill = cols, legend=c('Boy','Girl','No birth'), horiz = TRUE,xpd=TRUE,bty="n")
 
 dev.print(device=pdf, 'illu_fertility.pdf', width=14, height=8)
