@@ -3,7 +3,7 @@ library(descr); library(survey); library(RColorBrewer)
 remove(list=ls())
 
 #db<-readRDS(here("Spells","Data","Castro","cas_wom_senegal.rds"))
-db<-readRDS(here("Spells","Data","Castro","cas_wom_colombia.rds"))
+#db<-readRDS(here("Spells","Data","Castro","cas_wom_colombia.rds"))
 
 c<-2
 analysis<-list(cohort=db$maget>=39, period=!is.na(db$maget))
