@@ -1,17 +1,18 @@
 library(here); library(devtools); library(TraMineR); library(tidyverse); library(doBy)
-library(descr); library(survey)
+library(descr); library(survey); library(RColorBrewer)
 remove(list=ls())
 
-db<-readRDS(here("Spells","Data","Castro","cas_wom_senegal.rds"))
+#db<-readRDS(here("Spells","Data","Castro","cas_wom_senegal.rds"))
+db<-readRDS(here("Spells","Data","Castro","cas_wom_colombia.rds"))
 
-c<-1
+c<-2
 analysis<-list(cohort=db$maget>=39, period=!is.na(db$maget))
 
 db<-db[analysis[[c]],]
 col7<-c(brewer.pal(9, "PuBu")[4:6], brewer.pal(9, "PuRd")[4:6], 'gray90')
 
+### SURVEY 
 db$psu<-paste(db$filenw, db$v001)
-
 sd<-svydesign(~1, weights=~pwt, data=db); sd
 
 # Estimates for the next birth

@@ -3,8 +3,8 @@ library(RColorBrewer); library(car); library(reshape2); library(toOrdinal)
 remove(list=ls())
 
 
-#db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_cohort_colombia.rds")))
-db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_senegal.rds")))
+db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_colombia.rds")))
+#db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_senegal.rds")))
 db<-db[db$ceb==4 & db$maget>=39,]
 
 
