@@ -14,7 +14,7 @@ db<-merge(df[,-grep('v005', colnames(df))], dr, by='ident')
 db$pwt<-db$v005/1000000
 
 c<-1
-analysis<-list(cohort=db$maget>=39, period=!is.na(db$maget))
+analysis<-list(cohort=db$maget>=39, period=!is.na(db$maget))[c]
 
 db<-db[analysis[[c]],]
 col7<-c(brewer.pal(9, "PuBu")[4:6], brewer.pal(9, "PuRd")[4:6], 'gray90')
