@@ -1,7 +1,7 @@
 library(here);library(tidyverse)
 remove(list=ls())
 
-load(here('Spells', 'Data', 'Castro', 'cas_wom_dhs_raw_.RData'))
+load(here('Spells', 'Data', 'Castro', 'cas_wom_dhs_raw_senegal.RData'))
 Sys.time(); # runs in 1m (Senegal, 100,000 obs.) 13m (Colombia, 170,000 obs.)
 # move to long format, includes
 # only women > age 10, up until (and including) age at survey
@@ -28,7 +28,8 @@ dat <- db %>%
          gparity = ifelse(!is.na(sex) & sex == 2, 1, 0),
          gparity = cumsum(gparity),
          res = v025[which.max(mage)],
-         pwt = v005[!is.na(v005)][1]/1000000,
+         #pwt = v005[!is.na(v005)][1]/1000000,
+         #pwt = v005[which.max(mage)]/1000000,
          v008 = v008[which.max(mage)],
          yr = v008 / 12 + 1900,
          waveyr = round(yr / 5) * 5,

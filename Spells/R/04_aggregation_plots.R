@@ -2,35 +2,48 @@ library(here); library(devtools); library(TraMineR); library(tidyverse); library
 library(descr); library(survey); library(RColorBrewer)
 remove(list=ls())
 
-#db<-readRDS(here("Spells","Data","Castro","cas_wom_senegal.rds"))
+load(here('Spells', 'Data', 'Castro', 'cas_wom_dhs_raw_senegal.RData'))
+dr<-db[, c('ident', 'filenw','v005','v001')]
+
+df<-data.frame(readRDS(here("Spells","Data","Castro","cas_wom_senegal.rds")))
 #db<-readRDS(here("Spells","Data","Castro","cas_wom_colombia.rds"))
 
-c<-2
+
+# merge these two
+db<-merge(df[,-grep('v005', colnames(df))], dr, by='ident')
+db$pwt<-db$v005/1000000
+
+c<-1
 analysis<-list(cohort=db$maget>=39, period=!is.na(db$maget))
 
 db<-db[analysis[[c]],]
 col7<-c(brewer.pal(9, "PuBu")[4:6], brewer.pal(9, "PuRd")[4:6], 'gray90')
 
-### SURVEY 
-db$psu<-paste(db$filenw, db$v001)
-sd<-svydesign(~1, weights=~pwt, data=db); sd
+Sys.time(); # runs in 1 min
+sd<-svydesign(~filenw.y+v001.y, weights=~pwt, data=db); sd
+#sd<-svydesign(~1, weights=~pwt, data=db); sd
 
 # Estimates for the next birth
 est_nc<-svyby(~c_step_down_par1, ~left_par1+afb5+sexf, 
            subset(sd, left_par1>=0 & left_par1<=10), 
            FUN=svymean, na.rm=T)
+summary(est_nc)
+est_nc[1:22,]
 
 # Estimates for the next birth
 est_nb<-svyby(~c_step_down_boy1, ~left_par1+afb5+sexf, 
               subset(sd, left_par1>=0 & left_par1<=10), 
               FUN=svymean, na.rm=T)
+summary(est_nb)
+est_nb[1:22,]
 
 # Estimates for the next birth
 est_ng<-svyby(~c_step_down_gir1, ~left_par1+afb5+sexf, 
               subset(sd, left_par1>=0 & left_par1<=10), 
               FUN=svymean, na.rm=T)
-
-
+summary(est_ng)
+est_ng[1:22,]
+Sys.time()
 
 
 setwd(here("Spells","Figures"))
