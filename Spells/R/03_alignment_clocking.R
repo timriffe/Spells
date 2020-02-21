@@ -2,7 +2,6 @@ library(here); library(devtools); library(TraMineR); library(tidyverse)
 library(reshape2); library(colorspace); library(xtable)
 remove(list=ls())
 
-
 Sys.time() 
 # runs in 1m (Senegal, 1.3 million obs.), 3m (Colombia 2.8 million obs.)
 install_github("timriffe/Spells/Spells/R/Spells")
