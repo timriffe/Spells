@@ -45,7 +45,7 @@
 
 \begin{abstract}
 
-\absdiv{Background}Individuals are often observed passing through a sequence of discrete states in trajectory data. These are usually either simplified into transition probabilities to derive asymptotic values of aggregate statistics using Markov assumptions, or else retained for pattern and group detection using sequence analysis. Markov-derived aggregate statistics are of limited scope, and sequence analysis appears aimed at inferring typologies than generating aggregates.
+\absdiv{Background}Individuals are often observed passing through a sequence of discrete states in trajectory data. These are usually either simplified into transition probabilities to derive asymptotic values of aggregate statistics using Markov assumptions, or else retained for pattern and group detection using sequence analysis. Markov-derived aggregate statistics are of limited scope, and sequence analysis appears aimed at inferring typologies rather than generating aggregates.
 \absdiv{Objective}We broaden the scope of aggregate patterns and summary indices that may be calculated from trajectory data, including trajectories generated from Markov models by proposing a simple grammar of operations for trajectory data.
 \absdiv{Methods}We introduce the concepts of clocking and alignment as a new framework for generating novel statistics from trajectories. 
 \absdiv{Data}We use different data to demonstrate concepts and give example applications. We use published transition probabilities to simulate discrete trajectories of employment states to demonstrate concepts. We use retrospective fertility and union trajectories from Colombian Demographic and Health Surveys data and disability trajectories simulated from European Statistics on Income and Living Conditions for Italy (EU-SILC) for example applications.
@@ -72,38 +72,9 @@ Second we define \emph{alignment} operations, which shift trajectories to have s
 
 In isolation or in combination, clock and alignment operations open a large space for the derivation of demographic macro patterns. In the following sections we give concrete examples to illustrate concepts on using a toy example of simulated employment old-age trajectories. We give two abbreviated example applications for the cases of disability inequalities in Italy and birth interval differentials in Colombia. Disability trajectories are simulated from transition probabilities estimated from Italian SILC data. Birth and union histories are recorded histories from the Colombian Demographic and Health surveys. We subject both the simulated and recorded trajectories to a few simple analyses based on our framework, therein defining novel and interpretable comparisons. These introductory examples demonstrate the flexibility of the clocks and alignment framework for aggregations of trajectory data. Work shown here is fully reproducible, and we also offer an experimental \texttt{R} package, \texttt{Spells}, which enables readers to easily apply flexible clock and alignment operations.
 % 
-% Incidence-based matrix
-% models are rather undeveloped with respect to tenure-statistics, and these
-% might be of interest for a variety of substantive reasons. By tenure statistics I
-% refer to the statistics of particular spells or episodes of a state. For
-% example, in incidence-based models with bidirectional flows (i.e., allowing for
-% recovery and then re-onset, and so on), modelled individuals may pass through a state,
-% such as sickness, many times before death. Typically a transition matrix
-% manipulation would only give us the average time spent sick or moment statistics
-% thereof. Recently matrix calculations have been described for how to calculate the average number of episodes of a given state \citep{dudel2017b}.
-% Combined with the average state occupancy, this information yields the average
-% duration of episodes.
+% Incidence-based matrix models are rather undeveloped with respect to tenure-statistics, and these might be of interest for a variety of substantive reasons. By tenure statistics I refer to the statistics of particular spells or episodes of a state. For example, in incidence-based models with bidirectional flows (i.e., allowing for recovery and then re-onset, and so on), modelled individuals may pass through a state, such as sickness, many times before death. Typically a transition matrix manipulation would only give us the average time spent sick or moment statistics thereof. Recently matrix calculations have been described for how to calculate the average number of episodes of a given state \citep{dudel2017b}. Combined with the average state occupancy, this information yields the average duration of episodes.
 
-% One may wonder how the average spell duration changes with age, and for this
-% there is no ready matrix expression. Such analytic expressions are surely
-% possible, but in the following I intend to propose a suite of operations
-% (including the aforementioned) so broad and flexible as to fill the lifetime of
-% a matrix buff.
-% I proceed using simulations rather than matrix calculations because it will
-% save the work of deriving and checking dozens of formulas. In this way, we have
-% the liberty to change definitions without incurring methodological setbacks.
-% Since we simulate, we get stochastic stationary distributions of each
-% measurement for free, which I'll represent using fan-chart visualizations. This
-% approach is not all that different from that proposed by \citet{laditka1998new},
-% but I expand on their approach by
-% proposing a set of count statistics called \emph{clocks} and age
-% \emph{realignments}, which together result in a large (unbounded?) set of
-% age-like patterns of state episodes. These same operations can be used
-% on observed populations of sequences as well, but the key difference
-% is that observed populations are not stationary. Our example will refer to the
-% stationary tenure statistics that belong to a particular set of
-% age-specific transition rates, although the configuration of transition rates
-% used to generate results is immaterial.
+% One may wonder how the average spell duration changes with age, and for this there is no ready matrix expression. Such analytic expressions are surely possible, but in the following I intend to propose a suite of operations (including the aforementioned) so broad and flexible as to fill the lifetime of a matrix buff. I proceed using simulations rather than matrix calculations because it will save the work of deriving and checking dozens of formulas. In this way, we have the liberty to change definitions without incurring methodological setbacks. Since we simulate, we get stochastic stationary distributions of each measurement for free, which I'll represent using fan-chart visualizations. This approach is not all that different from that proposed by \citet{laditka1998new}, but I expand on their approach by proposing a set of count statistics called \emph{clocks} and age \emph{realignments}, which together result in a large (unbounded?) set of age-like patterns of state episodes. These same operations can be used on observed populations of sequences as well, but the key difference is that observed populations are not stationary. Our example will refer to the stationary tenure statistics that belong to a particular set of age-specific transition rates, although the configuration of transition rates used to generate results is immaterial.
 
 \section{Concepts}
 To demonstrate concepts, we simulate trajectories from a published transition matrix \citep{Dudel2017}. This matrix refers to black females aged 50-100 in 1994, and it contains age-structured transition probabilities for movements between employment, inactivity, and retirement, as well as mortality from these three states. Simulation is done using the \texttt{rmarkovchain()} function from the \texttt{R} package \texttt{markovchain} \citep{spedicato2017}. A glimpse of the first 10 randomly generated individuals is shown in Figure~\ref{fig:seq10}. These ten individuals will be recycled in all of the following data manipulations used to demonstrate concepts. 
