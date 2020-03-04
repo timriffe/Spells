@@ -1,10 +1,15 @@
 library(here); library(devtools); library(TraMineR); library(tidyverse); library(Spells)
 library(RColorBrewer); library(car); library(reshape2); library(toOrdinal)
 remove(list=ls())
+source("U:/Cloud/Spells/Spells/R/DrawSequences.R")
 
+install_github("timriffe/Spells/Spells/R/Spells")
+library(Spells)
+load_all(here("Spells","R","Spells"))
 
+setwd("U:/Cloud/Spells/Spells/Data/Castro")
 #db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_colombia.rds")))
-#db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_senegal.rds")))
+db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_senegal.rds")))
 db<-db[db$ceb==4 & db$maget>=39,]
 
 
