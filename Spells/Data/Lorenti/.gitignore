@@ -1,2 +1,13 @@
 SILC_tr_prob12_15.RDS
 SILCsim.rds
+males_tp_srh.rda
+boot_females_tp_limitations.rda
+boot_females_tp_srh.rda
+boot_males_tp_cronic.rda
+boot_males_tp_limitations.rda
+boot_males_tp_srh.rda
+females_tp_cronic.rda
+females_tp_limitations.rda
+females_tp_srh.rda
+males_tp_cronic.rda
+males_tp_limitations.rda
