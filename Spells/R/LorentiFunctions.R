@@ -102,7 +102,7 @@ get_trajectories <- function(
   case = 1){
   
   Fimc <- X %>% 
-    getU(start_age = 15) %>% 
+    getU(start_age = 16) %>% 
     closeout()
   # make sim matrix
   Fsim  <- replicate(Ntraj,
