@@ -5,7 +5,9 @@
 # objects (simulated trajectories)
 
 # these calcs just for one state space and sex.
-# devtools::install_github("tidyverse/multidplyr")
+# remotes::install_github("tidyverse/multidplyr")
+# remotes::install_github('nathanvan/parallelsugar')
+# remotes::install_github('timriffe/Spells/Spells/R/Spells')
 library(here)
 library(tidyverse)
 library(markovchain)
@@ -16,17 +18,20 @@ library(rlang)
 library(devtools)
 #library(data.table) # only single-threaded
 #library(multidplyr) # wasn't working with group_map()
-library(parallel) # finally used mclapply()
+# library(parallel) # finally used mclapply()
+# library(parallelsugar)
+library(doParallel)
+library(foreach)
 library(tictoc)
+
+library(Spells)
 # 0) load functions
 source(here::here("Spells","R","LorentiFunctions.R"))
 
-load_all(here("Spells","R","Spells"))
+
+
 TR <- readRDS(here("Spells","Data","Lorenti","boot_females_tp_limitations.rda"))
 
-# declare cluster
-use.cores <- max(c(parallel::detectCores()-2,1))
-# cluster   <- new_cluster(use.cores)
 
 TRp <- TR %>% 
   # just pick out extreme quintiles
@@ -39,48 +44,54 @@ TRp <- TR %>%
   group_by(i, InQ, sex) %>% 
   base::split(f=list(.$i,.$InQ),drop = TRUE)
 
+# this should automatically choose 40 if on Hydra,
+# or 6 if on TR's laptop
+clsize <- max(c(min(c(parallel::detectCores()-2,40)),1))
+cl     <- makeCluster(clsize)
+registerDoParallel(cl)
+getDoParWorkers()
+
+trials <- length(TRp)
+# should do small sizes on TR's laptop, big for Hydra
+Ntraj  <- ifelse(clsize == 6, 1000, 50000)
 # first example in application 1
 tic()
-A1.1 <-
-  mclapply(TRp, 
-         get_trajectories, 
-         Ntraj = 50000, 
-         case = 1, 
-         mc.cores = use.cores) %>% 
-  rbind_list()
-toc()
+A1.1 <- foreach(i = icount(trials),
+                .combine = 'rbind',
+                .packages=c('Spells','tidyverse',"markovchain"),.errorhandling = 'remove') %dopar% {
+                  get_trajectories(TRp[[i]], Ntraj = Ntraj, case = 1)
+                }
+(a1.1.time <- toc())
 
-save.rds(A1.1, file = here::here("Spells","Data","Lorenti","A1.1.rds"))
+saveRDS(A1.1, file = here::here("Spells","Data","Lorenti","A1.1.rds"))
 rm(A1.1);gc()
- 
+
 # second example in application 1
 tic()
-A1.2 <-
-  mclapply(TRp, 
-           get_trajectories, 
-           Ntraj = 50000, 
-           case = 2, 
-           mc.cores = use.cores) %>% 
-  rbind_list()
-toc()
+A1.2 <- foreach(i = icount(trials),
+                .combine = 'rbind',
+                .packages=c('Spells','tidyverse',"markovchain"),.errorhandling = 'remove') %dopar% {
+                  get_trajectories(TRp[[i]], Ntraj = Ntraj, case = 2)
+                }
+(a1.2.time <- toc())
 
-save.rds(A1.2, file = here::here("Spells","Data","Lorenti","A1.2.rds"))
+saveRDS(A1.2, file = here::here("Spells","Data","Lorenti","A1.2.rds"))
 rm(A1.1);gc()
 
 # third example in application 1
 tic()
-A1.3 <-
-  mclapply(TRp, 
-           get_trajectories, 
-           Ntraj = 50000, 
-           case = 3, 
-           mc.cores = use.cores) %>% 
-  rbind_list()
-toc()
-
-save.rds(A1.3, file = here::here("Spells","Data","Lorenti","A1.3.rds"))
+A1.3 <- foreach(i = icount(trials),
+                .combine = 'rbind',
+                .packages=c('Spells','tidyverse',"markovchain"),.errorhandling = 'remove') %dopar% {
+                  get_trajectories(TRp[[i]], Ntraj = Ntraj, case = 3)
+                }
+(a1.3.time <- toc())
+saveRDS(A1.3, file = here::here("Spells","Data","Lorenti","A1.3.rds"))
 rm(A1.3);gc()
- 
+
+
+stopCluster(cl) 
+closeAllConnections() 
 # p
 # a <- TRp %>% 
 #   do(get_trajectories(.data, Ntraj = 500, case = 1)) %>% 
