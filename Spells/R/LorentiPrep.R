@@ -12,7 +12,7 @@ load_all(here("Spells","R","Spells"))
 
 # 1) read in ITSILC data:
 
-TR <- readRDS(here("Spells","Data","Lorenti","SILC_tr_prob12_15.RDS"))
+TR <- readRDS(here::here("Spells","Data","Lorenti","SILC_tr_prob12_15.RDS"))
 
 # 2) get U
 # highest and lowest quintile, Females:
