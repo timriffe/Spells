@@ -4,7 +4,9 @@
 \name{X}
 \alias{X}
 \title{example trajectory data}
-\format{A character matrix, with individual trajectories in columns and age in rows (ages 50-100)}
+\format{
+A character matrix, with individual trajectories in columns and age in rows (ages 50-100)
+}
 \source{
 Simulated based on transition probabilities published in:
   Dudel, Christian, and Mikko Myrskylä. "Working life expectancy at age 50 in the United States and the impact of the great recession." Demography 54.6 (2017): 2101-2123.

@@ -100,6 +100,9 @@ All examples here based on individual multistate (categorical) trajectories in u
 \Large
 10 lives simulated from Dudel & Myrskylä (2017)
 ```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+if (! "Spells" %in% rownames(installed.packages())){
+  remotes::install_github("timriffe/Spells/Spells/R/Spells")
+}
 library(tidyverse)
 library(Spells)
 library(colorspace)
