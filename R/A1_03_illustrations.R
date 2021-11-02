@@ -8,7 +8,7 @@ library(reshape2)
 library(Spells)
 
 
-Dat <- readRDS(here::here("Spells","Data","Lorenti","SILCsim.rds"))
+Dat <- readRDS(here::here("Data","Lorenti","SILCsim.rds"))
 Dat$state <- as.character(Dat$state)
 
 XX <- Dat %>% 

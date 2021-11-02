@@ -2,7 +2,6 @@
 # Author: tim
 ###############################################################################
 
-
 library(markovchain)
 library(spatstat)
 library(here)

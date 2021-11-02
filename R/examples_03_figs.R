@@ -3,11 +3,13 @@
 ###############################################################################
 
 library(here)
+library(tidyverse)
 library(devtools)
 library(colorspace)
+library(Spells)
 # install_github("timriffe/Spells/R/Spells")
 
-source(here("R","GenerateStationary.R"))
+source(here("R","examples_02_generate_stationary.R"))
 
 draw_sequence2 <- function(state_seq, states, cols, y = 0,...){
 	xvals       <- 1:length(state_seq) - 1 + 50
@@ -16,6 +18,9 @@ draw_sequence2 <- function(state_seq, states, cols, y = 0,...){
 	
 	rect(xvals,y,xvals+1,y+1,col=col_seq,...)
 }
+
+
+
 draw_sequence3 <- function(durs, y = 0,...){
 	xvals             <- 1:length(durs) - 1 + 50	
 	durs[is.na(durs)] <- ""
@@ -27,15 +32,43 @@ draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
 	col_seq     <- cols[state_seq]
 	rect(x,y,x+1,y+1,col=col_seq,...)
 }
+# antique colors
+colsIN <- c("#855C75","#D9AF6B","#AF6458","#736F4C","#526A83","#625377","#68855C","#9C9C5E","#A06177","#8C785D","#467378","#7C7C7C")
 
+# colsIN <-c("#88CCEE","#CC6677","#DDCC77","#117733","#332288","#AA4499","#44AA99","#999933","#882255","#661100","#6699CC","#888888")
+length(colsIN)
+plot(NULL,xlim=c(0,12),ylim=c(0,1),asp=1)
+for (i in 1:12){
+  rect(i-1,0,i,1,col=colsIN[i])
+}
+text(1:12-.5,.5,1:12)
 
+# cols <- c(colsIN[c(4,3,9)],NA)
+cols <- c(colsIN[c(7,2,1)],NA)
+# cols[1]<- "#6c945c"
+# cols[3]<- "#826ca1"
+# cols <- c("#003f5c","#ffa600","#bc5090",NA)
 #cols   <- c("#74ee65", "#773129", "#41bbc5",NA)
-cols <- c(qualitative_hcl(5, palette = "Dark 3")[c(3,2,4)],NA)
-cols2 <- lighten(desaturate(cols,.3),.3)
+# cols <- lighten(desaturate(c(qualitative_hcl(5, palette = "Dark 3")[c(3,2,4)],NA),.1),.05)
+cols2 <- lighten(desaturate(cols,.01),.01)
+
 states <- c("Employed", "Inactive","Retired","Dead")
 yvals  <- 9:0 * 1.1
 
 X <- RTraj_clean[,1:10]
+
+
+# hcl_palettes(plot=T)
+
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols2, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 
 # saveRDS(RTraj_clean, here("LabTalk","RTraj_clean.rds"))
 # saveRDS(X, here("LabTalk","X.rds"))
@@ -51,16 +84,6 @@ text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
 text(47,6,"Random individual i",xpd=TRUE,srt=90)
 legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
-
-par(mai=c(.8,1,0,0))
-plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
-for (i in 1:10){
-  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
-}
-axis(1)
-text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
-text(47,6,"Random individual i",xpd=TRUE,srt=90)
-legend(60,-2,fill = cols2, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 
 # ---------------------------------------
 # figure 2
@@ -110,6 +133,7 @@ DurExit       <- apply(X,2,spell_dur_conditional,state = "Inactive", entry = FAL
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
   draw_sequence3(DurEntry[,i],y=yvals[i])
   rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
 }
@@ -127,6 +151,7 @@ pdf(here("Figures","Seq10ordUp.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
 	draw_sequence3(OrdUp[,i],y=yvals[i])
 	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
 }
@@ -140,6 +165,7 @@ pdf(here("Figures","Seq10ordDown.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
 	draw_sequence3(OrdDown[,i],y=yvals[i])
 	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
 }
@@ -153,13 +179,14 @@ dev.off()
 
 # time spent
 
-
-TimeSpent <- apply(X,2,spell_dur_before,state = "Inactive")
+# args(clock)
+TimeSpent <- apply(X,2,clock,state = "Inactive",clock_type="step")
 
 pdf(here("Figures","Seq10timespent.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
 	draw_sequence3(floor(TimeSpent)[,i],y=yvals[i])
 	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
 }
@@ -168,13 +195,14 @@ text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
 text(47,6,"Random individual i",xpd=TRUE,srt=90)
 dev.off()
 
-
-TimeLeft <- apply(X,2,spell_dur_after,state = "Inactive")
-
+# 
+# TimeLeft <- apply(X,2,spell_dur_after,state = "Inactive")
+TimeLeft <- apply(X,2,clock,state = "Inactive",clock_type="step",increasing = FALSE)
 pdf(here("Figures","Seq10timeleft.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
 	draw_sequence3(floor(TimeLeft)[,i],y=yvals[i])
 	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
 }
@@ -257,44 +285,4 @@ text(min(XretirefirstAlign),yvals+.5,1:10,pos=2,xpd=TRUE)
 text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
 legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
-
-
-library(here)
-library(tidyverse)
-source(here::here("R","DrawSequences.R"))
-Dat <- readRDS(here::here("Data","Lorenti","SILCsim.rds"))
-Dat$state <- as.character(Dat$state)
-X <- Dat %>% 
-  filter(age < 80) %>% 
-  group_by(InQ, id) %>% 
-  mutate(dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
-  ungroup() %>% 
-  filter(dead) %>% 
-  filter(InQ == "I",
-         age >= 50 & age <= 80) %>% 
-  mutate(state = case_when(state == "Healthy" ~ "H",
-                           state == "Disabled" ~ "D",
-                           TRUE ~ "Dead")) %>%
-  acast(id~age, value.var = "state") 
-X <- X[1:10,]
-DurEntry      <- apply(X, 1, spell_dur_conditional,state = "D", entry = TRUE)
-
-DurEntry <- t(DurEntry)
-
-# this appears in draft manuscript
-pdf(here("Figures","DisTrajExample.pdf"),width=7,height=4.5)
-colsHD <- c("#add996","#bf9319",Dead="#FFFFFF00")
-par(mai=c(.8,1,0,0))
-plot(NULL, type = "n", xlim = c(50,81), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
-for (i in 1:10){
-  draw_sequence2(X[i,],states = c("H","D","Dead"),colsHD,y=yvals[i], border = NA)
-  draw_sequence3(DurEntry[i,],y=yvals[i])
-  rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
-}
-axis(1)
-text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
-text(47,6,"Random individual i",xpd=TRUE,srt=90)
-legend(-10,-2,fill = colsHD[1:2], legend = c("Healthy","Disabled"),horiz = TRUE,xpd=TRUE,bty="n")
-dev.off()
-
 

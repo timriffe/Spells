@@ -99,7 +99,7 @@ ggsave(here("Figures","App1_macro2.pdf"),
 ##############################
 # Application 1.3
 A1.3 <- readRDS(here("Data","Lorenti","A1.3.rds"))
-head(A1.3)
+
 A1.3 %>% 
   group_by(InQ, sex, ad5, ttd) %>% 
   summarize(median = quantile(ttdprev,.5)) %>% 
@@ -114,7 +114,7 @@ A1.3 %>%
   annotate("text",x=49,y=6.7,label="lowest 20%") + 
   geom_segment(aes(x=54,y=6.7,xend=58,yend=6.5),color = "black") +
   labs(x = "Age", y = "Prevalence by age at death",size=2) +
-  guides(fill=FALSE,color=FALSE) +
+  guides(fill="none",color="none") +
   theme(
     axis.title.x = element_text(size = 13),
     axis.text.x = element_text(size = 13),
