@@ -4,11 +4,11 @@ remove(list=ls())
 
 Sys.time() 
 # runs in 1m (Senegal, 1.3 million obs.), 3m (Colombia 2.8 million obs.)
-install_github("timriffe/Spells/Spells/R/Spells")
+install_github("timriffe/Spells/R/Spells")
 library(Spells)
-load_all(here("Spells","R","Spells"))
+load_all(here("R","Spells"))
 
-db_tidy <- readRDS(here("Spells","Data","Castro","cas_wom_tidy_senegal.rds"))
+db_tidy <- readRDS(here("Data","Castro","cas_wom_tidy_senegal.rds"))
 
 first_sex <- function(x){
   x[!is.na(x)][1]
@@ -81,6 +81,6 @@ db_to_summarize_and_plot <- db_tidy %>%
   ungroup() %>% 
   filter(ceb >= 2 & afb<40, !is.na(mage))
 
-saveRDS(db_to_summarize_and_plot, here("Spells","Data","Castro","cas_wom_senegal.rds"))
+saveRDS(db_to_summarize_and_plot, here("Data","Castro","cas_wom_senegal.rds"))
 remove(list=ls())
 Sys.time()

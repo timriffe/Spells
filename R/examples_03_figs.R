@@ -5,9 +5,9 @@
 library(here)
 library(devtools)
 library(colorspace)
-install_github("timriffe/Spells/Spells/R/Spells")
+# install_github("timriffe/Spells/R/Spells")
 
-source(here("Spells","R","GenerateStationary.R"))
+source(here("R","GenerateStationary.R"))
 
 draw_sequence2 <- function(state_seq, states, cols, y = 0,...){
 	xvals       <- 1:length(state_seq) - 1 + 50
@@ -37,10 +37,10 @@ yvals  <- 9:0 * 1.1
 
 X <- RTraj_clean[,1:10]
 
-saveRDS(RTraj_clean, here("Spells","LabTalk","RTraj_clean.rds"))
-saveRDS(X, here("Spells","LabTalk","X.rds"))
+# saveRDS(RTraj_clean, here("LabTalk","RTraj_clean.rds"))
+# saveRDS(X, here("LabTalk","X.rds"))
 
-pdf("Figures/Seq10.pdf",height=4,width=9)
+pdf(here("Figures","Seq10.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -71,7 +71,7 @@ Ones            <- X == "Employed"
 Ones[Ones]      <- 1
 Ones[Ones == 0] <- NA
 
-pdf("Figures/Seq10ones.pdf",height=4,width=9)
+pdf(here("Figures","Seq10ones.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -89,7 +89,7 @@ dev.off()
 
 Dur <- apply(X,2,clock,clock_type="duration",state = "Inactive")
 
-pdf("Figures/Seq10dur.pdf",height=4,width=9)
+pdf(here("Figures","Seq10dur.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -123,7 +123,7 @@ OrdUp   <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=TRUE
 OrdDown <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=FALSE, step_size = 1)
 
 
-pdf("Figures/Seq10ordUp.pdf",height=4,width=9)
+pdf(here("Figures","Seq10ordUp.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -136,7 +136,7 @@ text(47,6,"Random individual i",xpd=TRUE,srt=90)
 dev.off()
 
 
-pdf("Figures/Seq10ordDown.pdf",height=4,width=9)
+pdf(here("Figures","Seq10ordDown.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -156,7 +156,7 @@ dev.off()
 
 TimeSpent <- apply(X,2,spell_dur_before,state = "Inactive")
 
-pdf("Figures/Seq10timespent.pdf",height=4,width=9)
+pdf(here("Figures","Seq10timespent.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -171,7 +171,7 @@ dev.off()
 
 TimeLeft <- apply(X,2,spell_dur_after,state = "Inactive")
 
-pdf("Figures/Seq10timeleft.pdf",height=4,width=9)
+pdf(here("Figures","Seq10timeleft.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -188,7 +188,7 @@ dev.off()
 # ---------------------------------
 # Alignment
 XdeathAlign <- apply(X,2,align,state = "Dead",type="left")
-pdf("Figures/Seq10deathalign.pdf",height=4,width=9)
+pdf(here("Figures","Seq10deathalign.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(-80,0), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -231,7 +231,7 @@ text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
 #legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
-pdf("Figures/Seq10inactlongright.pdf",height=4,width=9)
+pdf(here("Figures","Seq10inactlongright.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -246,7 +246,7 @@ dev.off()
 
 # -------------------------------------
 Xcenter   <- apply(X,2,align,state = c("Employed"),type="center",spell = "longest")
-pdf("Figures/Seq10centerlongempl.pdf",height=4,width=9)
+pdf(here("Figures","Seq10centerlongempl.pdf"),height=4,width=9)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -261,8 +261,8 @@ dev.off()
 
 library(here)
 library(tidyverse)
-source(here::here("Spells","R","DrawSequences.R"))
-Dat <- readRDS(here::here("Spells","Data","Lorenti","SILCsim.rds"))
+source(here::here("R","DrawSequences.R"))
+Dat <- readRDS(here::here("Data","Lorenti","SILCsim.rds"))
 Dat$state <- as.character(Dat$state)
 X <- Dat %>% 
   filter(age < 80) %>% 
@@ -282,7 +282,7 @@ DurEntry      <- apply(X, 1, spell_dur_conditional,state = "D", entry = TRUE)
 DurEntry <- t(DurEntry)
 
 # this appears in draft manuscript
-pdf(here("Spells","Figures","DisTrajExample.pdf"),width=7,height=4.5)
+pdf(here("Figures","DisTrajExample.pdf"),width=7,height=4.5)
 colsHD <- c("#add996","#bf9319",Dead="#FFFFFF00")
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,81), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")

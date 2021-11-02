@@ -1,4 +1,4 @@
-saveRDS(db_to_summarize_and_plot, here("Spells","Data","Castro","cas_wom_measures.rds"))
+saveRDS(db_to_summarize_and_plot, here("Data","Castro","cas_wom_measures.rds"))
 
 
 
@@ -19,8 +19,8 @@ table(db_to_summarize_and_plot$ceb, db_to_summarize_and_plot$afb)
 
 
 
-load(here("Spells","Data","Castro","cas_wom_measures.rds"))
-setwd(here("Spells","Figures"))
+load(here("Data","Castro","cas_wom_measures.rds"))
+setwd(here("Figures"))
 
 # left first BIRTH time left to second birth, stratified by
 # sex of the first birth AND age at first birth

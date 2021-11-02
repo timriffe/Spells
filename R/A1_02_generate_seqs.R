@@ -7,7 +7,7 @@
 # these calcs just for one state space and sex.
 # remotes::install_github("tidyverse/multidplyr")
 # remotes::install_github('nathanvan/parallelsugar')
-# remotes::install_github('timriffe/Spells/Spells/R/Spells')
+# remotes::install_github('timriffe/Spells/R/Spells')
 library(here)
 library(tidyverse)
 library(markovchain)
@@ -26,11 +26,11 @@ library(tictoc)
 
 library(Spells)
 # 0) load functions
-source(here::here("Spells","R","LorentiFunctions.R"))
+source(here::here("R","LorentiFunctions.R"))
 
 
 
-TR <- readRDS(here("Spells","Data","Lorenti","boot_females_tp_limitations.rda"))
+TR <- readRDS(here("Data","Lorenti","boot_females_tp_limitations.rda"))
 
 
 TRp <- TR %>% 
@@ -63,7 +63,7 @@ A1.1 <- foreach(i = icount(trials),
                 }
 (a1.1.time <- toc())
 
-saveRDS(A1.1, file = here::here("Spells","Data","Lorenti","A1.1.rds"))
+saveRDS(A1.1, file = here::here("Data","Lorenti","A1.1.rds"))
 rm(A1.1);gc()
 
 # second example in application 1
@@ -75,7 +75,7 @@ A1.2 <- foreach(i = icount(trials),
                 }
 (a1.2.time <- toc())
 
-saveRDS(A1.2, file = here::here("Spells","Data","Lorenti","A1.2.rds"))
+saveRDS(A1.2, file = here::here("Data","Lorenti","A1.2.rds"))
 rm(A1.1);gc()
 
 # third example in application 1
@@ -86,7 +86,7 @@ A1.3 <- foreach(i = icount(trials),
                   get_trajectories(TRp[[i]], Ntraj = Ntraj, case = 3)
                 }
 (a1.3.time <- toc())
-saveRDS(A1.3, file = here::here("Spells","Data","Lorenti","A1.3.rds"))
+saveRDS(A1.3, file = here::here("Data","Lorenti","A1.3.rds"))
 rm(A1.3);gc()
 
 

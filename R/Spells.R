@@ -1,6 +1,6 @@
 # Author: tim
 ###############################################################################
-setwd("/home/tim/git/Spells/Spells")
+
 set.seed(1)
 source("R/GenerateStationary.R")
 source("R/Counting.R")

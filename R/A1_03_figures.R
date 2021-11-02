@@ -7,15 +7,15 @@ library(ggridges)
 #----------------------
 
 
-A1.1 <- readRDS(here("Spells","Data","Lorenti","A1.1.rds"))
+A1.1 <- readRDS(here("Data","Lorenti","A1.1.rds"))
 
 App1_macro1 <- 
   A1.1 %>% 
   group_by(InQ, sex, age) %>% 
   summarize(lower = quantile(dur_first_mean,0.025),
             upper = quantile(dur_first_mean,0.975),
-            median = median(dur_first_mean)) %>% 
-  ungroup() %>% 
+            median = median(dur_first_mean),
+            .groups = "drop") %>% 
   ggplot(mapping = aes(x = age, 
                        y = median, 
                        color = InQ,
@@ -33,7 +33,7 @@ App1_macro1 <-
   xlim(16,65) +
   labs(x = "Age", y = "conditional mean spell duration (years)",
        main = "Mean disability spell duration of spells starting in age x")+
-  guides(color = FALSE, fill = FALSE)+
+  guides(color = "none", fill = "none")+
   theme(
     axis.title.x = element_text(size = 13), # use 16 for presentations
     axis.text.x = element_text(size = 13),
@@ -42,23 +42,20 @@ App1_macro1 <-
   scale_fill_brewer(palette = "Paired") + 
   scale_color_brewer(palette = "Paired")
 
-ggsave(here("Spells","Figures","App1_macro1.pdf"),
+ggsave(here("Figures","App1_macro1.pdf"),
        App1_macro1, width = 7, height = 6)
 
 
 ##############################
-# Application 1.2
+# Application Figure 1.2
 
-A1.2 <- readRDS(here("Spells","Data","Lorenti","A1.2.rds"))
-# head(A1.2)
-# colnames(A1.2)
-# table(A1.2$age)
-# head(A1.2[A1.2$age == 77,])
+A1.2 <- readRDS(here("Data","Lorenti","A1.2.rds"))
+
 A1.2 %>% 
   group_by(InQ, sex, age) %>% 
   summarize(lower = quantile(order_first_mean,0.025),
             upper = quantile(order_first_mean,0.975),
-            median = median(order_first_mean)) %>% 
+            median = median(order_first_mean),.groups = "drop") %>% 
   filter(age == 60)
 
 App1_macro2 <-
@@ -66,8 +63,8 @@ App1_macro2 <-
   group_by(InQ, sex, age) %>% 
   summarize(lower = quantile(order_first_mean,0.025),
             upper = quantile(order_first_mean,0.975),
-            median = median(order_first_mean)) %>% 
-  ungroup() %>% 
+            median = median(order_first_mean),
+            .groups = "drop") %>% 
   ggplot(mapping = aes(x = age, 
                        y = median, 
                        color = InQ,
@@ -90,18 +87,18 @@ App1_macro2 <-
   labs(x = "Age", 
        y = "mean episode order",
        main = "New disability episodes are on average 2nd episodes by age 54 if you're poor, 65 if you're rich")+
-  guides(color = FALSE, fill = FALSE)+
+  guides(color = "none", fill = "none")+
   theme(
     axis.title.x = element_text(size = 13), # use 16 for presentations
     axis.text.x = element_text(size = 13),
     axis.text.y = element_text(size = 13),
     axis.title.y = element_text(size = 13))
-ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro2.pdf",
+ggsave(here("Figures","App1_macro2.pdf"),
        App1_macro2, width = 7, height = 6)  
 
 ##############################
 # Application 1.3
-A1.3 <- readRDS(here("Spells","Data","Lorenti","A1.3.rds"))
+A1.3 <- readRDS(here("Data","Lorenti","A1.3.rds"))
 head(A1.3)
 A1.3 %>% 
   group_by(InQ, sex, ad5, ttd) %>% 
@@ -125,6 +122,6 @@ A1.3 %>%
     axis.title.y = element_text(size = 13),
     legend.position = c(0.9, 0.1))
 
-ggsave("/home/tim/workspace/Spells/Spells/Figures/App1_macro3.pdf",
+ggsave(here("Figures","App1_macro3.pdf"),
        App1_macro3, width = 7, height = 6)
 

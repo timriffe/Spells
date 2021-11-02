@@ -14,7 +14,7 @@ library(here)
 
 # get a transition matrix
 
-TM_path <- here("Spells","Data","Dudel","Transition matrices","Pmat_b_f_1994.csv")
+TM_path <- here("Data","Dudel","Transition matrices","Pmat_b_f_1994.csv")
 TM <- as.matrix(
 		read.csv(TM_path,
 				check.names = FALSE)

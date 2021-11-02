@@ -39,10 +39,12 @@ dat <- db %>%
                            mage >= afu ~ "M",
                            TRUE ~ "NM")) %>% 
   ungroup() %>% 
-  arrange(ident, mage) 
+  arrange(ident, mage) %>% 
+  mutate(key = paste0(ident, '_', mage)) %>% 
+  filter(!duplicated(key))
 
-dat$key<-paste0(dat$ident, '_', dat$mage)
-dat<-dat[duplicated(dat$key)==FALSE,]
+# dat$key<-paste0(dat$ident, '_', dat$mage)
+# dat<-dat[!duplicated(dat$key),]
 
 saveRDS(dat,here("Data","Castro","cas_wom_tidy_colombia.rds"))
 Sys.time()

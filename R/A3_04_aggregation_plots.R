@@ -2,11 +2,11 @@ library(here); library(devtools); library(TraMineR); library(tidyverse); library
 library(descr); library(survey); library(RColorBrewer)
 remove(list=ls())
 
-load(here('Spells', 'Data', 'Castro', 'cas_wom_dhs_raw_colombia.RData'))
+load(here('Data', 'Castro', 'cas_wom_dhs_raw_colombia.RData'))
 dr<-db[, c('ident', 'filenw','v005','v001')]
 
-df<-data.frame(readRDS(here("Spells","Data","Castro","cas_wom_colombia.rds")))
-#db<-readRDS(here("Spells","Data","Castro","cas_wom_colombia.rds"))
+df<-data.frame(readRDS(here("Data","Castro","cas_wom_colombia.rds")))
+#db<-readRDS(here("Data","Castro","cas_wom_colombia.rds"))
 
 
 # merge these two
@@ -57,7 +57,7 @@ est_ng <-
   est_ng %>% 
   rename(y = c_step_down_gir1)
 
-setwd(here("Spells","Figures"))
+setwd(here("Figures"))
 
 est_nb
 est_nb %>% 

@@ -15,7 +15,7 @@ db$sexpar<-factor(recode(db$sexpar, "'NB0'='NB'; 'NB1'='NB';
 table(db$gparity)
 table(db$sexpar)
 
-setwd(here("Spells","Figures"))
+setwd(here("Figures"))
 set.seed(423)
 # n<-floor(runif(10, 1, length(unique(db$ident))))
 sub <- db %>% 
