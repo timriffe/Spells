@@ -25,9 +25,17 @@ XX <- Dat %>%
   acast(id~age, value.var = "state") 
 XX <- XX[1:10,]
 
+colsIN <- c("#855C75","#D9AF6B","#AF6458","#736F4C","#526A83","#625377","#68855C","#9C9C5E","#A06177","#8C785D","#467378","#7C7C7C")
 
-colsHD <- c(H = "#add996",D="#bf9319",Dead="#FFFFFF00")
-pdf(here::here("Spells","Figures","App1_grammar1.pdf"),width=9,height=4)
+# colsIN <-c("#88CCEE","#CC6677","#DDCC77","#117733","#332288","#AA4499","#44AA99","#999933","#882255","#661100","#6699CC","#888888")
+# length(colsIN)
+# plot(NULL,xlim=c(0,12),ylim=c(0,1),asp=1)
+# for (i in 1:12){
+#   rect(i-1,0,i,1,col=colsIN[i])
+# }
+# colsHD <- c(H = "#add996",D="#bf9319",Dead="#FFFFFF00")
+colsHD <- c(H =  gray(.9), D = lighten(colsIN[3],.25),Dead="#FFFFFF00")
+pdf(here::here("Figures","App1_grammar1.pdf"),width=9,height=4)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,81), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -44,6 +52,7 @@ for (i in 1:10){
     border = NA
   )
 }
+
 axis(1)
 text(50,9:0+.5,1:10,pos=2,xpd=TRUE)
 text(47,6,"Random individual i",xpd=TRUE,srt=90)
@@ -51,7 +60,7 @@ legend(-10,-2,fill = colsHD[c("H","D")], legend = c("Healthy","Disabled"),horiz 
 dev.off()
 
 # grammar 2
-pdf(here::here("Spells","Figures","App1_grammar2.pdf"),width=9,height=4)
+pdf(here::here("Figures","App1_grammar2.pdf"),width=9,height=4)
 par(mai=c(.8,1,0,0))
 plot(NULL, type = "n", xlim = c(50,81), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
@@ -78,7 +87,7 @@ dev.off()
 
 # grammar 3
 # align on death
-pdf(here::here("Spells","Figures","App1_grammar3.pdf"),width=9,height=4)
+pdf(here::here("Figures","App1_grammar3.pdf"),width=9,height=4)
 par(mai=c(.8,0,0,1))
 plot(NULL, type = "n", xlim = c(-30,0), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
 for (i in 1:10){
