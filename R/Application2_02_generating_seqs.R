@@ -1,7 +1,7 @@
 library(here);library(tidyverse)
 remove(list=ls())
 
-load(here('Data', 'Castro', 'cas_wom_dhs_raw_colombia.RData'))
+load(here('Data', 'Application2', 'cas_wom_dhs_raw_colombia.RData'))
 Sys.time(); # runs in 1m (Senegal, 100,000 obs.) 13m (Colombia, 170,000 obs.)
 # move to long format, includes
 # only women > age 10, up until (and including) age at survey
@@ -46,5 +46,5 @@ dat <- db %>%
 # dat$key<-paste0(dat$ident, '_', dat$mage)
 # dat<-dat[!duplicated(dat$key),]
 
-saveRDS(dat,here("Data","Castro","cas_wom_tidy_colombia.rds"))
+saveRDS(dat,here("Data","Application2","cas_wom_tidy_colombia.rds"))
 Sys.time()

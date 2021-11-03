@@ -6,27 +6,7 @@ source(here::here("R","00_install_packages.R"))
 
 Rtraj_clean <- readRDS(here::here("Data","Dudel","Rtraj_clean.rds"))
 
-draw_sequence2 <- function(state_seq, states, cols, y = 0,...){
-	xvals       <- 1:length(state_seq) - 1 + 50
-	names(cols) <- states
-	col_seq     <- cols[state_seq]
-	
-	rect(xvals,y,xvals+1,y+1,col=col_seq,...)
-}
 
-
-
-draw_sequence3 <- function(durs, y = 0,...){
-	xvals             <- 1:length(durs) - 1 + 50	
-	durs[is.na(durs)] <- ""
-	text(xvals+.5,y+.5,durs,...)
-}
-# alignment
-draw_sequence4 <- function(state_seq, x, states, cols, y = 0,...){
-	names(cols) <- states
-	col_seq     <- cols[state_seq]
-	rect(x,y,x+1,y+1,col=col_seq,...)
-}
 # antique colors
 colsIN <- c("#855C75","#D9AF6B","#AF6458","#736F4C","#526A83","#625377","#68855C","#9C9C5E","#A06177","#8C785D","#467378","#7C7C7C")
 
