@@ -2,14 +2,9 @@
 # Author: tim
 ###############################################################################
 
-library(here)
-library(tidyverse)
-library(devtools)
-library(colorspace)
-library(Spells)
-# install_github("timriffe/Spells/R/Spells")
+source(here::here("R","00_install_packages.R"))
 
-source(here("R","examples_02_generate_stationary.R"))
+Rtraj_clean <- readRDS(here::here("Data","Dudel","Rtraj_clean.rds"))
 
 draw_sequence2 <- function(state_seq, states, cols, y = 0,...){
 	xvals       <- 1:length(state_seq) - 1 + 50

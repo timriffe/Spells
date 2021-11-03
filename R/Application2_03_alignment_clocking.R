@@ -73,6 +73,6 @@ db_to_summarize_and_plot <- db_tidy %>%
   ungroup() %>% 
   filter(ceb >= 2 & afb<40, !is.na(mage))
 
-saveRDS(db_to_summarize_and_plot, here("Data","Castro","cas_wom_senegal.rds"))
+saveRDS(db_to_summarize_and_plot, here("Data","Application2","cas_wom_senegal.rds"))
 remove(list=ls())
 Sys.time()

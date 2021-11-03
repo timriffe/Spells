@@ -1,9 +1,4 @@
-
-# first diagrams:
-library(here)
-library(tidyverse)
-library(reshape2)
-library(Spells)
+source(here::here("R","00_install_packages.R"))
 
 
 Dat <- readRDS(here::here("Data","Application1","SILCsim.rds"))

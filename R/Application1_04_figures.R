@@ -1,10 +1,4 @@
-#----------------------
-# preamble
-library(here)
-library(tidyverse)
-library(ggplot2)
-library(ggridges)
-#----------------------
+source(here::here("R","00_install_packages.R"))
 
 
 A1.1 <- readRDS(here("Data","Application1","A1.1.rds"))
