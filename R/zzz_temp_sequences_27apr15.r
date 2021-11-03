@@ -26,7 +26,6 @@ legstat.17nov.calyr <- read.dta(
   here("Data", "MAFE", "EV",
        "sequence_legstat_17nov_wide_calyr_05apr2015.dta"))
 
-# TR: funny there's no age variable.
 
 Dat <- legstat.17nov %>% 
   left_join(novisaenter, by = "ident_nmspell") %>% 

@@ -368,7 +368,7 @@ clock <- function(x,
                   step_size = 1,
                   dead_state = "Dead"){
   
-  # TR: removed for now, need a general solution. Note:
+  # removed for now, need a general solution. Note:
   # censoring should handle left and right, and also be sensitive
   # to clock types and increasing/decreasing. Lots of conditions to handle.
   
