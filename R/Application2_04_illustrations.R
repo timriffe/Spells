@@ -1,4 +1,4 @@
-source(here::here("R","00_install_packages.R"))
+source(here::here("R","00_load_functions.R"))
 
 #db<-data.frame(readRDS(here::here(Data","Application2","cas_wom_colombia.rds")))
 #db<-data.frame(readRDS(here::here("Data","Application2","cas_wom_senegal.rds")))

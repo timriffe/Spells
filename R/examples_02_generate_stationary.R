@@ -1,8 +1,5 @@
 
-# Author: tim
-###############################################################################
-
-source(here::here("R","00_install_packages.R"))
+source(here::here("R","00_load_functions.R"))
 # here I just read in the first matrix given in the supplementary material to:
 # Christian Dudel & Mikko Myrskylä (2017)
 # Working Life Expectancy at Age 50 in the United States and the Impact of the Great Recession

@@ -1,5 +1,4 @@
-source(here::here("R","00_install_packages.R"))
-
+source(here::here("R","00_load_functions.R"))
 
 Dat <- readRDS(here::here("Data","Application1","SILCsim.rds"))
 

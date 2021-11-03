@@ -1,4 +1,4 @@
-source(here::here("R","00_install_packages.R"))
+source(here::here("R","00_load_functions.R"))
 
 db_tidy <- readRDS(here("Data","Application2","cas_wom_tidy_senegal.rds"))
 

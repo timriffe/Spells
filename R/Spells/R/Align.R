@@ -1,7 +1,4 @@
 
-# Author: tim
-###############################################################################
-
 #' shift lower time interval bounds of state sequence
 #' @description left, right, or center align a sequence on the first, last, or longest spell of a specified state.
 #' @details Time steps of the sequence are assumed uniformly equal to 1.

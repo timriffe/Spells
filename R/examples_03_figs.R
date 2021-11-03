@@ -1,8 +1,5 @@
 
-# Author: tim
-###############################################################################
-
-source(here::here("R","00_install_packages.R"))
+source(here::here("R","00_load_functions.R"))
 
 Rtraj_clean <- readRDS(here::here("Data","Dudel","Rtraj_clean.rds"))
 

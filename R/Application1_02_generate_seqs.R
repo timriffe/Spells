@@ -5,7 +5,7 @@
 # objects (simulated trajectories)
 
 # 0) load functions
-source(here::here("R","00_install_packages.R"))
+source(here::here("R","00_load_functions.R"))
 
 TR <- readRDS(here("Data","Application1","boot_females_tp_limitations.rda"))
 

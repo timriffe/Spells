@@ -3,7 +3,7 @@
 
 library("markovchain")
 # Data coming from different project
-# data_home <- "/home/tim/workspace/HLEDecomp/HLEDecomp"
+# data_home <- "workspace/HLEDecomp/HLEDecomp"
 
 # functions copied-pasted from there, too specific to be packageable...
 getcols <- function(ntrans = 3, self = TRUE, dead = "4"){
