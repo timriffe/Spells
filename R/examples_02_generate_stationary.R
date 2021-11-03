@@ -2,7 +2,7 @@
 # Author: tim
 ###############################################################################
 
-source("00_install_packages.R")
+source(here::here("R","00_install_packages.R"))
 # here I just read in the first matrix given in the supplementary material to:
 # Christian Dudel & Mikko Myrskylä (2017)
 # Working Life Expectancy at Age 50 in the United States and the Impact of the Great Recession
@@ -39,4 +39,5 @@ RTraj                 <- rbind(rep("50::Employed",N), RTraj)
 RTraj_clean           <- gsub(".*:","",RTraj)
 rownames(RTraj_clean) <- 50:100
 
+saveRDS(RTraj_clean, file = here::here("Data","Dudel","Rtraj_clean.rds"))
 # ------------------
