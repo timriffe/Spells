@@ -1,11 +1,11 @@
 # build file
 library(here)
 library(devtools)
-pkg_path <- here("Spells","R","Spells")
+pkg_path <- here("R","Spells")
 
 document(pkg_path)
 check(pkg_path)
 
 
-devtools::install_local(here::here("Spells","R","Spells"), force = TRUE)
+devtools::install_local(here::here("R","Spells"), force = TRUE)
 

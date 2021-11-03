@@ -7,7 +7,7 @@ library(ggridges)
 #----------------------
 
 
-A1.1 <- readRDS(here("Data","Lorenti","A1.1.rds"))
+A1.1 <- readRDS(here("Data","Application1","A1.1.rds"))
 
 App1_macro1 <- 
   A1.1 %>% 
@@ -49,7 +49,7 @@ ggsave(here("Figures","App1_macro1.pdf"),
 ##############################
 # Application Figure 1.2
 
-A1.2 <- readRDS(here("Data","Lorenti","A1.2.rds"))
+A1.2 <- readRDS(here("Data","Application1","A1.2.rds"))
 
 A1.2 %>% 
   group_by(InQ, sex, age) %>% 
@@ -98,7 +98,7 @@ ggsave(here("Figures","App1_macro2.pdf"),
 
 ##############################
 # Application 1.3
-A1.3 <- readRDS(here("Data","Lorenti","A1.3.rds"))
+A1.3 <- readRDS(here("Data","Application1","A1.3.rds"))
 
 A1.3 %>% 
   group_by(InQ, sex, ad5, ttd) %>% 

@@ -286,3 +286,25 @@ text(min(XretirefirstAlign)-3,6,"Random individual i",xpd=TRUE,srt=90)
 legend(-10,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
 
+# prevalence curve
+Ones     <- XX == "Employed"
+Ones[XX == "Dead"] <- NA
+PrevEmpl <- rowMeans(Ones, na.rm=TRUE)
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,1), axes = FALSE, xlab = "", ylab = "")
+lines(50:100, PrevEmpl, lwd = 2)
+axis(1)
+text(43,.5,"Prevalence",xpd=TRUE,srt=90)
+axis(2, las = 1)
+
+Dat %>% 
+  filter(age < 80) %>% 
+  group_by(InQ, id) %>% 
+  mutate(dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
+  ungroup() %>% 
+  filter(dead) %>% 
+  filter(InQ == "I",
+         age >= 50 & age <= 80) %>% 
+  mutate(state = case_when(state == "Healthy" ~ "H",
+                           state == "Disabled" ~ "D",
+                           TRUE ~ "Dead"))

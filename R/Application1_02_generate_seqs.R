@@ -4,33 +4,10 @@
 # We just write out the results, and we don't save the intermediate data 
 # objects (simulated trajectories)
 
-# these calcs just for one state space and sex.
-# remotes::install_github("tidyverse/multidplyr")
-# remotes::install_github('nathanvan/parallelsugar')
-# remotes::install_github('timriffe/Spells/R/Spells')
-library(here)
-library(tidyverse)
-library(markovchain)
-library(reshape2)
-library(stringr)
-library(rlang)
-#library(Spells)
-library(devtools)
-#library(data.table) # only single-threaded
-#library(multidplyr) # wasn't working with group_map()
-# library(parallel) # finally used mclapply()
-# library(parallelsugar)
-library(doParallel)
-library(foreach)
-library(tictoc)
-
-library(Spells)
 # 0) load functions
-source(here::here("R","LorentiFunctions.R"))
+source(here::here("R","00_install_packages.R"))
 
-
-
-TR <- readRDS(here("Data","Lorenti","boot_females_tp_limitations.rda"))
+TR <- readRDS(here("Data","Application1","boot_females_tp_limitations.rda"))
 
 
 TRp <- TR %>% 
@@ -63,7 +40,7 @@ A1.1 <- foreach(i = icount(trials),
                 }
 (a1.1.time <- toc())
 
-saveRDS(A1.1, file = here::here("Data","Lorenti","A1.1.rds"))
+saveRDS(A1.1, file = here::here("Data","Application1","A1.1.rds"))
 rm(A1.1);gc()
 
 # second example in application 1
@@ -75,7 +52,7 @@ A1.2 <- foreach(i = icount(trials),
                 }
 (a1.2.time <- toc())
 
-saveRDS(A1.2, file = here::here("Data","Lorenti","A1.2.rds"))
+saveRDS(A1.2, file = here::here("Data","Application1","A1.2.rds"))
 rm(A1.1);gc()
 
 # third example in application 1
@@ -86,7 +63,7 @@ A1.3 <- foreach(i = icount(trials),
                   get_trajectories(TRp[[i]], Ntraj = Ntraj, case = 3)
                 }
 (a1.3.time <- toc())
-saveRDS(A1.3, file = here::here("Data","Lorenti","A1.3.rds"))
+saveRDS(A1.3, file = here::here("Data","Application1","A1.3.rds"))
 rm(A1.3);gc()
 
 
@@ -101,15 +78,15 @@ closeAllConnections()
 
 # Takes a looooong time, single-threaded!
 # A1.1 <- TR[, get_trajectories(.SD, Ntraj = 50000, case = 1), by = list(i,InQ,sex)]
-# save.rds(A1.1, file = here::here("Spells","Data","Lorenti","A1.1.rds"))
+# save.rds(A1.1, file = here::here("Spells","Data","Application1","A1.1.rds"))
 # rm(A1.1);gc()
 # 
 # A1.2 <- TR[, get_trajectories(.SD, Ntraj = 50000, case = 2), by = list(i,InQ,sex)]
-# save.rds(A1.2, file = here::here("Spells","Data","Lorenti","A1.2.rds"))
+# save.rds(A1.2, file = here::here("Spells","Data","Application1","A1.2.rds"))
 # rm(A1.2);gc()
 # 
 # A1.3 <- TR[, get_trajectories(.SD, Ntraj = 50000, case = 3), by = list(i,InQ,sex)]
-# save.rds(A1.3, file = here::here("Spells","Data","Lorenti","A1.3.rds"))
+# save.rds(A1.3, file = here::here("Spells","Data","Application1","A1.3.rds"))
 # rm(A1.3);gc()
 # 
 # rm(TR);gc()

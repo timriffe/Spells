@@ -3,7 +3,7 @@
 
 library("markovchain")
 # Data coming from different project
-data_home <- "/home/tim/workspace/HLEDecomp/HLEDecomp"
+# data_home <- "/home/tim/workspace/HLEDecomp/HLEDecomp"
 
 # functions copied-pasted from there, too specific to be packageable...
 getcols <- function(ntrans = 3, self = TRUE, dead = "4"){
@@ -120,9 +120,9 @@ RHRS <- rbind(RHRS_1_l,RHRS_2_l,RHRS_3_l)
 # mean(colSums(RHRS_clean=="ADL1")) * 2
 # mean(colSums(RHRS_clean=="ADL+")) * 2
 
-# saveRDS(RHRS_clean, here("Spells","Data","HRS","RHRS_clean.rds"))
+# saveRDS(RHRS_clean, here("Data","HRS","RHRS_clean.rds"))
 # 
-# RHRS_clean <- readRDS(here("Spells","Data","HRS","RHRS_clean.rds"))
+# RHRS_clean <- readRDS(here("Data","HRS","RHRS_clean.rds"))
 RHRS_long <- RHRS %>% 
   mutate(state = as.character(state)) %>% 
   arrange(year, id, age) %>% 
@@ -139,7 +139,7 @@ RHRS_long <- RHRS %>%
   gather(key = "clock", value = "value", c("y_dur_adl","y_step_up_adl","y_step_down_adl")) %>% 
   filter(!is.na(value))
 
-saveRDS(RHRS_long, here("Spells","Data","HRS","RHRS_long.rds"))
+saveRDS(RHRS_long, here("Data","HRS","RHRS_long.rds"))
 
 #DAT <- get_TR(version = "02", subset = sex == "f")
 #DAT <- get_TR("02",subset = sex == "f" & edu == "all_edu" & time == 1996)

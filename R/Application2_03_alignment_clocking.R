@@ -1,14 +1,6 @@
-library(here); library(devtools); library(TraMineR); library(tidyverse)
-library(reshape2); library(colorspace); library(xtable)
-remove(list=ls())
+source(here::here("R","00_install_packages.R"))
 
-Sys.time() 
-# runs in 1m (Senegal, 1.3 million obs.), 3m (Colombia 2.8 million obs.)
-install_github("timriffe/Spells/R/Spells")
-library(Spells)
-load_all(here("R","Spells"))
-
-db_tidy <- readRDS(here("Data","Castro","cas_wom_tidy_senegal.rds"))
+db_tidy <- readRDS(here("Data","Application2","cas_wom_tidy_senegal.rds"))
 
 first_sex <- function(x){
   x[!is.na(x)][1]

@@ -1,10 +1,6 @@
-library(here); library(devtools); library(TraMineR); library(tidyverse); library(Spells)
-library(RColorBrewer); library(car); library(reshape2); library(toOrdinal)
-remove(list=ls())
-
-
-#db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_colombia.rds")))
-#db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_senegal.rds")))
+source("00_install_packages.R")
+#db<-data.frame(readRDS(here::here(Data","Application2","cas_wom_colombia.rds")))
+#db<-data.frame(readRDS(here::here("Data","Application2","cas_wom_senegal.rds")))
 db<-db[db$ceb==4 & db$maget>=39,]
 
 
@@ -15,7 +11,8 @@ db$sexpar<-factor(recode(db$sexpar, "'NB0'='NB'; 'NB1'='NB';
 table(db$gparity)
 table(db$sexpar)
 
-setwd(here("Figures"))
+# TODO: remove wd change
+
 set.seed(423)
 # n<-floor(runif(10, 1, length(unique(db$ident))))
 sub <- db %>% 
@@ -101,4 +98,4 @@ text(-3,6,"Random individual i",xpd=TRUE,srt=90)
 text(-1, 1:10+0.5, labels=10:1, pos=2,xpd=TRUE)
 legend(0, 1, fill = cols, legend=c('Boy','Girl','No birth'), horiz = TRUE,xpd=TRUE,bty="n")
 
-dev.print(device=pdf, 'illu_fertility.pdf', width=14, height=8)
+dev.print(device=pdf, here("Figures",'illu_fertility.pdf'), width=14, height=8)

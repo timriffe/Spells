@@ -1,5 +1,36 @@
 
-# 0 function preamble
+# pacman will help us get everything installed
+if (!"pacman" %in% rownames(installed.packages())){
+  install.packages("pacman")
+}
+library(pacman)
+CRAN_packages <- c("here","tidyverse","markovchain","reshape2","stringr","rlang","devtools",
+                   "doParallel","foreach","tictoc","ggplot2","ggridges","TraMineR","RColorBrewer",
+                   "car","toOrdinal","doBy","descr","survey","spatstat","spatstat.core",
+                   "colorspace")
+
+# Install required CRAN packages if not available yet
+if(!sum(!p_isinstalled(CRAN_packages))==0) {
+  p_install(
+    package = CRAN_packages[!p_isinstalled(CRAN_packages)], 
+    character.only = TRUE
+  )
+}
+
+# install from github 
+if (!p_isinstalled("Spells")) {
+  remotes::install_github("timriffe/Spells/R/Spells", build = FALSE)
+}
+
+# Load the required CRAN/github packages
+p_load(CRAN_packages, character.only = TRUE)
+p_load("Spells", character.only = TRUE)
+
+
+# custom functions for following scripts:
+
+
+# Function preamble
 
 # Make a single U submatrix from a pi (transfer probs) vector
 pi2u <- function(pivec, 
@@ -41,8 +72,8 @@ getpiu <- function(TR, from = "Disabled", to = "Healthy", start_age = 15){
     # filter(sex == {{sexx}} &
     #          InQ == {{InQx}} &
     filter(
-             state_from == {{from}} &
-             state_to == {{to}}) %>% 
+      state_from == {{from}} &
+        state_to == {{to}}) %>% 
     pull(probs) %>% 
     pi2u(from = from, to = to, interval = 1, start_age = start_age)
 }
@@ -118,7 +149,7 @@ get_trajectories <- function(
   Fsim <-
     Fsim %>% 
     reshape2::melt(varnames = c("age","id"), 
-         value.name = "state") %>% 
+                   value.name = "state") %>% 
     mutate(state = as.character(state)) %>% 
     filter(age < 80) %>% # it's closed out so everyone dead at 80...
     group_by(id) %>% 
@@ -179,6 +210,9 @@ get_trajectories <- function(
   }
   Fsim
 }
+
+
+
 
 
 

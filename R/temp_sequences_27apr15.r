@@ -11,7 +11,7 @@ library(reshape2)
 library(here)
 ## 2 - READ STATA 17nov DATASET: MIGRATION YEAR
 legstat.17nov <- read.dta(
-  here("Spells", "Data", "MAFE", "EV",
+  here("Data", "MAFE", "EV",
        "sequence_legstat_17nov_wide_migyr_05apr2015.dta"))
 
 firstmigdec85 <- read.dta(
@@ -19,11 +19,11 @@ firstmigdec85 <- read.dta(
        "firstmigdec85.dta"))
 
 novisaenter  <- read.dta(
-  here("Spells", "Data", "MAFE", "EV",
+  here("Data", "MAFE", "EV",
        "novisa_14jun.dta"))
 
 legstat.17nov.calyr <- read.dta(
-  here("Spells", "Data", "MAFE", "EV",
+  here("Data", "MAFE", "EV",
        "sequence_legstat_17nov_wide_calyr_05apr2015.dta"))
 
 # TR: funny there's no age variable.
@@ -113,9 +113,9 @@ c("Fully irreg. (NRP, NWP)",
 # 
 # # TR: this was already read in, it seems
 # legstat.17nov.calyr <- read.dta(
-#   here("Spells", "Data", "MAFE", "EV",
+#   here("Data", "MAFE", "EV",
 #           "sequence_legstat_17nov_wide_calyr_05apr2015.dta"))
-# # dir(here("Spells", "Data", "MAFE", "EV"))
+# # dir(here("Data", "MAFE", "EV"))
 # 
 # legstat.17nov.calyr <- merge(legstat.17nov.calyr, firstmigdec85, 
 #                              by="ident_nmspell")

@@ -2,9 +2,7 @@
 # Author: tim
 ###############################################################################
 
-library(markovchain)
-library(spatstat)
-library(here)
+source("00_install_packages.R")
 # here I just read in the first matrix given in the supplementary material to:
 # Christian Dudel & Mikko Myrskylä (2017)
 # Working Life Expectancy at Age 50 in the United States and the Impact of the Great Recession

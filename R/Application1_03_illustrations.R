@@ -3,18 +3,17 @@
 library(here)
 library(tidyverse)
 library(reshape2)
-# devtools::install_github("timriffe/Spells/Spells/R/Spells")
-#devtools::install_local(here::here("Spells","R","Spells"), force = TRUE)
 library(Spells)
 
 
-Dat <- readRDS(here::here("Data","Lorenti","SILCsim.rds"))
-Dat$state <- as.character(Dat$state)
+Dat <- readRDS(here::here("Data","Application1","SILCsim.rds"))
 
 XX <- Dat %>% 
   filter(age < 80) %>% 
   group_by(InQ, id) %>% 
-  mutate(dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
+  mutate(
+    state = as.character(state),
+    dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
   ungroup() %>% 
   filter(dead) %>% 
   filter(InQ == "I",
@@ -110,3 +109,6 @@ text(1,9:0+.5,1:10,pos=4,xpd=TRUE)
 text(3,6,"Random individual i",xpd=TRUE,srt=90)
 legend(-10,-2,fill = colsHD[c("H","D")], legend = c("Healthy","Disabled"),horiz = TRUE,xpd=TRUE,bty="n")
 dev.off()
+
+
+

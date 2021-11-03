@@ -1,12 +1,10 @@
-library(here); library(devtools); library(TraMineR); library(tidyverse); library(doBy)
-library(descr); library(survey); library(RColorBrewer)
-remove(list=ls())
+source(here::here("R","00_install_packages.R"))
 
-load(here('Data', 'Castro', 'cas_wom_dhs_raw_colombia.RData'))
+load(here('Data', 'Application2', 'cas_wom_dhs_raw_colombia.RData'))
 dr<-db[, c('ident', 'filenw','v005','v001')]
 
-df<-data.frame(readRDS(here("Data","Castro","cas_wom_colombia.rds")))
-#db<-readRDS(here("Data","Castro","cas_wom_colombia.rds"))
+df<-data.frame(readRDS(here("Data","Application2","cas_wom_colombia.rds")))
+#db<-readRDS(here("Data","Application2","cas_wom_colombia.rds"))
 
 
 # merge these two
@@ -57,7 +55,6 @@ est_ng <-
   est_ng %>% 
   rename(y = c_step_down_gir1)
 
-setwd(here("Figures"))
 
 est_nb
 est_nb %>% 
@@ -81,8 +78,7 @@ ggplot(mapping = aes(x = left_par1,
   
   
   
-dev.print(device=pdf, paste0("mt_birth2_", names(analysis)[c], ".pdf"), width=7, height=5)
-
+dev.print(device=pdf, here::here("Figures",paste0("mt_birth2_", names(analysis)[c], ".pdf")), width = 7, height = 5)
 
 
 # left first BIRTH time left to second birth, stratified by
@@ -106,9 +102,8 @@ db %>%
   guides(color=guide_legend(title="First child")) + 
   xlab("Time since first birth") + 
   ylab("Mean time to second birth")
-dev.print(device=pdf, paste0("mt_birth2_", names(analysis)[c], ".pdf"), width=7, height=5)
+dev.print(device=pdf, here::here("Figures",paste0("mt_birth2_", names(analysis)[c], ".pdf")), width=7, height=5)
 
-# TR: this one is freaking cool!
 # left first BIRTH time left to second BOY, stratified by
 # sex of the first birth AND age at first birth
 db %>% 
@@ -127,11 +122,9 @@ db %>%
   guides(color=guide_legend(title="First child")) + 
   xlab("Time since first birth") + 
   ylab("Mean time to next boy")
-dev.print(device=pdf, paste0("mt_boy2_", names(analysis)[c], ".pdf"), width=7, height=5)
+dev.print(device=pdf, here::here("Figures",paste0("mt_boy2_", names(analysis)[c], ".pdf")), width=7, height=5)
 
 
-
-# TR: OMG they balance out!
 # left first BIRTH time left to second GIRL, stratified by
 # sex of the first birth AND age at first birth
 db %>% 
@@ -150,4 +143,4 @@ db %>%
   guides(color=guide_legend(title="First child")) + 
   xlab("Time since first birth") + 
   ylab("Mean time to next girl")
-dev.print(device=pdf, paste0("mt_girl2_", names(analysis)[c], ".pdf"), width=7, height=5)
+dev.print(device=pdf, here::here("Figures",paste0("mt_girl2_", names(analysis)[c], ".pdf")), width=7, height=5)

@@ -101,7 +101,7 @@ All examples here based on individual multistate (categorical) trajectories in u
 10 lives simulated from Dudel & Myrskylä (2017)
 ```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
 if (! "Spells" %in% rownames(installed.packages())){
-  remotes::install_github("timriffe/Spells/Spells/R/Spells")
+  remotes::install_github("timriffe/Spells/R/Spells")
 }
 library(tidyverse)
 library(Spells)
@@ -109,7 +109,7 @@ library(colorspace)
 library(here)
 library(reshape2)
 library(ggridges)
-source(here::here("Spells","R","DrawSequences.R"))
+source(here::here("R","DrawSequences.R"))
 #cols   <- c(qualitative_hcl(5, palette = "Dark 3")[c(3,2,4)],NA)
 palette_OkabeIto <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999")
 cols             <- c(palette_OkabeIto[c(3,1,2)],NA)
@@ -121,8 +121,8 @@ cols             <- c(palette_OkabeIto[c(3,1,2)],NA)
 cols2            <- lighten(desaturate(cols,.3),.3)
 states           <- c("Employed", "Inactive","Retired","Dead")
 yvals            <- 9:0 * 1.1
-X                <- readRDS(here("Spells","CED","X.rds"))
-XX               <- readRDS(here("Spells","CED","RTraj_clean.rds"))
+X                <- readRDS(here("CED","X.rds"))
+XX               <- readRDS(here("CED","RTraj_clean.rds"))
 ```
 
 ```{r,fig.height=4,fig.width=9}
