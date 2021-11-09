@@ -20,9 +20,20 @@ dat <- setDT(dat[RX010%in%15:84,])
 dat <- dat[!is.na(ADL),]
 
 setkeyv(dat,c("PB030","PB010"))
+# data and models ------------------------------------------------
+sub2 <- dat[IDmax==2,]
+sub3 <- dat[IDmax==3,]
+sub4 <- dat[IDmax==4,] 
 
+boot_fx <-function(){
+
+    dati <- as.data.frame(rbind(
+    sub2[sample(nrow(sub2), replace = T), ],
+    sub3[sample(nrow(sub3), replace = T), ],
+    sub4[sample(nrow(sub4), replace = T), ]))
+  
 #---------------------------------------------------------------------------------
-  tr_format <- setDT(subset(dat,select = c("PB030","RX010","FROM","TO","PB150","PB010","DB040","HX100","INQ_I","INQ_II","INQ_III","INQ_IV","INQ_V","North","Centre","South")))
+  tr_format <- setDT(subset(dati,select = c("PB030","RX010","FROM","TO","PB150","PB010","DB040","HX100","INQ_I","INQ_II","INQ_III","INQ_IV","INQ_V","North","Centre","South")))
   names(tr_format) <- c("pid","age","from","to","gender","year","area","INCQ","INQ_I","INQ_II","INQ_III","INQ_IV","INQ_V","North","Centre","South")
   
   
@@ -37,7 +48,7 @@ setkeyv(dat,c("PB030","PB010"))
   
   
   library(VGAM)
-  fit <- formula(to ~ from + s(age) + INQ_I + INQ_II + INQ_IV + INQ_V + Centre + South)
+  fit <- formula(to ~ from + s(age) + INQ_I + INQ_II + INQ_IV + INQ_V)
   
   fit.m <- vgam(fit 
                 ,family=multinomial(refLevel=1), data=droplevels(tr_format[tr_format$gender==1,]), trace=T,control=vgam.control(maxit=50))
@@ -76,8 +87,8 @@ means_q <- tr_format %>%
   filter(INQ_I == 1) %>% 
   mutate(gender = factor(gender, c(1,2),c("Men","Women"))) %>% 
   group_by(gender) %>%  
-  summarize(South = mean(South),
-            Centre= mean(Centre),
+  summarize(
+            
             INQ_I = mean(INQ_I),
             INQ_II = mean(INQ_II),
             INQ_III = mean(INQ_III),
@@ -103,8 +114,8 @@ means_q <- tr_format %>%
   filter(INQ_II == 1) %>% 
   mutate(gender = factor(gender, c(1,2),c("Men","Women"))) %>% 
   group_by(gender) %>%  
-  summarize(South = mean(South),
-            Centre= mean(Centre),
+  summarize(
+            
             INQ_I = mean(INQ_I),
             INQ_II = mean(INQ_II),
             INQ_III = mean(INQ_III),
@@ -130,8 +141,8 @@ means_q <- tr_format %>%
   filter(INQ_III == 1) %>% 
   mutate(gender = factor(gender, c(1,2),c("Men","Women"))) %>% 
   group_by(gender) %>%  
-  summarize(South = mean(South),
-            Centre= mean(Centre),
+  summarize(
+            
             INQ_I = mean(INQ_I),
             INQ_II = mean(INQ_II),
             INQ_III = mean(INQ_III),
@@ -157,8 +168,8 @@ means_q <- tr_format %>%
   filter(INQ_IV == 1) %>% 
   mutate(gender = factor(gender, c(1,2),c("Men","Women"))) %>% 
   group_by(gender) %>%  
-  summarize(South = mean(South),
-            Centre= mean(Centre),
+  summarize(
+            
             INQ_I = mean(INQ_I),
             INQ_II = mean(INQ_II),
             INQ_III = mean(INQ_III),
@@ -184,8 +195,8 @@ means_q <- tr_format %>%
   filter(INQ_V == 1) %>% 
   mutate(gender = factor(gender, c(1,2),c("Men","Women"))) %>% 
   group_by(gender) %>%  
-  summarize(South = mean(South),
-            Centre= mean(Centre),
+  summarize(
+            
             INQ_I = mean(INQ_I),
             INQ_II = mean(INQ_II),
             INQ_III = mean(INQ_III),
@@ -641,7 +652,7 @@ for(which.age in ages[-length(ages)]) {
   
 }
 
-get_tp <- function(mat,inc_q){
+get_tp <- function(mat,inc_q,sex){
   
   tmp <- as.data.frame(mat)
   tmp[,"to"] <- rownames(tmp)
@@ -649,29 +660,50 @@ get_tp <- function(mat,inc_q){
   tp <- pivot_longer(tmp, !to, names_to = "from",values_to = "probs")
   tp <- tp[tp[,"probs"]>0,c("from","to","probs")]
   tp$INC_Q <- inc_q
+  tp$sex <- sex
   tp
   }
 
 
-tp_I_m <- get_tp(Umat_m_q1,"I")
-tp_II_m <- get_tp(Umat_m_q2,"II")
-tp_III_m <- get_tp(Umat_m_q3,"III")
-tp_IV_m <- get_tp(Umat_m_q4,"IV")
-tp_V_m <- get_tp(Umat_m_q5,"V")
+tp_I_m <- get_tp(Umat_m_q1,"I","M")
+tp_II_m <- get_tp(Umat_m_q2,"II","M")
+tp_III_m <- get_tp(Umat_m_q3,"III","M")
+tp_IV_m <- get_tp(Umat_m_q4,"IV","M")
+tp_V_m <- get_tp(Umat_m_q5,"V","M")
 
-tp_I_f <- get_tp(Umat_f_q1,"I")
-tp_II_f <- get_tp(Umat_f_q2,"II")
-tp_III_f <- get_tp(Umat_f_q3,"III")
-tp_IV_f <- get_tp(Umat_f_q4,"IV")
-tp_V_f <- get_tp(Umat_f_q5,"V")
-
-
-
-dm <- as.data.frame(rbind(tp_I_m,tp_II_m,tp_III_m,tp_IV_m,tp_V_m))
-df <- as.data.frame(rbind(tp_I_f,tp_II_f,tp_III_f,tp_IV_f,tp_V_f))
+tp_I_f <- get_tp(Umat_f_q1,"I","F")
+tp_II_f <- get_tp(Umat_f_q2,"II","F")
+tp_III_f <- get_tp(Umat_f_q3,"III","F")
+tp_IV_f <- get_tp(Umat_f_q4,"IV","F")
+tp_V_f <- get_tp(Umat_f_q5,"V","F")
 
 
 
-saveRDS(dm,"U:/NextCloud/Projects/Spells/Data/males_tp_limitations.rds")
-saveRDS(df,"U:/NextCloud/Projects/Spells/Data/females_tp_limitations.rds")
+dd <- as.data.frame(rbind(tp_I_m,tp_II_m,tp_III_m,tp_IV_m,tp_V_m, tp_I_f,tp_II_f,tp_III_f,tp_IV_f,tp_V_f))
+
+return(dd)
+
+}
+
+library(doParallel)
+library(foreach)
+
+options(cores=30)
+
+cl <- makeCluster(30)
+registerDoParallel(cl)
+getDoParWorkers()
+
+trials <- 1000
+out <- NULL
+out <- foreach(i = icount(trials),
+               .combine = 'rbind',
+               .packages=c('VGAM','data.table','tidyverse','janitor'),.errorhandling = 'remove') %dopar% {
+                 out <- cbind(boot_fx(),i)
+                 
+               }               
+# saveRDS(dd,"U:/NextCloud/Projects/Spells/Data/tp_limitations.rds")
+
+
+saveRDS(out,"U:/NextCloud/Projects/Spells/Data/boot_tp_limitations.rds")
 
