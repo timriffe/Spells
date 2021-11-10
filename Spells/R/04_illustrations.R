@@ -8,9 +8,9 @@ library(Spells)
 load_all(here("Spells","R","Spells"))
 
 setwd("U:/Cloud/Spells/Spells/Data/Castro")
-#db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_colombia.rds")))
-db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_senegal.rds")))
-db<-db[db$ceb==4 & db$maget>=39,]
+db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_colombia.rds")))
+#db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_senegal.rds")))
+#db<-db[db$ceb==4 & db$maget>=39,]
 
 
 db$sexpar<-factor(paste(car::recode(db$sex, "1='B'; 2='G'; NA=' '"), 
@@ -21,7 +21,7 @@ table(db$gparity)
 table(db$sexpar)
 
 setwd(here("Spells","Figures"))
-set.seed(423)
+set.seed(1212)
 # n<-floor(runif(10, 1, length(unique(db$ident))))
 sub <- db %>% 
   filter(
@@ -79,7 +79,8 @@ plot(NULL, type="n", xlim=c(0,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
      main='')
 for (i in 1:10){
   draw_sequence(seqs[,i], x=Spells::align(mpar[,i], state="1", type='left'), y=i, cols=cols,
-                labels=floor(clock(x=bpar[,i], state="X",clock_type="step",increasing=FALSE)),
+                labels=floor(clock(x=bpar[,i], state="X",
+                                   clock_type="step",increasing=FALSE)),
                 border=NA, box = TRUE, cex=cex8)
   xr = sum(bpar[,i] == "X", na.rm = TRUE)
   rect(0,i,xr,i+1, border = "gray40", lwd=1)
@@ -95,7 +96,8 @@ plot(NULL, type="n", xlim=c(0,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
      main="")
 for (i in 1:10){
   draw_sequence(seqs[,i], x=Spells::align(mpar[,i], state="1", type='left'), y=i, cols=cols,
-                labels=floor(clock(x=gpar[,i], state="X",clock_type="step",increasing=FALSE)),
+                labels=floor(clock(x=gpar[,i], state="X",
+                                   clock_type="step",increasing=FALSE)),
                 border=NA, box = TRUE, cex=cex8)
   xr = sum(gpar[,i] == "X", na.rm = TRUE)
   rect(0,i,xr,i+1, border = "gray40", lwd=1)
