@@ -7,7 +7,7 @@ library(pacman)
 CRAN_packages <- c("here","tidyverse","markovchain","reshape2","stringr","rlang","devtools",
                    "doParallel","foreach","tictoc","ggplot2","ggridges","TraMineR","RColorBrewer",
                    "car","toOrdinal","doBy","descr","survey","spatstat","spatstat.core",
-                   "colorspace","data.table")
+                   "colorspace","data.table","VGAM","Formula")
 
 # Install required CRAN packages if not available yet
 if(!sum(!p_isinstalled(CRAN_packages))==0) {

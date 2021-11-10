@@ -1,12 +1,8 @@
-# A Lorenti
-# lorenti@demogr.mpg.de
+
 # Estimation of transition probabilities between health, disability and death states
 # using Silc data 2012-15, survival correction matching survival probs with italian 
 # life tables 2014. The matching algorithm follows https://doi.org/10.1007/s13524-017-0619-6
 
-
-rm(list=ls())
-lapply(list("data.table","tidyverse","VGAM","Formula"),require,character=T)
 #------------------------------------------------------------------------------
 dat <- readRDS("U:/NextCloud/Projects/Spells/Data/SILC_panel_12_15_spells.RDS")
 
@@ -47,7 +43,6 @@ boot_fx <-function(){
   tr_id <- tr_format[J(unique(pid)),mult="first"] 
   
   
-  library(VGAM)
   fit <- formula(to ~ from + s(age) + INQ_I + INQ_II + INQ_IV + INQ_V)
   
   fit.m <- vgam(fit 
