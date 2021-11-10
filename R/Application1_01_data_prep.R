@@ -1,13 +1,12 @@
-# A Lorenti
-# lorenti@demogr.mpg.de
+
 # Get the SILC data 2012-15 for Italy and prepare a dataset in transition format
 # with relevant variables for the estimation of health expectancies through multistate models
 
-rm(list=ls())
-library(data.table)
+source(here::here("R","00_load_functions.R"))
 #------------------files to be imported list------------------------#
 getwd()
-
+# TR: should be path in repo, i.e. relative to repo folder
+# Also, what is this file, and how would someone request it / download it?
 dat <- fread("Data/2012/tmp/l15p.csv")
 head(dat)
 
@@ -60,6 +59,8 @@ datp <- subset(dat,select=c("PB010","PB030","PB150","PE040","PH010","PH020","PH0
 #----------------------------------------------------------------------------------------------------------------
 # get individual data from register file
 
+# TR: should be path in repo, i.e. relative to repo folder
+# Also, what is this file, and how would someone request it / download it?
 dat <- fread("./Data/2012/tmp/l15r.csv")
 
 # RB010: YEAR OF THE SURVEY ..................................................................................... 
@@ -107,7 +108,8 @@ datmort <- subset(dat,select=c("RB030","PB010D","PH010D"),RB110==6)
 setnames(datmort,c("RB030"),c("PB030"))
 #----------------------------------------------------------------------------------------------------------------
 # get household data 
-
+# TR: should be path in repo, i.e. relative to repo folder
+# Also, what is this file, and how would someone request it / download it?
 dat <- fread("./Data/2012/tmp/l15h.csv")
 
 
@@ -229,6 +231,6 @@ dat[,INQ_III:= ifelse(HX100 == 3,1,0)]
 dat[,INQ_IV:= ifelse(HX100 == 4,1,0)]
 dat[,INQ_V:= ifelse(HX100 == 5,1,0)]
 
-
+# TR: should be path in repo, i.e. relative to repo folder
 saveRDS(dat,"U:/NextCloud/Projects/Spells/Data/SILC_panel_12_15_spells.RDS")
 
