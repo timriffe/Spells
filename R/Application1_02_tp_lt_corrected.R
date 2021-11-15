@@ -271,6 +271,8 @@ Umat_f_q5 <- as.matrix(Umat_f_q5,rownames="to")
 
 # Mortality Corrention using LIFE TABLES ================================================================
 
+# TR: instructions for getting these files. Can they be publicly downloaded, or even added to this repo?
+# path should be relative to repo
 lt_female <- paste("./Data/LT/Italia",as.numeric(yr)+2,"Femmine.csv",sep="_")
 
 lt_male <- paste("./Data/LT/Italia",as.numeric(yr)+2,"Maschi.csv",sep="_")
@@ -699,6 +701,6 @@ out <- foreach(i = icount(trials),
                }               
 # saveRDS(dd,"U:/NextCloud/Projects/Spells/Data/tp_limitations.rds")
 
-
+# TR: this should point to a folder in the repo (Data/Application1 for example)
 saveRDS(out,"U:/NextCloud/Projects/Spells/Data/boot_tp_limitations.rds")
 

@@ -7,19 +7,19 @@
 # 0) load functions
 source(here::here("R","00_load_functions.R"))
 
-TR <- readRDS(here("Data","Application1","boot_females_tp_limitations.rda"))
+TR <- readRDS(here("Data","Application1","boot_tp_limitations.rds"))
 
 
 TRp <- TR %>% 
   # just pick out extreme quintiles
-  filter(InQ %in% c("I","V")) %>% 
+  filter(INC_Q %in% c("I","V"),
+         sex == "F") %>% 
   mutate(from = as.character(from),
          from =  str_extract(from,"[a-z,A-Z]+"),
-         state_to = as.character(state_to),
-         sex = "F") %>% 
+         state_to = as.character(to)) %>% 
   rename(state_from = from) %>% 
-  group_by(i, InQ, sex) %>% 
-  base::split(f=list(.$i,.$InQ),drop = TRUE)
+  group_by(i, INC_Q, sex) %>% 
+  base::split(f=list(.$i,.$INC_Q),drop = TRUE)
 
 # this should automatically choose 40 if on Hydra,
 # or 6 if on TR's laptop
@@ -30,7 +30,7 @@ getDoParWorkers()
 
 trials <- length(TRp)
 # should do small sizes on TR's laptop, big for Hydra
-Ntraj  <- ifelse(clsize == 6, 1000, 50000)
+Ntraj  <- ifelse(clsize == 6, 50000, 50000)
 # first example in application 1
 tic()
 A1.1 <- foreach(i = icount(trials),
