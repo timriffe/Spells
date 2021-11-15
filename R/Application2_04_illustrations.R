@@ -1,8 +1,24 @@
+<<<<<<< HEAD:Spells/R/04_illustrations.R
+library(here); library(devtools); library(TraMineR); library(tidyverse); library(Spells)
+library(RColorBrewer); library(car); library(reshape2); library(toOrdinal)
+remove(list=ls())
+source("U:/Cloud/Spells/Spells/R/DrawSequences.R")
+
+install_github("timriffe/Spells/Spells/R/Spells")
+library(Spells)
+load_all(here("Spells","R","Spells"))
+
+setwd("U:/Cloud/Spells/Spells/Data/Castro")
+db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_colombia.rds")))
+#db<-data.frame(readRDS(here::here("Spells","Data","Castro","cas_wom_senegal.rds")))
+#db<-db[db$ceb==4 & db$maget>=39,]
+=======
 source(here::here("R","00_load_functions.R"))
 
 #db<-data.frame(readRDS(here::here(Data","Application2","cas_wom_colombia.rds")))
 #db<-data.frame(readRDS(here::here("Data","Application2","cas_wom_senegal.rds")))
 db<-db[db$ceb==4 & db$maget>=39,]
+>>>>>>> 59f185eb0145fd2b30c74592d7453af10b8117d1:R/Application2_04_illustrations.R
 
 
 db$sexpar<-factor(paste(car::recode(db$sex, "1='B'; 2='G'; NA=' '"), 
@@ -12,9 +28,14 @@ db$sexpar<-factor(recode(db$sexpar, "'NB0'='NB'; 'NB1'='NB';
 table(db$gparity)
 table(db$sexpar)
 
+<<<<<<< HEAD:Spells/R/04_illustrations.R
+setwd(here("Spells","Figures"))
+set.seed(1212)
+=======
 # TODO: remove wd change
 
 set.seed(423)
+>>>>>>> 59f185eb0145fd2b30c74592d7453af10b8117d1:R/Application2_04_illustrations.R
 # n<-floor(runif(10, 1, length(unique(db$ident))))
 sub <- db %>% 
   filter(
@@ -72,7 +93,8 @@ plot(NULL, type="n", xlim=c(0,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
      main='')
 for (i in 1:10){
   draw_sequence(seqs[,i], x=Spells::align(mpar[,i], state="1", type='left'), y=i, cols=cols,
-                labels=floor(clock(x=bpar[,i], state="X",clock_type="step",increasing=FALSE)),
+                labels=floor(clock(x=bpar[,i], state="X",
+                                   clock_type="step",increasing=FALSE)),
                 border=NA, box = TRUE, cex=cex8)
   xr = sum(bpar[,i] == "X", na.rm = TRUE)
   rect(0,i,xr,i+1, border = "gray40", lwd=1)
@@ -88,7 +110,8 @@ plot(NULL, type="n", xlim=c(0,25),  ylim=c(0,12), axes = FALSE, xlab="", ylab=""
      main="")
 for (i in 1:10){
   draw_sequence(seqs[,i], x=Spells::align(mpar[,i], state="1", type='left'), y=i, cols=cols,
-                labels=floor(clock(x=gpar[,i], state="X",clock_type="step",increasing=FALSE)),
+                labels=floor(clock(x=gpar[,i], state="X",
+                                   clock_type="step",increasing=FALSE)),
                 border=NA, box = TRUE, cex=cex8)
   xr = sum(gpar[,i] == "X", na.rm = TRUE)
   rect(0,i,xr,i+1, border = "gray40", lwd=1)

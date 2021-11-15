@@ -1,12 +1,8 @@
-# A Lorenti
-# lorenti@demogr.mpg.de
+
 # Estimation of transition probabilities between health, disability and death states
 # using Silc data 2012-15, survival correction matching survival probs with italian 
 # life tables 2014. The matching algorithm follows https://doi.org/10.1007/s13524-017-0619-6
 
-
-rm(list=ls())
-lapply(list("data.table","tidyverse","VGAM","Formula"),require,character=T)
 #------------------------------------------------------------------------------
 dat <- readRDS("U:/NextCloud/Projects/Spells/Data/SILC_panel_12_15_spells.RDS")
 
@@ -47,7 +43,6 @@ boot_fx <-function(){
   tr_id <- tr_format[J(unique(pid)),mult="first"] 
   
   
-  library(VGAM)
   fit <- formula(to ~ from + s(age) + INQ_I + INQ_II + INQ_IV + INQ_V)
   
   fit.m <- vgam(fit 
@@ -276,6 +271,8 @@ Umat_f_q5 <- as.matrix(Umat_f_q5,rownames="to")
 
 # Mortality Corrention using LIFE TABLES ================================================================
 
+# TR: instructions for getting these files. Can they be publicly downloaded, or even added to this repo?
+# path should be relative to repo
 lt_female <- paste("./Data/LT/Italia",as.numeric(yr)+2,"Femmine.csv",sep="_")
 
 lt_male <- paste("./Data/LT/Italia",as.numeric(yr)+2,"Maschi.csv",sep="_")
@@ -704,6 +701,6 @@ out <- foreach(i = icount(trials),
                }               
 # saveRDS(dd,"U:/NextCloud/Projects/Spells/Data/tp_limitations.rds")
 
-
+# TR: this should point to a folder in the repo (Data/Application1 for example)
 saveRDS(out,"U:/NextCloud/Projects/Spells/Data/boot_tp_limitations.rds")
 
