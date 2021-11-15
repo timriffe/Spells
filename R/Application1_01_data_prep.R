@@ -7,7 +7,23 @@ source(here::here("R","00_load_functions.R"))
 getwd()
 # TR: should be path in repo, i.e. relative to repo folder
 # Also, what is this file, and how would someone request it / download it?
-dat <- fread("Data/2012/tmp/l15p.csv")
+
+# This is one of four csv files included in a zip folder when you request
+# the data from ISTAT. p stands for 'p'erson-file.
+# These are the data you want:
+# https://www.istat.it/it/archivio/4204
+# To request this, go here:
+# https://contact.istat.it/index.php?Lingua=Inglese
+# Register to become a user
+# Then fill out a form here:
+# https://www.istat.it/en/analysis-and-products/microdata-files#file_ricerca
+# scroll down to 'standard files', choose the doc or pdf versions of the form.
+# after filling it out, submit it in your registered profile.
+# Processing times vary, but 1-4 weeks can be expected. 
+# You'll end up getting access to a zip file.
+# extract these to Data/Application1
+
+dat <- fread("Data/Application1/l15p.csv")
 head(dat)
 
 
@@ -61,7 +77,7 @@ datp <- subset(dat,select=c("PB010","PB030","PB150","PE040","PH010","PH020","PH0
 
 # TR: should be path in repo, i.e. relative to repo folder
 # Also, what is this file, and how would someone request it / download it?
-dat <- fread("./Data/2012/tmp/l15r.csv")
+dat <- fread("Data/Application1/l15r.csv")
 
 # RB010: YEAR OF THE SURVEY ..................................................................................... 
 # RB030: PERSONAL ID ............................................................................................
@@ -108,9 +124,8 @@ datmort <- subset(dat,select=c("RB030","PB010D","PH010D"),RB110==6)
 setnames(datmort,c("RB030"),c("PB030"))
 #----------------------------------------------------------------------------------------------------------------
 # get household data 
-# TR: should be path in repo, i.e. relative to repo folder
-# Also, what is this file, and how would someone request it / download it?
-dat <- fread("./Data/2012/tmp/l15h.csv")
+# from same data request
+dat <- fread("Data/Application2/l15h.csv")
 
 
 # HB010: TOTAL DISPOSABLE HOUSEHOLD INCOME
@@ -127,7 +142,7 @@ dath <- subset(dat,select=c(HB010,HB030,HY020,HX090,HX100))
 #----------------------------------------------------------------------------------------------------------------
 # get household data from register file
 
-dat <- fread("./Data/2012/tmp/l15d.csv")
+dat <- fread("Data/Application1/l15d.csv")
 
 # DB010: YEAR OF THE SURVEY ....................................................................................... 
 # DB030: HOUSEHOLD ID ............................................................................................. 
@@ -232,5 +247,5 @@ dat[,INQ_IV:= ifelse(HX100 == 4,1,0)]
 dat[,INQ_V:= ifelse(HX100 == 5,1,0)]
 
 # TR: should be path in repo, i.e. relative to repo folder
-saveRDS(dat,"U:/NextCloud/Projects/Spells/Data/SILC_panel_12_15_spells.RDS")
+saveRDS(dat,"Data/Application2/SILC_panel_12_15_spells.RDS")
 

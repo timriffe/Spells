@@ -4,7 +4,7 @@
 # life tables 2014. The matching algorithm follows https://doi.org/10.1007/s13524-017-0619-6
 
 #------------------------------------------------------------------------------
-dat <- readRDS("U:/NextCloud/Projects/Spells/Data/SILC_panel_12_15_spells.RDS")
+dat <- readRDS("Data/Application1/SILC_panel_12_15_spells.RDS")
 
 mineta <- 16
 maxeta <- 80
@@ -273,9 +273,9 @@ Umat_f_q5 <- as.matrix(Umat_f_q5,rownames="to")
 
 # TR: instructions for getting these files. Can they be publicly downloaded, or even added to this repo?
 # path should be relative to repo
-lt_female <- paste("./Data/LT/Italia",as.numeric(yr)+2,"Femmine.csv",sep="_")
+lt_female <- paste("Data/Application1/",as.numeric(yr)+2,"Femmine.csv",sep="_")
 
-lt_male <- paste("./Data/LT/Italia",as.numeric(yr)+2,"Maschi.csv",sep="_")
+lt_male <- paste("Data/Application1/",as.numeric(yr)+2,"Maschi.csv",sep="_")
 
 col_nm <- c("age", "lx", "dx", "qx", "Lx", "px", "ex")
 
@@ -699,8 +699,7 @@ out <- foreach(i = icount(trials),
                  out <- cbind(boot_fx(),i)
                  
                }               
-# saveRDS(dd,"U:/NextCloud/Projects/Spells/Data/tp_limitations.rds")
 
-# TR: this should point to a folder in the repo (Data/Application1 for example)
-saveRDS(out,"U:/NextCloud/Projects/Spells/Data/boot_tp_limitations.rds")
+# Save to start
+saveRDS(out,"Data/Application1/boot_tp_limitations.rds")
 

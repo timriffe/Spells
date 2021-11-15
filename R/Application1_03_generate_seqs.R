@@ -12,26 +12,35 @@ TR <- readRDS(here("Data","Application1","boot_tp_limitations.rds"))
 
 TRp <- TR %>% 
   # just pick out extreme quintiles
-  filter(INC_Q %in% c("I","V"),
+  dplyr::filter(INC_Q %in% c("I","V"),
          sex == "F") %>% 
   mutate(from = as.character(from),
          from =  str_extract(from,"[a-z,A-Z]+"),
          state_to = as.character(to)) %>% 
   rename(state_from = from) %>% 
-  group_by(i, INC_Q, sex) %>% 
   base::split(f=list(.$i,.$INC_Q),drop = TRUE)
+
+
 
 # this should automatically choose 40 if on Hydra,
 # or 6 if on TR's laptop
 clsize <- max(c(min(c(parallel::detectCores()-2,40)),1))
+
+library(parallel)
+A1.1 <-
+  mclapply(1:length(TRp))
+
+
+
 cl     <- makeCluster(clsize)
 registerDoParallel(cl)
 getDoParWorkers()
 
 trials <- length(TRp)
-# should do small sizes on TR's laptop, big for Hydra
-Ntraj  <- ifelse(clsize == 6, 50000, 50000)
+# should do small sizes on laptop, big for Hydra
+Ntraj  <- ifelse(clsize == 6, 1000, 50000)
 # first example in application 1
+
 tic()
 A1.1 <- foreach(i = icount(trials),
                 .combine = 'rbind',
@@ -44,6 +53,8 @@ saveRDS(A1.1, file = here::here("Data","Application1","A1.1.rds"))
 rm(A1.1);gc()
 
 # second example in application 1
+
+
 tic()
 A1.2 <- foreach(i = icount(trials),
                 .combine = 'rbind',
