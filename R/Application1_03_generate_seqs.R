@@ -7,79 +7,77 @@
 # 0) load functions
 source(here::here("R","00_load_functions.R"))
 
-TR <- readRDS(here("Data","Application1","boot_tp_limitations.rds"))
-
-
-TRp <- TR %>% 
-  # just pick out extreme quintiles
-  dplyr::filter(INC_Q %in% c("I","V"),
-         sex == "F") %>% 
-  mutate(from = as.character(from),
-         from =  str_extract(from,"[a-z,A-Z]+"),
-         state_to = as.character(to)) %>% 
-  rename(state_from = from) %>% 
-  base::split(f=list(.$i,.$INC_Q),drop = TRUE)
-
-
+TRin <- readRDS(here("Data","Application1","boot_tp_limitations.rds"))
 
 # this should automatically choose 40 if on Hydra,
 # or 6 if on TR's laptop
 clsize <- max(c(min(c(parallel::detectCores()-2,40)),1))
+TRp <-
+  TRin %>% 
+  # just pick out extreme quintiles
+  dplyr::filter(INC_Q %in% c("I","V"),
+         sex == "F") %>% 
+  mutate(from = as.character(from),
+         state_from =  str_extract(from,"[a-z,A-Z]+"),
+         to = as.character(to),
+         state_to = str_extract(to,"[a-z,A-Z]+"),
+         parallel_group = i %% clsize + 1,
+         age_from = str_extract(from,"[0-9]+")) %>% 
+  select(-from, - to) %>% 
+  arrange(parallel_group, i, INC_Q) %>% 
+  base::split(f=list(.$parallel_group),drop = TRUE)
 
-library(parallel)
-A1.1 <-
-  mclapply(1:length(TRp))
+inner_fun <- function(X, .case = 1, .Ntraj = 1000){
+  X %>% 
+    group_by(i, INC_Q) %>% 
+    do(get_trajectories(X = .data, Ntraj = .Ntraj, case = .case)) %>% 
+    ungroup()
+}
 
 
-
-cl     <- makeCluster(clsize)
-registerDoParallel(cl)
-getDoParWorkers()
-
-trials <- length(TRp)
-# should do small sizes on laptop, big for Hydra
-Ntraj  <- ifelse(clsize == 6, 1000, 50000)
-# first example in application 1
 
 tic()
-A1.1 <- foreach(i = icount(trials),
-                .combine = 'rbind',
-                .packages=c('Spells','tidyverse',"markovchain"),.errorhandling = 'remove') %dopar% {
-                  get_trajectories(TRp[[i]], Ntraj = Ntraj, case = 1)
-                }
-(a1.1.time <- toc())
+A1.1 <-
+  mclapply(TRp,
+           inner_fun,
+           .Ntraj = Ntraj,
+           .case = 1,
+           mc.cores = clsize) %>% 
+  bind_rows()
+toc()
 
 saveRDS(A1.1, file = here::here("Data","Application1","A1.1.rds"))
 rm(A1.1);gc()
 
 # second example in application 1
-
-
 tic()
-A1.2 <- foreach(i = icount(trials),
-                .combine = 'rbind',
-                .packages=c('Spells','tidyverse',"markovchain"),.errorhandling = 'remove') %dopar% {
-                  get_trajectories(TRp[[i]], Ntraj = Ntraj, case = 2)
-                }
-(a1.2.time <- toc())
+A1.2 <-
+  mclapply(TRp,
+           inner_fun,
+           .Ntraj = Ntraj,
+           .case = 2,
+           mc.cores = clsize) %>% 
+  bind_rows()
+toc()
 
 saveRDS(A1.2, file = here::here("Data","Application1","A1.2.rds"))
-rm(A1.1);gc()
+rm(A1.2);gc()
 
 # third example in application 1
+# second example in application 1
 tic()
-A1.3 <- foreach(i = icount(trials),
-                .combine = 'rbind',
-                .packages=c('Spells','tidyverse',"markovchain"),.errorhandling = 'remove') %dopar% {
-                  get_trajectories(TRp[[i]], Ntraj = Ntraj, case = 3)
-                }
-(a1.3.time <- toc())
+A1.3 <-
+  mclapply(TRp,
+           inner_fun,
+           .Ntraj = Ntraj,
+           .case = 3,
+           mc.cores = clsize) %>% 
+  bind_rows()
+toc()
 saveRDS(A1.3, file = here::here("Data","Application1","A1.3.rds"))
 rm(A1.3);gc()
 
 
-stopCluster(cl) 
-closeAllConnections() 
 # p
 # a <- TRp %>% 
 #   do(get_trajectories(.data, Ntraj = 500, case = 1)) %>% 

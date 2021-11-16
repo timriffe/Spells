@@ -7,7 +7,7 @@ library(pacman)
 CRAN_packages <- c("here","tidyverse","markovchain","reshape2","stringr","rlang","devtools",
                    "doParallel","foreach","tictoc","ggplot2","ggridges","TraMineR","RColorBrewer",
                    "car","toOrdinal","doBy","descr","survey","spatstat","spatstat.core",
-                   "colorspace","data.table","VGAM","Formula")
+                   "colorspace","data.table","VGAM","Formula","parallel")
 
 # Install required CRAN packages if not available yet
 if(!sum(!p_isinstalled(CRAN_packages))==0) {
@@ -21,11 +21,14 @@ if(!sum(!p_isinstalled(CRAN_packages))==0) {
 if (!p_isinstalled("Spells")) {
   remotes::install_github("timriffe/Spells/R/Spells", build = FALSE)
 }
+if (!p_isinstalled("parallelsugar")) {
+  remotes::install_github('nathanvan/parallelsugar', build = FALSE)
+}
 
 # Load the required CRAN/github packages
 p_load(CRAN_packages, character.only = TRUE)
 p_load("Spells", character.only = TRUE)
-
+p_load("parallelsugar", character.only = TRUE)
 
 # custom functions for following scripts:
 
@@ -38,6 +41,7 @@ pi2u <- function(pivec,
                  to = "H",
                  start_age = 50,
                  interval = 2) {
+  
   out           <- cbind(rbind(0, diag(pivec)), 0)
   n             <- length(pivec)
   # the final subtraction of the interval is particular to
@@ -52,7 +56,7 @@ pi2u <- function(pivec,
 
 # Compose u blocks into U
 u2U <- function(HH, HU, UH, UU){
-  rbind(
+  Uout <- rbind(
     cbind(HH, UH),
     cbind(HU, UU))
 }
@@ -112,7 +116,8 @@ closeout <- function(U, name = "FV", start_age = 15){
   
   # give adequate names
   # first data version started at age 16, later at 15?
-  age_state   <- c(outer(start_age:80,
+  max_age <- rownames(U) %>% parse_number(na = "D::Inf") %>% max(na.rm=TRUE)
+  age_state   <- c(outer(start_age:max_age,
                          paste0("::",c("Healthy","Disabled")),paste0),"Dead")
   
   dimnames(U3) <- list(to=age_state, from=age_state)

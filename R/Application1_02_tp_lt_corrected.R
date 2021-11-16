@@ -271,11 +271,13 @@ Umat_f_q5 <- as.matrix(Umat_f_q5,rownames="to")
 
 # Mortality Corrention using LIFE TABLES ================================================================
 
-# TR: instructions for getting these files. Can they be publicly downloaded, or even added to this repo?
-# path should be relative to repo
-lt_female <- paste("Data/Application1/",as.numeric(yr)+2,"Femmine.csv",sep="_")
+# You can get these same files by manually downloading from here:
+# http://demo.istat.it/tvm2016/index.php?lingua=ita
+# choose 2014 male and female national tables.
 
-lt_male <- paste("Data/Application1/",as.numeric(yr)+2,"Maschi.csv",sep="_")
+lt_female <- here::here("Data","Application1",paste("Italia",as.numeric(yr)+2,"Femmine.csv",sep="_"))
+
+lt_male <- here::here("Data","Application1",paste("Italia",as.numeric(yr)+2,"Maschi.csv",sep="_"))
 
 col_nm <- c("age", "lx", "dx", "qx", "Lx", "px", "ex")
 
