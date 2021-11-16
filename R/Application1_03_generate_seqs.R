@@ -12,6 +12,9 @@ TRin <- readRDS(here("Data","Application1","boot_tp_limitations.rds"))
 # this should automatically choose 40 if on Hydra,
 # or 6 if on TR's laptop
 clsize <- max(c(min(c(parallel::detectCores()-2,40)),1))
+Ntraj <- ifelse(clsize == 40, 50000, 1000)
+
+
 TRp <-
   TRin %>% 
   # just pick out extreme quintiles
