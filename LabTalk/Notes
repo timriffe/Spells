@@ -1,0 +1,13 @@
+post talk notes:
+
+- be clear on vocabulary: time steps, vs episodes | episodes = spells,
+  
+- continuous color strips are episodes, divided into time steps.
+
+- state that clocks are random variables (true), but that we don't know the process,
+  except by chance in this simple case. Some comparisons with Markov asymptotic 
+  results are possible, like mean episode count, state expectancies, state moments,
+  but that doesn't cover all clocks, and it covers no alignments. Asymptotic results 
+  could be worked out for a toy example, however.
+  
+- no comparison statistics except to compare quantiles.
