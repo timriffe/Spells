@@ -5,23 +5,23 @@ A1.1 <- readRDS(here("Data","Application1","A1.1.rds"))
 
 App1_macro1 <- 
   A1.1 %>% 
-  group_by(InQ, sex, age) %>% 
+  group_by(INC_Q, age) %>% 
   summarize(lower = quantile(dur_first_mean,0.025),
             upper = quantile(dur_first_mean,0.975),
             median = median(dur_first_mean),
             .groups = "drop") %>% 
   ggplot(mapping = aes(x = age, 
                        y = median, 
-                       color = InQ,
-                       fill = InQ,
+                       color = INC_Q,
+                       fill = INC_Q,
                        ymin = lower,
                        ymax = upper)) + 
   geom_ribbon(alpha=.2, color = NA) +
   geom_line(size=1.5) + 
-  geom_segment(aes(x=40,y=2,xend=49,yend=2),color = "black") +
+  geom_segment(aes(x=36.5,y=2,xend=47,yend=2),color = "black") +
   annotate("text", x = 38, y = 1.4, label = "highest 20%") +
-  annotate("text", x = 40, y = 2.2, label = "lowest 20%") +
-  annotate("text", x = 45, y = 1.4, label = "Women from the highest\nincome quintile reach a mean\ndisability bout duration\nof 2 years 9 years later.", hjust=0)+
+  annotate("text", x = 35, y = 2.2, label = "lowest 20%") +
+  annotate("text", x = 45, y = 1.4, label = "Women from the highest\nincome quintile reach a mean\ndisability bout duration\nof 2 years 10 years later.", hjust=0)+
   geom_curve(mapping=aes(x=43.5,y=1.65,xend = 45,yend=2),
              color="black",size=.1,curvature=-.6,arrow = arrow(length = unit(0.02, "npc")))+
   xlim(16,65) +
@@ -35,7 +35,7 @@ App1_macro1 <-
     axis.title.y = element_text(size = 13))+
   scale_fill_brewer(palette = "Paired") + 
   scale_color_brewer(palette = "Paired")
-
+App1_macro1
 ggsave(here("Figures","App1_macro1.pdf"),
        App1_macro1, width = 7, height = 6)
 
@@ -46,7 +46,7 @@ ggsave(here("Figures","App1_macro1.pdf"),
 A1.2 <- readRDS(here("Data","Application1","A1.2.rds"))
 
 A1.2 %>% 
-  group_by(InQ, sex, age) %>% 
+  group_by(INC_Q, age) %>% 
   summarize(lower = quantile(order_first_mean,0.025),
             upper = quantile(order_first_mean,0.975),
             median = median(order_first_mean),.groups = "drop") %>% 
@@ -54,15 +54,15 @@ A1.2 %>%
 
 App1_macro2 <-
   A1.2 %>% 
-  group_by(InQ, sex, age) %>% 
+  group_by(INC_Q, age) %>% 
   summarize(lower = quantile(order_first_mean,0.025),
             upper = quantile(order_first_mean,0.975),
             median = median(order_first_mean),
             .groups = "drop") %>% 
   ggplot(mapping = aes(x = age, 
                        y = median, 
-                       color = InQ,
-                       fill = InQ,
+                       color = INC_Q,
+                       fill = INC_Q,
                        ymin = lower,
                        ymax = upper)) + 
   geom_ribbon(alpha=.2, color = NA) +
@@ -72,8 +72,8 @@ App1_macro2 <-
   xlim(16,78) + 
   ylim(1,6) + 
   # to be fixed:
-  geom_segment(aes(x=60,y=3.61,xend=60,yend=4.37),color = "black") +
-  annotate("text", x = 35, y = 4.5, label = "Women in the lowest\nincome quintile had\non average .75 more\ndisability bouts by age 60",hjust=0) +
+  geom_segment(aes(x=60,y=3.53,xend=60,yend=4.39),color = "black") +
+  annotate("text", x = 35, y = 4.5, label = "Women in the lowest\nincome quintile had\non average 1.1 more\ndisability bouts by age 60",hjust=0) +
   geom_curve(mapping=aes(x=43.5,y=4,xend = 59,yend=4),
              color="black",size=.1,curvature=.3,arrow = arrow(length = unit(0.02, "npc")))+
   annotate("text", x = 36, y = 2.6, label = "lowest 20%") +
@@ -87,26 +87,27 @@ App1_macro2 <-
     axis.text.x = element_text(size = 13),
     axis.text.y = element_text(size = 13),
     axis.title.y = element_text(size = 13))
+App1_macro2
 ggsave(here("Figures","App1_macro2.pdf"),
        App1_macro2, width = 7, height = 6)  
 
 ##############################
 # Application 1.3
 A1.3 <- readRDS(here("Data","Application1","A1.3.rds"))
-
+App1_macro3 <-
 A1.3 %>% 
-  group_by(InQ, sex, ad5, ttd) %>% 
+  group_by(INC_Q, ad5, ttd) %>% 
   summarize(median = quantile(ttdprev,.5)) %>% 
   ggplot(mapping = aes(x = ad5-ttd, 
                        y = as.factor(ad5), 
-                       color = InQ,
-                       fill = InQ,
+                       color = INC_Q,
+                       fill = INC_Q,
                        height = median)) + 
   geom_density_ridges(stat = "identity",alpha = .4) +
   annotate("text",x=68,y=5.5,label="highest 20%") + 
   geom_segment(aes(x=63,y=5.5,xend=59,yend=6.1),color = "black") +
-  annotate("text",x=49,y=6.7,label="lowest 20%") + 
-  geom_segment(aes(x=54,y=6.7,xend=58,yend=6.5),color = "black") +
+  annotate("text",x=39,y=6.8,label="lowest 20%") + 
+  geom_segment(aes(x=43.5,y=6.7,xend=48,yend=6.6),color = "black") +
   labs(x = "Age", y = "Prevalence by age at death",size=2) +
   guides(fill="none",color="none") +
   theme(
@@ -115,7 +116,54 @@ A1.3 %>%
     axis.text.y = element_text(size = 13),
     axis.title.y = element_text(size = 13),
     legend.position = c(0.9, 0.1))
-
+App1_macro3
 ggsave(here("Figures","App1_macro3.pdf"),
        App1_macro3, width = 7, height = 6)
+
+
+tp       <- 
+  readRDS("Data/Application1/tp_limitations.rds") %>% 
+  separate(from, into = c("age", "state_from"), sep = "::",convert=TRUE) %>% 
+  separate(to, into = c(NA, "state_to"), sep = "::") %>% 
+  filter(sex == "F") %>% 
+  mutate(lt_adj = TRUE) %>% 
+  select(-sex)
+tp_unadj <- readRDS("Data/Application1/old/females_tp_limitations.rda") %>% 
+  separate(from, into = c(NA, "state_from"), sep = "::") %>% 
+  rename(INC_Q = InQ) %>% 
+  select(-to) %>% 
+  mutate(lt_adj = FALSE) 
+readRDS("Data/Application1/tp_limitations.rds") %>% head()
+str(tp)
+tps <-
+  tp %>% 
+  bind_rows(tp_unadj) %>% 
+  pivot_wider(names_from = state_to, values_from = probs) %>% 
+  mutate(Dead = 1 - Disabled - Healthy) %>% 
+  pivot_longer(Disabled:Dead, names_to = "state_to", values_to = "probs")
+
+tps %>% 
+  filter(state_from == "Disabled",
+         INC_Q %in% c("I","V")) %>% 
+  ggplot(aes(x = age, y = probs, 
+             color = state_to, 
+             lty = lt_adj, 
+             group = interaction(state_to, lt_adj))) +
+  geom_line() + 
+  facet_wrap(~INC_Q)
+
+
+LTf <- read_delim("Data/Application1/Italia_2014_Femmine.csv",skip=1,deli=";",locale = locale(decimal_mark = ",")) %>% 
+  mutate(qx = `Probabilità di morte (per mille)`/1000) %>% 
+  rename(age = Età) %>% 
+  select(age, qx)
+
+tps %>% 
+  filter(state_to == "Dead") %>% 
+  ggplot(aes(x=age, y = probs, color = state_from, lty = lt_adj,group = interaction(state_from, INC_Q, lt_adj))) +
+  geom_line() +
+  scale_y_log10() +
+  geom_line(data = LTf %>% filter(between(age, 16,80)), mapping = aes(x = age, y = qx), color = "black", inherit.aes = FALSE)
+  
+
 
