@@ -1,23 +1,54 @@
 source(here::here("R","00_load_functions.R"))
 
-Dat <- readRDS(here::here("Data","Application1","old","SILCsim.rds"))
-
-XX <- Dat %>% 
-  filter(age < 80) %>% 
-  group_by(InQ, id) %>% 
-  mutate(
-    state = as.character(state),
-    dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
-  ungroup() %>% 
-  filter(dead) %>% 
-  filter(InQ == "I",
-         age >= 50 & age <= 80) %>% 
-  mutate(state = case_when(state == "Healthy" ~ "H",
-                           state == "Disabled" ~ "D",
-                           TRUE ~ "Dead")) %>%
-  acast(id~age, value.var = "state") 
-XX <- XX[1:10,]
-
+# Dat <- readRDS(here::here("Data","Application1","old","SILCsim.rds"))
+# 
+# XX <- Dat %>% 
+#   filter(age < 80) %>% 
+#   group_by(InQ, id) %>% 
+#   mutate(
+#     state = as.character(state),
+#     dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
+#   ungroup() %>% 
+#   filter(dead) %>% 
+#   filter(InQ == "I",
+#          age >= 50 & age <= 80) %>% 
+#   mutate(state = case_when(state == "Healthy" ~ "H",
+#                            state == "Disabled" ~ "D",
+#                            TRUE ~ "Dead")) %>%
+#   acast(id~age, value.var = "state") 
+# XX <- XX[1:10,] # dput(XX)
+XX <- structure(c("H", "H", "H", "H", "H", "H", "H", "H", "D", "H", 
+                  "H", "H", "H", "H", "H", "H", "H", "H", "H", "D", "H", "H", "H", 
+                  "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", 
+                  "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", 
+                  "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", 
+                  "H", "H", "H", "H", "H", "H", "D", "H", "H", "H", "H", "H", "H", 
+                  "H", "H", "H", "D", "H", "H", "H", "D", "D", "H", "H", "H", "H", 
+                  "H", "H", "H", "H", "H", "D", "H", "H", "H", "H", "H", "H", "H", 
+                  "H", "H", "H", "H", "H", "D", "H", "H", "H", "Dead", "H", "H", 
+                  "H", "H", "H", "D", "H", "H", "H", "Dead", "H", "H", "H", "H", 
+                  "H", "D", "H", "D", "H", "Dead", "H", "H", "H", "H", "H", "D", 
+                  "H", "D", "H", "Dead", "H", "H", "H", "H", "H", "D", "H", "D", 
+                  "H", "Dead", "H", "H", "H", "H", "H", "H", "H", "D", "H", "Dead", 
+                  "H", "H", "H", "H", "H", "D", "H", "H", "H", "Dead", "H", "H", 
+                  "H", "H", "H", "H", "H", "D", "Dead", "Dead", "H", "H", "H", 
+                  "H", "H", "H", "H", "H", "Dead", "Dead", "H", "H", "H", "H", 
+                  "H", "H", "H", "H", "Dead", "Dead", "H", "D", "D", "H", "H", 
+                  "H", "H", "H", "Dead", "Dead", "H", "Dead", "D", "H", "H", "H", 
+                  "H", "H", "Dead", "Dead", "H", "Dead", "H", "H", "D", "H", "H", 
+                  "H", "Dead", "Dead", "D", "Dead", "H", "H", "D", "H", "H", "H", 
+                  "Dead", "Dead", "H", "Dead", "H", "D", "D", "H", "H", "H", "Dead", 
+                  "Dead", "H", "Dead", "H", "Dead", "D", "H", "H", "H", "Dead", 
+                  "Dead", "Dead", "Dead", "H", "Dead", "D", "D", "D", "H", "Dead", 
+                  "Dead", "Dead", "Dead", "Dead", "Dead", "D", "Dead", "D", "D", 
+                  "Dead", "Dead", "Dead", "Dead", "Dead", "Dead", "D", "Dead", 
+                  "D", "D", "Dead", "Dead", "Dead", "Dead", "Dead", "Dead", "Dead", 
+                  "Dead", "Dead", "Dead", "Dead"), .Dim = c(10L, 30L), .Dimnames = list(
+                    c("15", "27", "58", "69", "76", "102", "108", "115", "118", 
+                      "126"), c("50", "51", "52", "53", "54", "55", "56", "57", 
+                                "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", 
+                                "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", 
+                                "78", "79")))
 colsIN <- c("#855C75","#D9AF6B","#AF6458","#736F4C","#526A83","#625377","#68855C","#9C9C5E","#A06177","#8C785D","#467378","#7C7C7C")
 
 # colsIN <-c("#88CCEE","#CC6677","#DDCC77","#117733","#332288","#AA4499","#44AA99","#999933","#882255","#661100","#6699CC","#888888")
