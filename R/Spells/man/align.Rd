@@ -8,7 +8,8 @@ align(
   x,
   state = "Inactive",
   type = c("left", "right", "center"),
-  spell = c("first", "last", "longest")
+  spell = c("first", "last", "longest"),
+  step_size = 1
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ align(
 \item{type}{character one of \code{"left"}, \code{"right"}, or \code{"center"}}
 
 \item{spell}{character one of \code{"first"}, \code{"last"}, or \code{"longest"}}
+
+\item{step_size}{numeric. uniform size of a time step. default 1.}
 }
 \value{
 lower time interval bounds after shifting, and assuming unit time steps.
@@ -38,4 +41,5 @@ align(x,state = "A", type = "left", spell = "first")
 align(x,state = "A", type = "right", spell = "last")
 align(x,state = "A", type = "center", spell = "longest")
 align(x,state = "R", type = "left", spell = "first")
+align(x,state = "R", type = "left", spell = "first", step_size = .25)
 }

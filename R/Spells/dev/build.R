@@ -8,4 +8,4 @@ check(pkg_path)
 
 
 devtools::install_local(here::here("R","Spells"), force = TRUE)
-
+load_all(here::here("R","Spells"))

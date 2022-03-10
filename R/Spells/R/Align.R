@@ -18,7 +18,7 @@
 #' align(x,state = "A", type = "right", spell = "last")
 #' align(x,state = "A", type = "center", spell = "longest")
 #' align(x,state = "R", type = "left", spell = "first")
-
+#' align(x,state = "R", type = "left", spell = "first", step_size = .25)
 align <- function(x, 
                   state = "Inactive", 
                   type = c("left", "right", "center"), 
@@ -42,7 +42,7 @@ align <- function(x,
 		spells     <- sec$values
 		durs       <- sec$lengths * step_size
 		n          <- length(durs)
-		x_lefts    <- cumsum(c(0,durs[-n])) * step_size
+		x_lefts    <- cumsum(c(0,durs[-n])) 
 		x_rights   <- x_lefts + durs
 		
 		# which is the reference spell? 3 choices
