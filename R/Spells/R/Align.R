@@ -6,6 +6,7 @@
 #' @param state character string, the reference state.
 #' @param type character one of \code{"left"}, \code{"right"}, or \code{"center"}
 #' @param spell character one of \code{"first"}, \code{"last"}, or \code{"longest"}
+#' @param step_size numeric. uniform size of a time step. default 1.
 #' @return lower time interval bounds after shifting, and assuming unit time steps.
 #' @export
 #' @examples 
@@ -21,14 +22,15 @@
 align <- function(x, 
                   state = "Inactive", 
                   type = c("left", "right", "center"), 
-                  spell = c("first", "last", "longest")){
+                  spell = c("first", "last", "longest"),
+                  step_size = 1){
   
   # validate arguments
   spell             <- match.arg(spell)
   type              <- match.arg(type)
   
 	# starting left x position for each observation
-	x_left_all        <- 1:length(x) - 1
+	x_left_all        <- (1:length(x) - 1) * step_size
 	names(x_left_all) <- x
 	
 	# combine states if necessary
@@ -38,9 +40,9 @@ align <- function(x,
 		# now get spell info
 		sec        <- rle(x)
 		spells     <- sec$values
-		durs       <- sec$lengths
+		durs       <- sec$lengths * step_size
 		n          <- length(durs)
-		x_lefts    <- cumsum(c(0,durs[-n]))
+		x_lefts    <- cumsum(c(0,durs[-n])) * step_size
 		x_rights   <- x_lefts + durs
 		
 		# which is the reference spell? 3 choices
