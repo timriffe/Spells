@@ -1,3 +1,6 @@
+rm(list=ls())
+libraries <- list("data.table")
+lapply(libraries,require, character=T)
 
 # Get the SILC data 2012-15 for Italy and prepare a dataset in transition format
 # with relevant variables for the estimation of health expectancies through multistate models
@@ -23,7 +26,7 @@ getwd()
 # You'll end up getting access to a zip file.
 # extract these to Data/Application1
 
-dat <- fread("Data/Application1/l15p.csv")
+dat <- fread("U:/Nextcloud/Data/IT-SILC/2012-15/File/l15p.csv")
 head(dat)
 
 
@@ -77,7 +80,7 @@ datp <- subset(dat,select=c("PB010","PB030","PB150","PE040","PH010","PH020","PH0
 
 # TR: should be path in repo, i.e. relative to repo folder
 # Also, what is this file, and how would someone request it / download it?
-dat <- fread("Data/Application1/l15r.csv")
+dat <- fread("U:/Nextcloud/Data/IT-SILC/2012-15/File/l15r.csv")
 
 # RB010: YEAR OF THE SURVEY ..................................................................................... 
 # RB030: PERSONAL ID ............................................................................................
@@ -125,7 +128,7 @@ setnames(datmort,c("RB030"),c("PB030"))
 #----------------------------------------------------------------------------------------------------------------
 # get household data 
 # from same data request
-dat <- fread("Data/Application2/l15h.csv")
+dat <- fread("U:/Nextcloud/Data/IT-SILC/2012-15/File/l15h.csv")
 
 
 # HB010: TOTAL DISPOSABLE HOUSEHOLD INCOME
@@ -142,7 +145,7 @@ dath <- subset(dat,select=c(HB010,HB030,HY020,HX090,HX100))
 #----------------------------------------------------------------------------------------------------------------
 # get household data from register file
 
-dat <- fread("Data/Application1/l15d.csv")
+dat <- fread("U:/Nextcloud/Data/IT-SILC/2012-15/File/l15d.csv")
 
 # DB010: YEAR OF THE SURVEY ....................................................................................... 
 # DB030: HOUSEHOLD ID ............................................................................................. 
@@ -170,46 +173,22 @@ dat <- merge(dati,datf,by=c("PB010","PB040"))
 # Include mortality
 setkeyv(dat,c("PB030","PB010"))
 
-dat <- merge(dat,datmort,by.x = c("PB030","PB010"), by.y = c("PB030","PB010D"),all = T)
+#get the id of those who are dead, order the data and add an extra row with values equal to the last available data per individual
 
-# clean up  wspace
+id_deaths <- datmort[['PB030']]
+
+datm <- dat[PB030%in%id_deaths,.SD[.N-1],by='PB030']
+datm[,`:=` (PB010 = PB010 + 1, PH010 = 6, PH020 = 6, PH030 = 6 , RX010 = RX010 + 1,RX020 = RX020 + 1 )]
+
+
+setkeyv(dat,c("PB030"))
+
+dat <- rbind(dat[RB110!=6],datm)
+
 
 rm(list=setdiff(ls(),"dat"))
 
-#----------------------------------------------------------------------------------------------------------------
-# create health variables
-
-dtm <- dat[PH010D==6,]
-dtm[,YEAR:= PB010 + 1]
-dtm[,PH010:=NULL]
-setnames(dtm,"PH010D","PH010")
-dat[,YEAR := PB010]
-dat[,PH010D := NULL]
-dat <- rbindlist(list(dat,dtm),use.names = T)
-idx <- dat[PH010==6,][['PB030']]
-dat <- dat[!is.na(PH010),]
-cols <- c("PH010","PB010")
-dat[, (cols) := lapply(.SD, function(x) as.integer(as.character(x))), .SDcols = cols]
-
-dat[,HEALTH:=PH010]
-dat[,SRH:=PH010]
-dat[,CRON:=PH020][PH010==6, CRON:=PH010]
-dat[,ADL:= PH030][PH010==6, ADL:=PH010]
-
-dat[,IDcount:=seq_len(.N),by=PB030]
-dat[,IDmax:=.N,by=PB030]
-
-#keep only obs with at least 2 obs
-
-dat <- subset(dat,IDmax>1)
-dat <- dat[!(IDmax==5&RB060==0),]
-
-dat <- setDT(dat[RX010%in%c(15:85)|is.na(RX010),])
-dat <- dat[!is.na(ADL),]
-
-dim(dat)  
-
-setkeyv(dat,c("PB030","PB010"))
+setnames(dat,c("PH010","PH020","PH030"),c("SRH", "CRON","ADL"))
 
 # ADL TR_FORMAT
 
@@ -217,14 +196,14 @@ dat[,FROM:= sapply(ADL,function(x) {if(x %in% 1:2) 1 else if (x %in% 3) 0 else i
 
 dat[,TO := c(FROM[-1L], NA),by=PB030]
 
-#---------------------------------------------------------------------------------
 # prepare EDU
 
 dat[,edu_low:=0];dat[PE040%in%c(0:2,100,200),edu_low:=1]
-dat[,edu_mid:=0];dat[PE040%in%c(3,300,4,400),edu_mid:=1]
-dat[,edu_high:=0];dat[PE040%in%c(5,500),edu_high:=1]
+dat[,edu_mid:=0];dat[PE040%in%c(3,300),edu_mid:=1]
+dat[,edu_high:=0];dat[PE040%in%c(4,400,5,500),edu_high:=1]
 
 dat[,edu:=NA_real_];dat[edu_low==1,edu:=0];dat[edu_mid==1,edu:=1];dat[edu_high==1,edu:=2]
+dat[,edu:= factor(edu, levels = c(0,1,2),labels=c("low","mid","high"))]
 
 # prepare Geo AREA
 
@@ -232,7 +211,6 @@ dat[,area3:=NA_character_];dat[DB040%in%c("ITC","ITH"),area3 := "North"]
 dat[DB040%in%c("ITI"),area3 := "Centre"];dat[DB040%in%c("ITF","ITG"),area3 := "South"]
 
 dat[,area3:=factor(area3,levels = c("North","Centre","South"))]
-dat[,edu:= factor(edu, levels = c(0,1,2),labels=c("low","mid","high"))]
 
 dat[,Centre:=ifelse(area3=="Centre",1,0)] 
 dat[,South:=ifelse(area3=="South",1,0)]
@@ -246,6 +224,15 @@ dat[,INQ_III:= ifelse(HX100 == 3,1,0)]
 dat[,INQ_IV:= ifelse(HX100 == 4,1,0)]
 dat[,INQ_V:= ifelse(HX100 == 5,1,0)]
 
+dat[,TER_I:=ifelse(HX100==1,1,0)]
+dat[,TER_II:=ifelse(HX100==2,1,0)]
+dat[,TER_III:=ifelse(HX100==3,1,0)]
+
+dat[, IDmax := .N, by = "PB030"]
+
 # TR: should be path in repo, i.e. relative to repo folder
+
+#saveRDS(dat,"./raw_silc_data/SILC_panel_12_15_spells.RDS")
+
 saveRDS(dat,"Data/Application2/SILC_panel_12_15_spells.RDS")
 
