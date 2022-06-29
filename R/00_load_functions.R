@@ -5,12 +5,12 @@ if (!"pacman" %in% rownames(installed.packages())){
 }
 library(pacman)
 CRAN_packages <- c("here","tidyverse","markovchain","reshape2","stringr","rlang","devtools",
-                   "doParallel","foreach","tictoc","ggplot2","ggridges","TraMineR","RColorBrewer",
+                   "doParallel","foreach","tictoc","ggplot2","ggridges","RColorBrewer",
                    "car","toOrdinal","doBy","descr","survey","spatstat","spatstat.core",
                    "colorspace","data.table","VGAM","Formula","parallel")
 
 # Install required CRAN packages if not available yet
-if(!sum(!p_isinstalled(CRAN_packages))==0) {
+if(sum(!p_isinstalled(CRAN_packages))>0) {
   p_install(
     package = CRAN_packages[!p_isinstalled(CRAN_packages)], 
     character.only = TRUE

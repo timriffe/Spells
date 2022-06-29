@@ -7,7 +7,7 @@
 # 0) load functions
 source(here::here("R","00_load_functions.R"))
 
-TRin <- readRDS(here("Data","Application1","boot_tp_limitations.rds"))
+TRin <- readRDS(here::here("Data","Application1","boot_tp_limitations.rds"))
 
 # this should automatically choose 40 if on Hydra,
 # or 6 if on TR's laptop
@@ -32,6 +32,7 @@ TRp <-
 
 inner_fun <- function(X, .case = 1, .Ntraj = 1000){
   X %>% 
+    as_tibble() %>% 
     group_by(i, INC_Q) %>% 
     do(get_trajectories(X = .data, Ntraj = .Ntraj, case = .case)) %>% 
     ungroup()
