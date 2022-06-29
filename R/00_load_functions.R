@@ -47,10 +47,11 @@ pi2u <- function(pivec,
   # the final subtraction of the interval is particular to
   # the way these probabilities were estimated and labelled.
   # to technically our first one goes from 48 to 50, not from 50 to 52.
-  ages          <- ((0:n) * interval) + start_age - interval
-  from_names    <- c(paste(from,ages[-length(ages)],sep="::"),"D::Inf")
-  to_names      <- c(paste(to,ages[-1],sep="::"),"D::Inf")
+  ages          <- ((0:n) * interval) + start_age 
+  from_names    <- paste(from,ages,sep="::")
+  to_names      <- paste(to,ages,sep="::")
   dimnames(out) <- list(to_names, from_names)
+  length(to_names)
   out
 }
 
@@ -109,18 +110,15 @@ closeout <- function(U, name = "FV", start_age = 15){
   U[U < 0] <- 0
   U1 <- cbind(U, 0)
   U2 <- rbind(U1, 1 - colSums(U1))
+  # hack. as of 29 June, 2022 some input parameters sum to > 1, mostly in the 
+  # young tail...
+  U2[U2 < 0] <- 0
   #all(colSums(U1) < 1)
   
   # transpose to the standard Markov orientation
   U3 <- t(U2)
   
-  # give adequate names
-  # first data version started at age 16, later at 15?
-  max_age <- rownames(U) %>% parse_number(na = "D::Inf") %>% max(na.rm=TRUE)
-  age_state   <- c(outer(start_age:max_age,
-                         paste0("::",c("Healthy","Disabled")),paste0),"Dead")
-  
-  dimnames(U3) <- list(to=age_state, from=age_state)
+  dimnames(U3) <- list(to=c(rownames(U),"Dead::Inf"), from=c(rownames(U),"Dead::Inf"))
   # create markovchain object
   new("markovchain", 
       states = rownames(U3),
@@ -137,26 +135,35 @@ get_trajectories <- function(
   Ntraj = 50000, 
   case = 1){
   
+  age_mm    <- X %>% pull(age_from) %>% as.integer() %>% range()
+  start_age <- min(age_mm)
+  max_age   <- max(age_mm)
+  
   Fimc <- X %>% 
-    getU(start_age = 16) %>% 
-    closeout()
+    getU(start_age = start_age) %>% 
+    closeout(start_age = start_age)
+  
   # make sim matrix
   Fsim  <- replicate(Ntraj,
-                     rmarkovchain(n = 65, 
+                     rmarkovchain(n = (max_age - start_age), # 
                                   object = Fimc, 
-                                  t0 = "15::Healthy", 
+                                  t0 = paste0("Healthy::",start_age), 
                                   parallel = TRUE)
   )
   
-  dimnames(Fsim) <- list(15:79, 1:Ntraj)
-  Fsim           <- gsub(".*:","", Fsim)
+  dimnames(Fsim) <- list((start_age + 1):max_age, 1:Ntraj)
+
   # start pipe
   Fsim <-
     Fsim %>% 
-    reshape2::melt(varnames = c("age","id"), 
-                   value.name = "state") %>% 
-    mutate(state = as.character(state)) %>% 
-    filter(age < 80) %>% # it's closed out so everyone dead at 80...
+    as_data_frame() %>% 
+    pivot_longer(everything(), 
+                 names_to = "id", 
+                 values_to = "state::age") %>% 
+    separate(`state::age`, 
+             into = c("state","age"),
+             sep = "::", 
+             convert = TRUE) %>% 
     group_by(id) %>% 
     mutate(dead = ifelse(any(state == "Dead"),TRUE,FALSE)) %>% 
     ungroup() %>% 

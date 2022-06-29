@@ -15,11 +15,19 @@ clsize <- max(c(min(c(parallel::detectCores()-2,40)),1))
 Ntraj <- ifelse(clsize == 40, 50000, 1000)
 
 
+
+rescale <- function(x){
+  x / sum(x)
+}
 TRp <-
   TRin %>% 
   # just pick out extreme quintiles
   dplyr::filter(INC_Q %in% c("I","V"),
          sex == "F") %>% 
+  group_by(i,INC_Q,from) %>% 
+  mutate(probs = case_when(sum(probs) > 1 ~ rescale(probs),
+                           TRUE ~ probs)) %>% 
+  ungroup() %>% 
   mutate(from = as.character(from),
          state_from =  str_extract(from,"[a-z,A-Z]+"),
          to = as.character(to),
@@ -39,6 +47,16 @@ inner_fun <- function(X, .case = 1, .Ntraj = 1000){
 }
 
 
+# test
+# X <- TRp[[1]] %>% filter(i == 6, INC_Q == "I")
+# inner_fun(TRp[[1]], .Ntraj = 5, .case = 1)
+# X <- TRp[[1]] %>% 
+#   group_by(INC_Q,i) %>% 
+#   mutate(groupid = group_indices()) %>% 
+#   ungroup()
+# for (ii in 1:max(X$groupid)){
+#   inner_fun(filter(X,groupid==ii),.Ntraj = 1,.case = 1)
+# }
 
 tic()
 A1.1 <-
