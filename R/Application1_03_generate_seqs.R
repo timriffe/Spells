@@ -19,14 +19,22 @@ Ntraj <- ifelse(clsize == 40, 50000, 1000)
 rescale <- function(x){
   x / sum(x)
 }
+no_non_zero_zero_mort <- function(x){
+  if (sum(x == 1)){
+    x <- x / (1+1e-6)
+  }
+  x
+}
 TRp <-
   TRin %>% 
   # just pick out extreme quintiles
   dplyr::filter(INC_Q %in% c("I","V"),
          sex == "F") %>% 
+  mutate(probs = if_else(probs < 0, 0, probs)) %>% 
   group_by(i,INC_Q,from) %>% 
   mutate(probs = case_when(sum(probs) > 1 ~ rescale(probs),
-                           TRUE ~ probs)) %>% 
+                           TRUE ~ probs),
+         probs = no_non_zero_zero_mort(probs)) %>% 
   ungroup() %>% 
   mutate(from = as.character(from),
          state_from =  str_extract(from,"[a-z,A-Z]+"),
@@ -48,8 +56,34 @@ inner_fun <- function(X, .case = 1, .Ntraj = 1000){
 
 
 # test
-# X <- TRp[[1]] %>% filter(i == 6, INC_Q == "I")
-# inner_fun(TRp[[1]], .Ntraj = 5, .case = 1)
+X <- TRp[[1]] %>% filter(i == 40, INC_Q == "I")
+
+X <- TRp[[2]]
+X <-
+X %>% 
+  group_by(INC_Q,i) %>% 
+  mutate(groupid = group_indices())
+
+ids <- X$groupid %>% unique %>% sort
+errors2 <- rep(NA,50)
+for (i in ids){
+  a <- try(inner_fun(filter(X,groupid == i),
+                              .Ntraj = 1, .case = 1))
+  if (class(a) == "try-error"){
+    errors2[i] <- i
+  }
+}
+# TR <- X %>% filter(groupid == 1)
+# get_trajectories(X = TR, Ntraj = 1, case = 1)
+# 
+# 
+# errors <- rep(NA,40)
+# for (i in 1:40){
+#   a <- try(inner_fun(TRp[[i]], .Ntraj = 2, .case = 1)) 
+#   if (class(a)== "try-error"){
+#     errors[i] <- i
+#   }
+# }
 # X <- TRp[[1]] %>% 
 #   group_by(INC_Q,i) %>% 
 #   mutate(groupid = group_indices()) %>% 

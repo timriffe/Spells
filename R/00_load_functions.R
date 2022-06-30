@@ -118,7 +118,8 @@ closeout <- function(U, name = "FV", start_age = 15){
   # transpose to the standard Markov orientation
   U3 <- t(U2)
   
-  dimnames(U3) <- list(to=c(rownames(U),"Dead::Inf"), from=c(rownames(U),"Dead::Inf"))
+  dimnames(U3) <- list(to = c(rownames(U), "Dead::Inf"), 
+                       from = c(rownames(U), "Dead::Inf"))
   # create markovchain object
   new("markovchain", 
       states = rownames(U3),
@@ -148,7 +149,7 @@ get_trajectories <- function(
                      rmarkovchain(n = (max_age - start_age), # 
                                   object = Fimc, 
                                   t0 = paste0("Healthy::",start_age), 
-                                  parallel = TRUE)
+                                  parallel = F) # this would multiply threads
   )
   
   dimnames(Fsim) <- list((start_age + 1):max_age, 1:Ntraj)
@@ -156,7 +157,7 @@ get_trajectories <- function(
   # start pipe
   Fsim <-
     Fsim %>% 
-    as_data_frame() %>% 
+    as_tibble() %>% 
     pivot_longer(everything(), 
                  names_to = "id", 
                  values_to = "state::age") %>% 
@@ -222,6 +223,8 @@ get_trajectories <- function(
   }
   Fsim
 }
+
+
 
 # assumes left-align
 draw_sequence2 <- function(state_seq, states, cols, y = 0,...){
