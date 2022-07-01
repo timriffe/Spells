@@ -18,21 +18,22 @@ App1_macro1 <-
                        ymax = upper)) + 
   geom_ribbon(alpha=.2, color = NA) +
   geom_line(size=1.5) + 
-  geom_segment(aes(x=36.5,y=2,xend=47,yend=2),color = "black") +
+  geom_segment(aes(x=38,y=2,xend=49,yend=2),color = "black") +
   annotate("text", x = 38, y = 1.4, label = "highest 20%") +
   annotate("text", x = 35, y = 2.2, label = "lowest 20%") +
-  annotate("text", x = 45, y = 1.4, label = "Women from the highest\nincome quintile reach a mean\ndisability bout duration\nof 2 years 10 years later.", hjust=0)+
+  annotate("text", x = 45, y = 1.4, label = "Women from the highest\nincome quintile reach a mean\ndisability bout duration\nof 2 years 11 years later.", hjust=0)+
   geom_curve(mapping=aes(x=43.5,y=1.65,xend = 45,yend=2),
              color="black",size=.1,curvature=-.6,arrow = arrow(length = unit(0.02, "npc")))+
-  xlim(16,65) +
+  xlim(26,65) +
   labs(x = "Age", y = "conditional mean spell duration (years)",
        main = "Mean disability spell duration of spells starting in age x")+
   guides(color = "none", fill = "none")+
   theme(
-    axis.title.x = element_text(size = 13), # use 16 for presentations
-    axis.text.x = element_text(size = 13),
-    axis.text.y = element_text(size = 13),
-    axis.title.y = element_text(size = 13))+
+    axis.title.x = element_text(size = 14), # use 16 for presentations
+    axis.text.x = element_text(size = 14),
+    axis.text.y = element_text(size = 14),
+    axis.title.y = element_text(size = 14)) +
+  theme_minimal() +
   scale_fill_brewer(palette = "Paired") + 
   scale_color_brewer(palette = "Paired")
 App1_macro1
@@ -50,7 +51,7 @@ A1.2 %>%
   summarize(lower = quantile(order_first_mean,0.025),
             upper = quantile(order_first_mean,0.975),
             median = median(order_first_mean),.groups = "drop") %>% 
-  filter(age == 60)
+  filter(age == 70)
 
 App1_macro2 <-
   A1.2 %>% 
@@ -69,15 +70,15 @@ App1_macro2 <-
   geom_line(size=1.5) + 
   scale_fill_brewer(palette = "Paired") + 
   scale_color_brewer(palette = "Paired") +
-  xlim(16,78) + 
-  ylim(1,6) + 
+  xlim(30,78) + 
+  ylim(1,6.5) + 
   # to be fixed:
-  geom_segment(aes(x=60,y=3.53,xend=60,yend=4.39),color = "black") +
-  annotate("text", x = 35, y = 4.5, label = "Women in the lowest\nincome quintile had\non average 1.1 more\ndisability bouts by age 60",hjust=0) +
+  geom_segment(aes(x=65,y=3.54,xend=65,yend=4.3),color = "black") +
+  annotate("text", x = 35, y = 4.5, label = "Women in the lowest\nincome quintile had\non average .8 more\ndisability bouts by age 65",hjust=0) +
   geom_curve(mapping=aes(x=43.5,y=4,xend = 59,yend=4),
              color="black",size=.1,curvature=.3,arrow = arrow(length = unit(0.02, "npc")))+
-  annotate("text", x = 36, y = 2.6, label = "lowest 20%") +
-  annotate("text", x = 40, y = 1.5, label = "highest 20%") +
+  annotate("text", x = 46, y = 2.7, label = "lowest 20%", size = 5) +
+  annotate("text", x = 50, y = 1.8, label = "highest 20%", size = 5) +
   labs(x = "Age", 
        y = "mean episode order",
        main = "New disability episodes are on average 2nd episodes by age 54 if you're poor, 65 if you're rich")+

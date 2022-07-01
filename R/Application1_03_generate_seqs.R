@@ -55,43 +55,6 @@ inner_fun <- function(X, .case = 1, .Ntraj = 1000){
 }
 
 
-# test
-X <- TRp[[1]] %>% filter(i == 40, INC_Q == "I")
-
-X <- TRp[[2]]
-X <-
-X %>% 
-  group_by(INC_Q,i) %>% 
-  mutate(groupid = group_indices())
-
-ids <- X$groupid %>% unique %>% sort
-errors2 <- rep(NA,50)
-for (i in ids){
-  a <- try(inner_fun(filter(X,groupid == i),
-                              .Ntraj = 1, .case = 1))
-  if (class(a) == "try-error"){
-    errors2[i] <- i
-  }
-}
-# TR <- X %>% filter(groupid == 1)
-# get_trajectories(X = TR, Ntraj = 1, case = 1)
-# 
-# 
-# errors <- rep(NA,40)
-# for (i in 1:40){
-#   a <- try(inner_fun(TRp[[i]], .Ntraj = 2, .case = 1)) 
-#   if (class(a)== "try-error"){
-#     errors[i] <- i
-#   }
-# }
-# X <- TRp[[1]] %>% 
-#   group_by(INC_Q,i) %>% 
-#   mutate(groupid = group_indices()) %>% 
-#   ungroup()
-# for (ii in 1:max(X$groupid)){
-#   inner_fun(filter(X,groupid==ii),.Ntraj = 1,.case = 1)
-# }
-
 tic()
 A1.1 <-
   mclapply(TRp,
