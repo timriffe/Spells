@@ -1,0 +1,478 @@
+---
+title: "Alignment, Clocking, and Macro Patterns of Episodes in the Life Course"
+author: "Tim Riffe, Angelo Lorenti, Andrés Castro"
+date: "1 July 2022" 
+colortheme: "dove"
+output: beamer_presentation
+header-includes:
+  - \usepackage{color}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Example questions:
+
+\Large
+> - Do disability episodes get shorter or longer with age? And over time?
+> - How much of a state expectancy is composed of short vs long episodes?
+> - How do parity-specific birth interval distributions vary by completed fertility or in response to birth outcomes?
+
+## 
+
+\Large
+\begin{block}{\textbf{Solution}}
+We develop a framework (or grammar) of data operations to flexibly derive aggregate patterns from trajectory data.
+\end{block}
+
+<br>
+\pause
+
+\begin{block}{\textbf{Approach}}
+ \textbf{Clocks} are within and between episode timekeeping operations.\\
+ \textbf{Alignment} is a time structuring operation.  
+\end{block}
+<!-- if simulated then there is likely a markov expression waiting to be written -->
+
+## Approach
+
+\Large
+\begin{block}{\textbf{Clocks}}
+Within episodes of state \textbf{s}, count time \textcolor{red}{steps} or episode  \textcolor{red}{order} up or down, or total episode  \textcolor{red}{duration} conditional on time of episode entry, exit, or neither.
+\end{block}
+
+## Approach
+
+\Large
+\begin{block}{\textbf{Alignment}}
+  \textcolor{red}{left}, \textcolor{red}{right}, \textcolor{red}{center}, etc. on the \textcolor{blue}{first}, \textcolor{blue}{last}, \textcolor{blue}{longest}, \textcolor{blue}{shortest}, \textcolor{blue}{$n^{th}$}, \textcolor{blue}{$n^{th}$ from last} episode of state \textbf{s}. 
+\end{block}
+
+## Requisites
+
+\Large 
+\begin{block}{\textbf{Trajectory data}}
+ A set of either \textcolor{red}{observed} or \textcolor{red}{simulated} time series of \textcolor{blue}{discrete time steps} consisting in  \textcolor{blue}{categories}. 
+\end{block}
+
+## Illustrations
+
+\Large
+10 lives simulated from Dudel & Myrskylä (2017)
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+if (! "Spells" %in% rownames(installed.packages())){
+  remotes::install_github("timriffe/Spells/R/Spells")
+}
+library(tidyverse)
+library(Spells)
+library(colorspace)
+library(here)
+library(reshape2)
+library(ggridges)
+source(here::here("R","00_load_functions.R"))
+#cols   <- c(qualitative_hcl(5, palette = "Dark 3")[c(3,2,4)],NA)
+palette_OkabeIto <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999")
+cols             <- c(palette_OkabeIto[c(3,1,2)],NA)
+# plot(NULL, xlim=c(0,length(palette_OkabeIto)), ylim=c(0,1), 
+#     xlab="", ylab="", xaxt="n", yaxt="n")
+# rect(0:(length(palette_OkabeIto)-1), 0, 1:length(palette_OkabeIto), 1, col=palette_OkabeIto)
+
+# background colors for clock measures:
+cols2            <- lighten(desaturate(cols,.3),.3)
+states           <- c("Employed", "Inactive","Retired","Dead")
+yvals            <- 9:0 * 1.1
+X                <- readRDS(here("Talks","CED","X.rds"))
+XX               <- readRDS(here("Talks","CED","RTraj_clean.rds"))
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence2(X[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+```
+
+## Illustration: Age structured prevalence.
+
+\Large 
+\emph{Identity} clock in employment state
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+Ones            <- X == "Employed"
+Ones[Ones]      <- 1
+Ones[Ones == 0] <- NA
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(Ones[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Age structured prevalence.
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+Ones     <- XX == "Employed"
+Ones[XX == "Dead"] <- NA
+PrevEmpl <- rowMeans(Ones, na.rm=TRUE)
+```
+```{r}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,1), axes = FALSE, xlab = "", ylab = "")
+lines(50:100, PrevEmpl, lwd = 2)
+axis(1)
+text(43,.5,"Prevalence",xpd=TRUE,srt=90)
+axis(2, las = 1)
+```
+
+## Illustration: Clocks: Duration (unconditional)
+
+```{r}
+# unconditional durations
+Dur      <- apply(X,2,clock,clock_type="duration",state = "Inactive")
+# conditional on age at entry:
+# (function not yet wrapped in clock())
+DurEntry      <- apply(X,2,spell_dur_conditional,state = "Inactive", entry = TRUE)
+DurExit      <- apply(X,2,spell_dur_conditional,state = "Inactive", entry = FALSE)
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(Dur[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Duration \textcolor{red}{conditioned on entry}
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(DurEntry[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Duration \textcolor{blue}{conditioned on exit}
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(DurExit[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Order \textcolor{red}{Ascending}
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+OrdUp   <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=TRUE, step_size = 1)
+OrdDown <- apply(X,2,clock,clock_type="order",state = "Employed",increasing=FALSE, step_size = 1)
+```
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(OrdUp[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Order \textcolor{blue}{Descending}
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(OrdDown[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Steps \textcolor{red}{Ascending}
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+StepUp   <- apply(X,2,clock,clock_type="step",state = "Inactive",increasing=TRUE, step_size = 1)
+StepDown <- apply(X,2,clock,clock_type="step",state = "Inactive",increasing=FALSE, step_size = 1)
+```
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(floor(StepUp)[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Clocks: Steps \textcolor{blue}{Descending}
+
+```{r,fig.height=4,fig.width=9}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,101), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+  draw_sequence2(X[,i],states,cols2,y=yvals[i], border = NA)
+	draw_sequence3(floor(StepDown)[,i],y=yvals[i])
+	rect(50,yvals[i],(which(X[,i] == "Dead")[1]+49),yvals[i]+1,border = gray(.4),lwd=.5)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Alignment: Age = Birth alignment
+
+```{r,fig.height=4,fig.width=10}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(50,130), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence2(X[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(50,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(47,6,"Random individual i",xpd=TRUE,srt=90)
+legend(60,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+```
+
+## Illustration: Alignment: Death
+
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+XdeathAlign <- apply(X,2,align,state = "Dead",type="left")
+```
+
+```{r,fig.height=4,fig.width=10}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-80,0), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=XdeathAlign[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(-80,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-83,6,"Random individual i",xpd=TRUE,srt=90)
+legend(-40,-2,fill = cols, legend = states[-4],horiz = TRUE,xpd=TRUE,bty="n")
+```
+
+## Illustration: Alignment: \emph{Entry} to \emph{first} retirement
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+XretirefirstAlign <- apply(X,2,align,state = "Retired",type="left",spell = "first")
+```
+```{r,fig.height=4,fig.width=10}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=XretirefirstAlign[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(-30,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-33,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Alignment: \emph{Exit} from \emph{first} employment
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+Xemployexitfirst <- apply(X,2,align,state = "Employed",type="right",spell = "first")
+```
+```{r,fig.height=4,fig.width=10}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=Xemployexitfirst[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(-30,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-33,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Illustration: Alignment: \emph{Exit} from \emph{longest} employment
+```{r, echo = FALSE, results =" hide", message = FALSE, warning = FALSE}
+Xemployexitlongest<- apply(X,2,align,state = "Employed",type="right",spell = "longest")
+```
+```{r,fig.height=4,fig.width=10}
+par(mai=c(.8,1,0,0))
+plot(NULL, type = "n", xlim = c(-30,50), ylim = c(0,12), axes = FALSE, xlab = "", ylab = "")
+for (i in 1:10){
+	draw_sequence4(state_seq = X[,i],x=Xemployexitlongest[,i],states,cols,y=yvals[i], border = NA)
+}
+axis(1)
+text(-30,yvals+.5,1:10,pos=2,xpd=TRUE)
+text(-33,6,"Random individual i",xpd=TRUE,srt=90)
+```
+
+## Aggregation
+
+\Large
+\begin{block}{\textbf{Macro patterns}}
+Combine clocks and alignment to aggregate (e.g. means, quantiles)
+\end{block}
+
+## A Health Application 
+```{r statespace, echo = FALSE,warning=FALSE,message=FALSE}
+# tools::texi2dvi('statespace.tex',pdf=TRUE,clean=TRUE)
+# a<-file.rename(from="statespace.pdf",to="statespace.pdf")
+# system(paste("cd",here::here(), "&& inkscape -l statespace.svg statespace.pdf",sep=" "))
+knitr::include_graphics("statespace.pdf")
+```
+```{r, include = FALSE}
+A1.1 <- readRDS(here("Data","Application1","A1.1.rds"))
+A1.2 <- readRDS(here("Data","Application1","A1.2.rds"))
+A1.3 <- readRDS(here("Data","Application1","A1.3.rds"))
+```
+
+
+## Inequality in disability spell duration
+```{r, message=FALSE,warning=FALSE, echo = FALSE}
+A1.1 %>% 
+  group_by(INC_Q, age) %>% 
+  summarize(lower = quantile(dur_first_mean,0.025),
+            upper = quantile(dur_first_mean,0.975),
+            median = median(dur_first_mean),
+            .groups = "drop") %>% 
+  ggplot(mapping = aes(x = age, 
+                       y = median, 
+                       color = INC_Q,
+                       fill = INC_Q,
+                       ymin = lower,
+                       ymax = upper)) + 
+  geom_ribbon(alpha=.2, color = NA) +
+  geom_line(size=1.5) + 
+  geom_segment(aes(x=38,y=2,xend=49,yend=2),color = "black") +
+  annotate("text", x = 38, y = 1.4, label = "highest 20%") +
+  annotate("text", x = 35, y = 2.2, label = "lowest 20%") +
+  annotate("text", x = 45, y = 1.4, label = "Women from the highest\nincome quintile reach a mean\ndisability bout duration\nof 2 years 10 years later.", hjust=0)+
+  geom_curve(mapping=aes(x=43.5,y=1.65,xend = 45,yend=2),
+             color="black",size=.1,curvature=-.6,arrow = arrow(length = unit(0.02, "npc")))+
+  xlim(26,65) +
+  labs(x = "Age", y = "conditional mean spell duration (years)",
+       main = "Mean disability spell duration of spells starting in age x") +
+  guides(color = "none", fill = "none")+
+  theme(
+    axis.title.x = element_text(size = 16), # use 16 for presentations
+    axis.text.x = element_text(size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title.y = element_text(size = 16)) +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") + 
+  scale_color_brewer(palette = "Paired")
+```
+
+
+## How many times have people been disabled? 
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+  A1.2 %>% 
+  group_by(INC_Q, age) %>% 
+  summarize(lower = quantile(order_first_mean,0.025),
+            upper = quantile(order_first_mean,0.975),
+            median = median(order_first_mean),
+            .groups = "drop") %>% 
+  ggplot(mapping = aes(x = age, 
+                       y = median, 
+                       color = INC_Q,
+                       fill = INC_Q,
+                       ymin = lower,
+                       ymax = upper)) + 
+  geom_ribbon(alpha=.2, color = NA) +
+  geom_line(size=1.5) + 
+  scale_fill_brewer(palette = "Paired") + 
+  scale_color_brewer(palette = "Paired") +
+  xlim(30,78) + 
+  ylim(1,6.5) + 
+  # to be fixed:
+  geom_segment(aes(x=65,y=3.54,xend=65,yend=4.3),color = "black") +
+  annotate("text", x = 35, y = 4.5, label = "Women in the lowest\nincome quintile had\non average .8 more\ndisability bouts by age 65",hjust=0) +
+  geom_curve(mapping=aes(x=47,y=4.2,xend = 64,yend=4.1),
+             color="black",size=.1,curvature=-.3,arrow = arrow(length = unit(0.02, "npc")))+
+  annotate("text", x = 46, y = 2.7, label = "lowest 20%", size = 5) +
+  annotate("text", x = 50, y = 1.8, label = "highest 20%", size = 5) +
+  labs(x = "Age", 
+       y = "mean episode order",
+       main = "New disability episodes are on average 2nd episodes by age 54 if you're poor, 65 if you're rich")+
+  guides(color = "none", fill = "none")+
+  theme(
+    axis.title.x = element_text(size = 16), # use 16 for presentations
+    axis.text.x = element_text(size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title.y = element_text(size = 16)) +
+  theme_minimal()
+```
+
+## Inequality in end-of-life disability levels and dispersion
+```{r, message=FALSE,warning=FALSE, echo = FALSE}
+A1.3 %>% 
+  group_by(INC_Q, ad5, ttd) %>% 
+  summarize(median = quantile(ttdprev,.5)) %>% 
+  ggplot(mapping = aes(x = ad5-ttd, 
+                       y = as.factor(ad5), 
+                       color = INC_Q,
+                       fill = INC_Q,
+                       height = median)) + 
+  geom_density_ridges(stat = "identity",alpha = .4) +
+  scale_fill_manual(values = c("V" = "#3182b0","I" = "#80a8bf")) +
+  scale_color_manual(values = c("V" = "#3182b0","I" = "#80a8bf")) +
+  annotate("text",x=68,y=5.5,label="highest 20%") + 
+  geom_segment(aes(x=63,y=5.5,xend=59,yend=6.1),color = "black") +
+  annotate("text",x=39,y=6.8,label="lowest 20%") + 
+  geom_segment(aes(x=43.5,y=6.7,xend=48,yend=6.6),color = "black") +
+  labs(x = "Age", y = "Prevalence by age at death",size=2) +
+  guides(fill="none",color="none") +
+  theme(
+    axis.title.x = element_text(size = 16),
+    axis.text.x = element_text(size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    legend.position = c(0.9, 0.1)) +
+  theme_minimal(  )
+```
+
+## Conclusions
+
+\Large
+- Help pose and answer questions
+- Measure recipes translate to natural language
+- Diverse applications
+- `R` package `Spells` in beta version
+
+\pause
+ ![](SpellsHex.pdf){width=200px}
+
+
+
